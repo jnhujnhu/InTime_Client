@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/tag_infowindow"
+    android:padding="15dp">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/dialog_imagetag"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title: "
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/dialog_imagetag"
+        android:textSize="@dimen/dialog_normal_textsize"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reward: "
+        android:id="@+id/textView15"
+        android:layout_below="@+id/textView21"
+        android:layout_toEndOf="@+id/dialog_imagetag"
+        android:textSize="@dimen/dialog_normal_textsize"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Some"
+        android:id="@+id/dialog_title"
+        android:layout_toEndOf="@+id/textView2"
+        android:textColor="#000000"
+        android:textSize="@dimen/dialog_normal_textsize"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="100"
+        android:id="@+id/dialog_reward"
+        android:layout_toEndOf="@+id/textView15"
+        android:textColor="#000000"
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_toRightOf="@+id/textView15"
+        android:layout_alignTop="@+id/textView15" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" Points/hour"
+        android:id="@+id/textView18"
+        android:layout_alignTop="@+id/dialog_reward"
+        android:layout_toEndOf="@+id/dialog_reward"
+        android:textColor="#000000"
+        android:textSize="12dp"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_above="@+id/textView17"
+        android:layout_marginBottom="-3dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="From: "
+        android:id="@+id/textView14"
+        android:layout_below="@+id/textView15"
+        android:layout_alignStart="@+id/textView15"
+        android:textSize="@dimen/dialog_normal_textsize" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To: "
+        android:id="@+id/textView16"
+        android:layout_below="@+id/textView14"
+        android:layout_toEndOf="@+id/dialog_imagetag"
+        android:textSize="@dimen/dialog_normal_textsize" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Position"
+        android:id="@+id/textView17"
+        android:textColor="#000000"
+        android:layout_below="@+id/dialog_reward"
+        android:layout_toRightOf="@+id/textView14"
+        android:textSize="@dimen/dialog_normal_textsize"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Certain Place"
+        android:id="@+id/dialog_destination"
+        android:layout_below="@+id/textView14"
+        android:layout_toEndOf="@+id/textView16"
+        android:textColor="#000000"
+        android:textSize="@dimen/dialog_normal_textsize" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description: "
+        android:id="@+id/textView19"
+        android:layout_below="@+id/dialog_imagetag"
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:paddingLeft="15dp"
+        android:paddingTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
+        android:text="                      something"
+        android:id="@+id/dialog_description"
+        android:layout_below="@+id/dialog_imagetag"
+        android:layout_alignParentStart="true"
+        android:textColor="#000000"
+        android:layout_alignParentEnd="true"
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:paddingLeft="15dp"
+        android:paddingTop="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accept"
+        android:id="@+id/dialog_accept"
+        android:textSize="12dp"
+        android:layout_alignTop="@+id/dialog_cancel"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/dialog_cancel"
+        android:textSize="12dp"
+        android:layout_below="@+id/dialog_description"
+        android:layout_toStartOf="@+id/dialog_accept" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type: "
+        android:id="@+id/textView21"
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_below="@+id/textView2"
+        android:layout_toEndOf="@+id/dialog_imagetag" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Some Type"
+        android:id="@+id/dialog_type"
+        android:textColor="#000000"
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_toEndOf="@+id/textView21"
+        android:layout_alignTop="@+id/textView21"
+        android:layout_toRightOf="@+id/textView21" />
+</RelativeLayout>

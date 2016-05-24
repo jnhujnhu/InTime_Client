@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/navigation_message"
+            android:icon="@drawable/ic_mymessage"
+            android:title="@string/Nav_item_message"/>
+        <item
+            android:id="@+id/navigation_wallet"
+            android:icon="@drawable/ic_mywallet"
+            android:title="@string/Nav_item_wallet"/>
+        <item
+            android:id="@+id/navigation_history"
+            android:icon="@drawable/ic_myhistory"
+            android:title="@string/Nav_item_history"/>
+        <item
+            android:id="@+id/navigation_promotion"
+            android:icon="@drawable/ic_mypromotion"
+            android:title="@string/Nav_item_promotion"/>
+        <item
+            android:id="@+id/navigation_help"
+            android:icon="@drawable/ic_help"
+            android:title="@string/Nav_item_help"/>
+        <item
+            android:id="@+id/navigation_setting"
+            android:icon="@drawable/ic_setting"
+            android:title="@string/Nav_item_setting"/>
+    </group>
+</menu>

@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/custom_actionbar_height"
+    tools:context=".ui.mainscreen.QueryFragment"
+    android:background="@drawable/bg_querybar"
+    android:focusableInTouchMode="true">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_detail"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/bg_searchbutton"
+        android:src="@drawable/ic_user"
+        android:padding="@dimen/custom_actionbar_icon_padding"
+        android:layout_margin="@dimen/custom_actionbar_icon_margin" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/queryinput"
+        android:background="@drawable/bg_queryinput_border"
+        android:layout_gravity="center_horizontal|top"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:singleLine="true"
+        android:textCursorDrawable="@null"
+        android:layout_alignTop="@+id/querystart"
+        android:layout_toRightOf="@+id/user_detail"
+        android:layout_toLeftOf="@+id/querystart"
+        android:hint="@string/query_placeholder"
+        android:textSize="15dp"
+        android:layout_alignBottom="@+id/querystart" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/querystart"
+        android:layout_gravity="right|top"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/bg_searchbutton"
+        android:padding="@dimen/custom_actionbar_icon_padding"
+        android:layout_margin="@dimen/custom_actionbar_icon_margin"
+        android:src="@drawable/ic_search"/>
+
+
+
+</RelativeLayout>

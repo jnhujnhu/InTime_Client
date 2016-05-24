@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <fragment
+                android:id="@+id/queryfragment"
+                android:name="com.example.kevin.mapapplication.ui.mainscreen.QueryFragment"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+
+            <fragment
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:context=".ui.mainscreen.MapsActivity" />
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_addbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_addtag"
+            android:clickable="true"
+            app:backgroundTint="#4654f4"
+            app:fabSize="normal"
+            app:rippleColor="#4693e7"
+            app:pressedTranslationZ="6dp"
+            app:elevation="6dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_locationbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_location_marker"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:backgroundTint="#e6e6e6"
+            app:rippleColor="#a1a1a1"
+            app:pressedTranslationZ="3dp"
+            app:elevation="2dp" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_actionbar_height"
+        android:background="@drawable/bg_querybar"
+        android:id="@+id/action_bar_mask"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/Mask_actionbar_title"
+            android:textSize="20sp"
+            android:gravity="center" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/query_listview"
+        android:layout_width="240dp"
+        android:layout_height="210dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/bg_queryinput_border"
+        android:clickable="true"
+        android:nestedScrollingEnabled="true"
+        android:visibility="invisible"
+        android:elevation="3dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginRight="-15dp"
+        android:orientation="horizontal"
+        android:background="#faf8f8"
+        android:elevation="5dp"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:paddingRight="20dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="90dp"
+        android:visibility="invisible"
+        android:id="@+id/ll_task_informer">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Task is in progress."
+            android:layout_marginEnd="10dp"
+            android:textSize="@dimen/dialog_normal_textsize"/>
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:text="Cancel"
+            android:textColor="#a9a9a9"
+            android:id="@+id/btn_task_cancel"
+            android:background="@drawable/bg_task_informer_button"
+            android:stateListAnimator="@null"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_redevent"
+        android:layout_width="@dimen/eventbutton_width"
+        android:layout_height="@dimen/eventbutton_height"
+        android:textColor="#FFFFFF"
+        android:text="@string/red_tag_title"
+        android:textSize="10sp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="-10dp"
+        android:layout_marginBottom="90dp"
+        android:visibility="invisible"
+        android:stateListAnimator="@drawable/button_state_list"
+        android:background="@drawable/bg_redevent"
+        android:transitionName="redtag"
+        android:enabled="false"/>
+
+    <Button
+        android:id="@+id/btn_blueevent"
+        android:layout_width="@dimen/eventbutton_width"
+        android:layout_height="@dimen/eventbutton_height"
+        android:textColor="#FFFFFF"
+        android:text="@string/blue_tag_title"
+        android:textSize="10sp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="-10dp"
+        android:layout_marginBottom="140dp"
+        android:visibility="invisible"
+        android:stateListAnimator="@drawable/button_state_list"
+        android:background="@drawable/bg_blueevent"
+        android:transitionName="bluetag"
+        android:enabled="false"/>
+
+    <Button
+        android:id="@+id/btn_greenevent"
+        android:layout_width="@dimen/eventbutton_width"
+        android:layout_height="@dimen/eventbutton_height"
+        android:textColor="#FFFFFF"
+        android:text="@string/green_tag_title"
+        android:textSize="10sp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="-10dp"
+        android:layout_marginBottom="190dp"
+        android:visibility="invisible"
+        android:stateListAnimator="@drawable/button_state_list"
+        android:background="@drawable/bg_greenevent"
+        android:transitionName="greentag"
+        android:enabled="false"/>
+
+</FrameLayout>

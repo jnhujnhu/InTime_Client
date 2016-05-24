@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.startup.StartUpActivity"
+    android:background="@drawable/login_background"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/startup_app_title"
+        android:id="@+id/login_title"
+        android:textColor="#ffffff"
+        android:textSize="50sp"
+        android:layout_centerInParent="true"
+        android:elegantTextHeight="false"
+        android:fontFamily="serif"
+        android:textStyle="bold|italic" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/loading"
+        android:indeterminateTint="#FFFFFF"
+        android:indeterminateTintMode="src_atop" />
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        android:background="@drawable/bg_startup_panel"
+        android:elevation="6dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/login_panel"
+        android:alpha="0.95"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Username "
+            android:id="@+id/log_label_username"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="25dp"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Password "
+            android:id="@+id/log_label_password"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/log_label_username" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:id="@+id/login_username"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/log_label_username"
+            android:layout_toRightOf="@+id/log_label_username"
+            android:layout_alignTop="@+id/log_label_username"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/login_password"
+            android:layout_alignTop="@+id/log_label_password"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:layout_toRightOf="@+id/log_label_password"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="Register"
+            android:id="@+id/register_btn"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="55dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_startup_panel_button"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="Login"
+            android:id="@+id/login_btn"
+            android:background="@drawable/bg_startup_panel_button"
+            android:textColor="#ffffff"
+            android:layout_alignTop="@+id/register_btn"
+            android:layout_alignEnd="@+id/login_username"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="315dp"
+        android:background="@drawable/bg_startup_panel"
+        android:elevation="6dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/register_panel"
+        android:alpha="0.95"
+        android:visibility="visible"
+        android:layout_alignTop="@+id/login_panel">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Username "
+            android:id="@+id/reg_label_username"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="25dp"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Password "
+            android:id="@+id/reg_label_password"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/reg_label_username" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Re-Password "
+            android:id="@+id/reg_label_repassword"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/reg_label_password" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Phone "
+            android:id="@+id/reg_label_phone"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/reg_label_repassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Email "
+            android:id="@+id/reg_label_email"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/reg_label_phone" />
+
+        <EditText
+            android:layout_width="165dp"
+            android:layout_height="37dp"
+            android:id="@+id/reg_username"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/reg_label_username"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <EditText
+            android:layout_width="165dp"
+            android:layout_height="37dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/reg_password"
+            android:layout_alignTop="@+id/reg_label_password"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <EditText
+            android:layout_width="165dp"
+            android:layout_height="37dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/reg_repassword"
+            android:layout_alignTop="@+id/reg_label_repassword"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <EditText
+            android:layout_width="165dp"
+            android:layout_height="37dp"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/reg_phone"
+            android:layout_alignTop="@+id/reg_label_phone"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <EditText
+            android:layout_width="165dp"
+            android:layout_height="37dp"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/reg_email"
+            android:layout_alignTop="@+id/reg_label_email"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/bg_startup_panel_input"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:textCursorDrawable="@null"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:maxLength="16"
+            android:textColor="#000000" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="@string/startup_reg_cancel_btn"
+            android:id="@+id/reg_cancel"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="55dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_startup_panel_button"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:text="@string/startup_reg_confirm_btn"
+            android:id="@+id/reg_confirm"
+            android:background="@drawable/bg_startup_panel_button"
+            android:textColor="#ffffff"
+            android:layout_alignTop="@+id/reg_cancel"
+            android:layout_alignEnd="@+id/reg_password"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"/>
+
+    </RelativeLayout>
+</RelativeLayout>
