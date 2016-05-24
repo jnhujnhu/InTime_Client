@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.startup.StartUpActivity"
-    android:background="@drawable/login_background"
+    android:background="@drawable/login_background_copy"
     >
 
     <TextView
@@ -139,11 +139,12 @@
         android:layout_height="315dp"
         android:background="@drawable/bg_startup_panel"
         android:elevation="6dp"
-        android:layout_centerHorizontal="true"
         android:id="@+id/register_panel"
         android:alpha="0.95"
         android:visibility="visible"
-        android:layout_alignTop="@+id/login_panel">
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentTop="false"
+        android:layout_centerInParent="true">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="45dp"
@@ -303,29 +304,44 @@
             android:textColor="#000000" />
 
         <Button
-            android:layout_width="100dp"
-            android:layout_height="35dp"
-            android:text="@string/startup_reg_cancel_btn"
-            android:id="@+id/reg_cancel"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="55dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_startup_panel_button"
-            android:textColor="#ffffff"
-            android:textAllCaps="false"
-            android:stateListAnimator="@null"/>
+             android:layout_width="100dp"
+             android:layout_height="35dp"
+             android:text="@string/startup_reg_cancel_btn"
+             android:id="@+id/reg_cancel"
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="35dp"
-            android:text="@string/startup_reg_confirm_btn"
-            android:id="@+id/reg_confirm"
+             android:layout_marginStart="55dp"
             android:background="@drawable/bg_startup_panel_button"
-            android:textColor="#ffffff"
-            android:layout_alignTop="@+id/reg_cancel"
-            android:layout_alignEnd="@+id/reg_password"
-            android:textAllCaps="false"
-            android:stateListAnimator="@null"/>
+             android:textColor="#ffffff"
+             android:textAllCaps="false"
+             android:stateListAnimator="@null"
+             android:layout_below="@+id/reg_email"
+             android:layout_marginTop="17dp" />
 
-    </RelativeLayout>
+         <Button
+             android:layout_width="100dp"
+             android:layout_height="35dp"
+             android:text="@string/startup_reg_confirm_btn"
+             android:id="@+id/reg_confirm"
+             android:background="@drawable/bg_startup_panel_button"
+             android:textColor="#ffffff"
+             android:layout_alignTop="@+id/reg_cancel"
+             android:layout_alignEnd="@+id/reg_password"
+             android:textAllCaps="false"
+             android:stateListAnimator="@null"/>
+
+     </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/subtitle"
+        android:id="@+id/subtitle"
+        android:layout_centerHorizontal="true"
+        android:paddingStart="90dp"
+        android:fontFamily="serif"
+        android:textStyle="italic"
+        android:visibility="invisible"
+        android:layout_alignTop="@+id/login_panel"
+        android:layout_marginTop="-45dp" />
 </RelativeLayout>

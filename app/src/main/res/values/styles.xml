@@ -38,7 +38,7 @@
     </style>
 
     <style name="StartUpTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@drawable/login_background</item>
+        <item name="android:windowBackground">@drawable/login_background_copy</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

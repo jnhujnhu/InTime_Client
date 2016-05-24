@@ -42,7 +42,7 @@ public class ConnectionManager {
         params.put("password", password);
         params.put("phone", phone);
         params.put("email", email);
-        client.post(context, SERVER_ADDR + "/user", params, handler);
+        client.post(context, SERVER_ADDR + "/users", params, handler);
     }
 
 

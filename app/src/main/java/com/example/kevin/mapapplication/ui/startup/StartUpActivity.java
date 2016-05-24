@@ -33,6 +33,7 @@ public class StartUpActivity extends AppCompatActivity {
 
 
     private TextView title;
+    private TextView subtitle;
     private RelativeLayout login_panel;
     private RelativeLayout register_panel;
     private Button login_btn;
@@ -61,6 +62,7 @@ public class StartUpActivity extends AppCompatActivity {
 
         Animation fadein = AnimationUtils.loadAnimation(this, R.anim.fade_in_slow);
         title = (TextView) findViewById(R.id.login_title);
+        subtitle = (TextView) findViewById(R.id.subtitle);
         title.startAnimation(fadein);
 
         new Thread(new Runnable() {
@@ -242,6 +244,7 @@ public class StartUpActivity extends AppCompatActivity {
             Animation fadeinF = AnimationUtils.loadAnimation(StartUpActivity.this, R.anim.fade_in_fast);
             fadeinF.setFillAfter(true);
             login_panel.startAnimation(fadeinF);
+            subtitle.startAnimation(fadeinF);
             EnableLoginPanel();
         }
     };

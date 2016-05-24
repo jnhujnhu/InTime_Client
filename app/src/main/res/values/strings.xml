@@ -82,4 +82,5 @@
     <string name="startup_reg_cancel_btn">Cancel</string>
     <string name="startup_reg_confirm_btn">Submit</string>
     <string name="startup_app_title">InTime</string>
+    <string name="subtitle">—— Design for a substantial life.</string>
 </resources>
