@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="126dp"
     android:id="@+id/User_portrait"
     android:weightSum="1"
     android:background="@drawable/bg_user_detail">
 
     <ImageView
-        android:layout_width="63dp"
-        android:layout_height="63dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:id="@+id/imageView"
         android:src="@drawable/user_portrait"
         android:layout_marginLeft="16dp"
         android:contentDescription="@string/User_portrait"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="10dp"
+        android:layout_gravity="center_vertical|bottom"
         android:background="@drawable/bg_userportriat_border"
-        android:padding="3dp"/>
+        android:padding="3dp"
+        android:layout_marginBottom="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:text="TestUser"
-        android:id="@+id/textView"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="20dp"
-        android:textSize="20dp"
-        android:layout_marginTop="10dp"
-        android:textColor="#ffffff" />
+        android:id="@+id/drawer_header_username"
+        android:layout_gravity="center_vertical|bottom"
+        android:layout_marginLeft="100dp"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="36dp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp">
+    <ImageButton
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:id="@+id/drawer_header_detail_btn"
+        android:src="@drawable/ic_accountmsgnav"
+        android:background="@drawable/bg_searchbutton"
+        android:layout_marginRight="10dp"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="36dp"
+        android:textAlignment="center" />
 
-        <ImageButton
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:id="@+id/imageButton"
-            android:src="@drawable/ic_accountmsgnav"
-            android:background="@drawable/bg_searchbutton"
-            android:padding="5dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="5dp"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentTop="false" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</FrameLayout>

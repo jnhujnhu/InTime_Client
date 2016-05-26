@@ -18,6 +18,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         ImageButton back = (ImageButton) findViewById(R.id.btn_back);
+        assert back != null;
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

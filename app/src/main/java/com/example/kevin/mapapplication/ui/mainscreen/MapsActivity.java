@@ -2,11 +2,13 @@ package com.example.kevin.mapapplication.ui.mainscreen;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,10 +27,13 @@ import android.view.animation.Interpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
@@ -35,11 +41,13 @@ import com.example.kevin.mapapplication.model.MarkerManager;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.BlueTagInfoActivity;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.GreenTagInfoActivity;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.RedTagInfoActivity;
+import com.example.kevin.mapapplication.ui.startup.StartUpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
 import com.example.kevin.mapapplication.ui.userinfo.MessageActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
+import com.example.kevin.mapapplication.ui.userinfo.UserDetailActivity;
 import com.example.kevin.mapapplication.ui.userinfo.WalletActivity;
 import com.example.kevin.mapapplication.utils.DirectionManager;
 import com.example.kevin.mapapplication.utils.LocationTracker;
@@ -50,6 +58,7 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -64,12 +73,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private LatLng CurrentPosition;
+    private float CurrentAccuracy;
     private LocationTracker mLocationTracker;
     private DirectionManager dm;
     private TaskInformer taskInformer;
     private TagButtonManager tagButtonManager;
 
-    private static final float ZoomLevel = 17f;
+    private Circle MyPositionCircle;
+    private Marker MyPositionMarker;
+
+    private static final float ZoomLevel = 18f;
     public static final int REQUEST_CODE = 233;
     private static final int TOUCH_USER_DETAIL = 1;
     private static final int TOUCH_QUERY_FOCUSED = 2;
@@ -83,6 +96,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FloatingActionButton Fab;
     private long timebetweenclicks;
     private int fabclickcount;
+
+    private SharedPreferences userinfo;
+    private String m_username;
 
 
     @Override
@@ -126,7 +142,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Bundle bundle = data.getExtras();
                     String str = bundle.getString("Form");
                     if(str!=null && str.equals("Confirmed")) {
-
                         tagButtonManager.HideTagButton();
                         ChangeEverything();
                         TagAngChangePackage(BitmapDescriptorFactory.HUE_RED);
@@ -136,7 +151,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     bundle = data.getExtras();
                     str = bundle.getString("Form");
                     if(str!=null && str.equals("Confirmed")) {
-
                         tagButtonManager.HideTagButton();
                         ChangeEverything();
                         TagAngChangePackage(BitmapDescriptorFactory.HUE_GREEN);
@@ -146,10 +160,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     bundle = data.getExtras();
                     str = bundle.getString("Form");
                     if(str!=null && str.equals("Confirmed")) {
-
                         tagButtonManager.HideTagButton();
                         ChangeEverything();
                         TagAngChangePackage(BitmapDescriptorFactory.HUE_BLUE);
+                    }
+                    break;
+                case UserDetailActivity.RESULT_CODE:
+                    bundle = data.getExtras();
+                    if(bundle.getBoolean("IsUsernameModified")) {
+                        m_username = userinfo.getString("username", null);
+                        NavigationView navigationview = (NavigationView) findViewById(R.id.nav_view);
+                        View headerview = navigationview.getHeaderView(0);
+                        TextView drawer_header_username = (TextView) headerview.findViewById(R.id.drawer_header_username);
+                        drawer_header_username.setText(m_username);
                     }
                     break;
             }
@@ -285,11 +308,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         drawer.closeDrawer(GravityCompat.START);
+
         switch (id) {
             case R.id.navigation_setting :
                 final Intent intent_1 = new Intent(this, SettingsActivity.class);
@@ -315,6 +341,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final Intent intent_6 = new Intent(this, WalletActivity.class);
                 StartActivityWithDelay(intent_6);
                 break;
+            case R.id.navigation_logout :
+
+                SharedPreferences userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
+                SharedPreferences.Editor editor = userinfo.edit();
+                editor.putString("username", null);
+                editor.putString("password", null);
+                editor.putString("uid", null);
+                editor.putString("token", null);
+                editor.apply();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(150);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent_7 = new Intent(MapsActivity.this, StartUpActivity.class);
+                        startActivity(intent_7);
+                        finish();
+                    }
+                }).start();
+                break;
         }
         return true;
     }
@@ -332,7 +381,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Animation fadein = AnimationUtils.loadAnimation(this, R.anim.fade_and_slide_down);
                 listView.startAnimation(fadein);
                 listView.setVisibility(View.VISIBLE);
-                Log.i("Query", "Focused");
                 break;
             case TOUCH_QUERY_UNFOCUSED:
                 listView = (ListView) findViewById(R.id.query_listview);
@@ -340,7 +388,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 listView.startAnimation(fadeout);
                 listView.setVisibility(View.INVISIBLE);
                 HideSoftInputandClearFocus();
-                Log.i("Query", "Unfocused");
                 break;
             case TOUCH_SEARCH:
                 if(!Content.equals("")) {
@@ -440,6 +487,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         taskInformer.SetTaskInformer();
 
+        //////////////////GET_USER_INFO/////////////////////
+        userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
+        m_username = userinfo.getString("username", null);
+
+        if(m_username == null) {
+            Toast.makeText(MapsActivity.this, "Error!", Toast.LENGTH_LONG).show();
+        }
+        ////////////////////////////////////////////////////
+
+        View headerview = navigationview.getHeaderView(0);
+        TextView drawer_header_username = (TextView) headerview.findViewById(R.id.drawer_header_username);
+        drawer_header_username.setText(m_username);
+        ImageButton user_detail_btn = (ImageButton) headerview.findViewById(R.id.drawer_header_detail_btn);
+
+        headerview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, UserDetailActivity.class);
+                StartActivityWithDelay(intent);
+            }
+        });
+        user_detail_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, UserDetailActivity.class);
+                StartActivityWithDelay(intent);
+            }
+        });
+
         final ArrayAdapter adapter =new ArrayAdapter<String>(this, R.layout.query_listview_item, new String[]{"StarCraft II", "Dota", "LOL", "Football", "Basketball", "Piano"});
 
         ListView listView = (ListView) findViewById(R.id.query_listview);
@@ -455,21 +531,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    private void SetMyPositionMarker() {
+        if(MyPositionCircle!=null && MyPositionMarker!=null) {
+            MyPositionCircle.remove();
+            MyPositionMarker.remove();
+        }
+        MyPositionCircle = mMap.addCircle(new CircleOptions().center(CurrentPosition)
+                .radius(CurrentAccuracy)
+                .fillColor(Color.argb(100, 91, 93, 255))
+                .strokeColor(Color.argb(80, 0, 0, 170)));
+        MyPositionMarker = mMap.addMarker(new MarkerOptions().position(CurrentPosition).title("Your Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+    }
+
 
     private void Mapinit() {
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setInfoWindowAdapter(this);
 
-        CurrentPosition = new LatLng(-34, 151);
         CurrentPosition = mLocationTracker.getCurrentLatlng();
+        CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
 
-        // Add a marker
-        mMap.addCircle(new CircleOptions().center(CurrentPosition)
-                .radius(100)
-                .fillColor(Color.argb(100, 91, 93, 255))
-                .strokeColor(Color.argb(80, 0, 0, 170)));
-        mMap.addMarker(new MarkerOptions().position(CurrentPosition).title("Your Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        SetMyPositionMarker();
 
         LatLng TestScene = new LatLng(31.19326239, 121.59417715);
 
@@ -510,6 +593,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locatebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CurrentPosition = mLocationTracker.getCurrentLatlng();
+                CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
+                SetMyPositionMarker();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));
             }
         });

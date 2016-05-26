@@ -6,6 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -23,9 +24,20 @@ public class LocationTracker implements LocationListener {
 
     private double Longtitude;
 
+    private float Accuracy;
+
     public LocationTracker(Context context) {
+
+        Latitude = -34;
+        Longtitude = 151;
+        Accuracy = 100;
+
         mContext = context;
         getLocation();
+    }
+
+    public float getCurrentAccuracy() {
+        return Accuracy;
     }
 
     public LatLng getCurrentLatlng() {
@@ -35,33 +47,41 @@ public class LocationTracker implements LocationListener {
     private void getLocation(){
         Location location;
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if(mLocationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
             try {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
                 location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if(location != null) {
+                if (location != null) {
+                    Accuracy = location.getAccuracy();
                     Latitude = location.getLatitude();
                     Longtitude = location.getLongitude();
                     Log.i("Location", "From GPS");
-                }
-                else {
+                } else if(mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
                     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
                     location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    if(location != null) {
+                    if (location != null) {
+                        Accuracy = location.getAccuracy();
                         Latitude = location.getLatitude();
                         Longtitude = location.getLongitude();
                         Log.i("Location", "From Network");
                     }
                 }
+                else {
+                    Log.i("Location", "Error!");
+                    Toast.makeText(mContext, "No Location Service Available", Toast.LENGTH_LONG).show();
+                    Latitude = -1;
+                    Longtitude = -1;
+                }
             }catch (SecurityException se) {
                 se.printStackTrace();
             }
         }
-        else if(mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        else if(mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
             try {
                 mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
                 location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 if(location != null) {
+                    Accuracy = location.getAccuracy();
                     Latitude = location.getLatitude();
                     Longtitude = location.getLongitude();
                     Log.i("Location", "From Network");
@@ -72,6 +92,10 @@ public class LocationTracker implements LocationListener {
         }
         else {
             Log.i("Location", "Error!");
+            Toast.makeText(mContext, "No Location Service Available", Toast.LENGTH_LONG).show();
+            Accuracy = 0;
+            Latitude = -1;
+            Longtitude = -1;
         }
     }
 

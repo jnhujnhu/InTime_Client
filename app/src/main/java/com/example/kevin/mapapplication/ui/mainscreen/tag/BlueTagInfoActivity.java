@@ -51,6 +51,7 @@ public class BlueTagInfoActivity extends AppCompatActivity {
         Reward = (EditText) findViewById(R.id.tag_reward);
         DetailedDcpt = (EditText) findViewById(R.id.tag_detaildcpt);
 
+        assert submit != null;
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +83,7 @@ public class BlueTagInfoActivity extends AppCompatActivity {
                 }
             }
         });
+        assert cancel != null;
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

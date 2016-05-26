@@ -23,6 +23,13 @@
         <item name="colorAccent">@color/customcolorGreen</item>
     </style>
 
+    <style name="MyAppThemeGray" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/customcolorGray</item>
+    </style>
+
     <style name="MyCustomTheme" parent="@android:style/Theme.Material.Panel">
         <item name="android:windowAnimationStyle">@style/MyAnimation.Window</item>
     </style>

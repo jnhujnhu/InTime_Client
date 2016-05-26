@@ -15,10 +15,12 @@
         android:id="@+id/login_title"
         android:textColor="#ffffff"
         android:textSize="50sp"
-        android:layout_centerInParent="true"
         android:elegantTextHeight="false"
         android:fontFamily="serif"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold|italic"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/login_panel"
+        android:layout_marginTop="30dp" />
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -141,7 +143,7 @@
         android:elevation="6dp"
         android:id="@+id/register_panel"
         android:alpha="0.95"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_alignParentBottom="false"
         android:layout_alignParentTop="false"
         android:layout_centerInParent="true">
@@ -301,6 +303,8 @@
             android:paddingRight="10dp"
             android:singleLine="true"
             android:maxLength="16"
+            android:hint="@string/reg_box_email_optional"
+            android:textColorHint="@color/customcolorHint"
             android:textColor="#000000" />
 
         <Button

@@ -1,14 +1,16 @@
 package com.example.kevin.mapapplication.ui.startup;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
 
+import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -49,10 +52,35 @@ public class StartUpActivity extends AppCompatActivity {
     private EditText reg_email;
     private ProgressBar loading;
 
+    private SharedPreferences userinfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startup);
+
+        userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
+        loading = (ProgressBar) findViewById(R.id.loading);
+
+        String sp_username = userinfo.getString("username", null);
+
+
+        if(sp_username != null) {
+            String sp_password = userinfo.getString("password", null);
+            Login(sp_username, sp_password, new Runnable(){
+                @Override
+                public void run() {
+                    ShowLoginInterface();
+                }
+            });
+        }
+        else {
+            ShowLoginInterface();
+        }
+    }
+
+    private void ShowLoginInterface() {
+        //Toast.makeText(StartUpActivity.this, "Error!", Toast.LENGTH_LONG).show();
 
         login_panel = (RelativeLayout) findViewById(R.id.login_panel);
         register_panel = (RelativeLayout) findViewById(R.id.register_panel);
@@ -69,7 +97,7 @@ public class StartUpActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2500);
+                    Thread.sleep(2000);
                     TitleSlideUpHandler.sendMessage(new Message());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -91,12 +119,12 @@ public class StartUpActivity extends AppCompatActivity {
         reg_phone = (EditText) findViewById(R.id.reg_phone);
         reg_email = (EditText) findViewById(R.id.reg_email);
 
-        loading = (ProgressBar) findViewById(R.id.loading);
 
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Login(login_username.getText().toString(), login_password.getText().toString());
+                HideSoftInfoKeyword();
+                Login(login_username.getText().toString(), login_password.getText().toString(), null);
             }
         });
 
@@ -130,44 +158,32 @@ public class StartUpActivity extends AppCompatActivity {
         reg_confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Register(reg_username.getText().toString(), reg_password.getText().toString(), reg_phone.getText().toString(), reg_email.getText().toString());
+                if(reg_password.getText().toString().equals(reg_repassword.getText().toString())) {
+                    HideSoftInfoKeyword();
+                    Register(reg_username.getText().toString(), reg_password.getText().toString(), reg_phone.getText().toString(), reg_email.getText().toString());
+                }
+                else {
+                    Toast.makeText(StartUpActivity.this,"Password and Re-password not match.", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
 
-    private void Login(String username, String password){
-        loading.setVisibility(View.VISIBLE);
-        AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try {
-                    loading.setVisibility(View.INVISIBLE);
-                    JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                    Toast.makeText(getApplicationContext(), "Userid:" + res.get("uid") + " token:" + res.get("token") + " expiresIn:" + res.get("expiresIn"), Toast.LENGTH_LONG).show();
-                    /*Intent intent = new Intent(StartUpActivity.this, MapsActivity.class);
-                    StartUpActivity.this.startActivity(intent);
-                    finish();*/
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                try {
-                    loading.setVisibility(View.INVISIBLE);
-                    //JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                    Toast.makeText(getApplicationContext(), new String(responseBody, StandardCharsets.UTF_8), Toast.LENGTH_LONG).show();
-                    System.out.println(new String(responseBody, StandardCharsets.UTF_8));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        ConnectionManager.getInstance().Login(this.getBaseContext(), username, password, handler);
+    private void HideSoftInfoKeyword() {
+        View view = getCurrentFocus();
+        InputMethodManager imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(view != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
-    private void Register(String username, String password, String phone, String email) {
+    private void StartMainScreen() {
+        Intent intent = new Intent(StartUpActivity.this, MapsActivity.class);
+        StartUpActivity.this.startActivity(intent);
+        finish();
+    }
+
+    private void Login(final String username, final String password, final Runnable doFailure){
         loading.setVisibility(View.VISIBLE);
         AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
             @Override
@@ -175,7 +191,15 @@ public class StartUpActivity extends AppCompatActivity {
                 try {
                     loading.setVisibility(View.INVISIBLE);
                     JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                    Toast.makeText(getApplicationContext(), "Userid:" + res.get("uid"), Toast.LENGTH_LONG).show();
+                    SharedPreferences.Editor editor = userinfo.edit();
+                    editor.putString("username", username);
+                    editor.putString("password", password);
+                    editor.putString("uid", (String) res.get("uid"));
+                    editor.putString("token", (String) res.get("token"));
+                    editor.apply();
+                    //Toast.makeText(StartUpActivity.this,"Success.", Toast.LENGTH_LONG).show();
+                    StartMainScreen();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -184,9 +208,47 @@ public class StartUpActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 loading.setVisibility(View.INVISIBLE);
-                //JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                Toast.makeText(getApplicationContext(), new String(responseBody, StandardCharsets.UTF_8), Toast.LENGTH_LONG).show();
-                System.out.println(new String(responseBody, StandardCharsets.UTF_8));
+                if (statusCode == 0) {
+                    Toast.makeText(StartUpActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
+                } else {
+                    try {
+                        JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
+                        Toast.makeText(StartUpActivity.this, res.getString("error"), Toast.LENGTH_LONG).show();
+                        if(doFailure!=null)
+                            doFailure.run();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        ConnectionManager.getInstance().Login(this.getBaseContext(), username, password, handler);
+    }
+
+    private void Register(final String username, final String password, String phone, String email) {
+        loading.setVisibility(View.VISIBLE);
+        AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(StartUpActivity.this,"Register Success.", Toast.LENGTH_LONG).show();
+                Login(username, password, null);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                loading.setVisibility(View.INVISIBLE);
+                if(statusCode == 0) {
+                    Toast.makeText(StartUpActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    try {
+                        JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
+                        Toast.makeText(StartUpActivity.this, (String) res.get("error"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         };
         ConnectionManager.getInstance().Register(this.getBaseContext(), username, password, phone, email, handler);

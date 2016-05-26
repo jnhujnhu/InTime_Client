@@ -18,6 +18,7 @@ public class WalletActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wallet);
 
         ImageButton back = (ImageButton) findViewById(R.id.btn_back);
+        assert back != null;
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

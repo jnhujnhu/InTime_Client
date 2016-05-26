@@ -1,8 +1,14 @@
 package com.example.kevin.mapapplication.model;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.Toast;
 
 import com.loopj.android.http.*;
+
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -43,6 +49,23 @@ public class ConnectionManager {
         params.put("phone", phone);
         params.put("email", email);
         client.post(context, SERVER_ADDR + "/users", params, handler);
+    }
+
+    public void ModifyUserInfo(Context context, String token, String uid, String username, String oldpassword, String password, String phone, String email, AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        params.put("username", username);
+        params.put("password", password);
+        params.put("oldPassword", oldpassword);
+        params.put("phone", phone);
+        params.put("email", email);
+        client.addHeader("x-access-token", token);
+        client.put(context, SERVER_ADDR + "/users/" + uid, params, handler);
+    }
+
+    public void GetUserInfo(String uid, String token, AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        params.put("token", token);
+        client.get(SERVER_ADDR + "/users/" + uid, params, handler);
     }
 
 

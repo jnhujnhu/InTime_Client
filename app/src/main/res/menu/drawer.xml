@@ -25,5 +25,9 @@
             android:id="@+id/navigation_setting"
             android:icon="@drawable/ic_setting"
             android:title="@string/Nav_item_setting"/>
+        <item
+            android:id="@+id/navigation_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/Nav_item_logout"/>
     </group>
 </menu>
