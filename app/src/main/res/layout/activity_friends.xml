@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.userinfo.FriendsActivity">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_actionbar_height"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout1"
+        android:background="@drawable/bg_querybar">
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/custom_actionbar_icon_margin"
+            android:padding="@dimen/custom_actionbar_icon_padding"
+            android:src="@drawable/ic_actionbar_back"
+            android:background="@drawable/bg_backbutton" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/Nav_item_friends"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/custom_actionbar_title_textsize"/>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_alignParentStart="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/linearLayout1"
+                android:layout_alignParentStart="true"
+                android:id="@+id/layout_user_pending">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp"
+                    android:text="Pending"
+                    android:id="@+id/textView"
+                    android:background="#d5d5d5"
+                    android:paddingStart="10dp"
+                    android:fontFamily="san-serif"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:textColor="#646464" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/layout_user_pending"
+                android:layout_alignParentStart="true"
+                android:id="@+id/layout_user_waiting">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp"
+                    android:text="Waiting"
+                    android:id="@+id/textView33"
+                    android:background="#d5d5d5"
+                    android:paddingStart="10dp"
+                    android:fontFamily="san-serif"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:textColor="#646464" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/layout_user_waiting"
+                android:layout_alignParentStart="true"
+                android:id="@+id/layout_user_accepted">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp"
+                    android:text="Accepted "
+                    android:id="@+id/textView34"
+                    android:background="#d5d5d5"
+                    android:paddingStart="10dp"
+                    android:fontFamily="san-serif"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    android:textColor="#646464" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

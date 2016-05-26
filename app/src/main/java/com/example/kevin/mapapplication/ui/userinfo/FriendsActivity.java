@@ -8,14 +8,14 @@ import android.widget.ImageButton;
 
 import com.example.kevin.mapapplication.R;
 
-public class MessageActivity extends AppCompatActivity {
+public class FriendsActivity extends AppCompatActivity {
 
     public static final int RESULT_CODE = 233;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_friends);
 
         ImageButton back = (ImageButton) findViewById(R.id.btn_back);
         assert back != null;

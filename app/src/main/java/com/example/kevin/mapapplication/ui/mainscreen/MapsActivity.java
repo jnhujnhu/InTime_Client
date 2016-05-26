@@ -8,7 +8,6 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
@@ -16,8 +15,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -27,10 +24,8 @@ import android.view.animation.Interpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,7 +39,7 @@ import com.example.kevin.mapapplication.ui.mainscreen.tag.RedTagInfoActivity;
 import com.example.kevin.mapapplication.ui.startup.StartUpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
-import com.example.kevin.mapapplication.ui.userinfo.MessageActivity;
+import com.example.kevin.mapapplication.ui.userinfo.FriendsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.UserDetailActivity;
@@ -329,8 +324,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final Intent intent_3 = new Intent(this, HistoryActivity.class);
                 StartActivityWithDelay(intent_3);
                 break;
-            case R.id.navigation_message :
-                final Intent intent_4 = new Intent(this, MessageActivity.class);
+            case R.id.navigation_friends :
+                final Intent intent_4 = new Intent(this, FriendsActivity.class);
                 StartActivityWithDelay(intent_4);
                 break;
             case R.id.navigation_promotion :

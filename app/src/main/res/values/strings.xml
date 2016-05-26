@@ -72,7 +72,7 @@
     <string name="green_tag_title">+ green tag</string>
     <string name="query_placeholder">Pretend that you can search..</string>
     <string name="Search_result_title">Search Result For:</string>
-    <string name="Nav_item_message">Message</string>
+    <string name="Nav_item_friends">Friends</string>
     <string name="Nav_item_wallet">Wallet</string>
     <string name="Nav_item_history">History</string>
     <string name="Nav_item_promotion">Promotion</string>
