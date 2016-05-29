@@ -22,6 +22,7 @@ import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
 
 import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
+import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -70,6 +71,12 @@ public class StartUpActivity extends AppCompatActivity {
             Login(sp_username, sp_password, new Runnable(){
                 @Override
                 public void run() {
+                    SharedPreferences.Editor editor = userinfo.edit();
+                    editor.putString("username", null);
+                    editor.putString("password", null);
+                    editor.putString("uid", null);
+                    editor.putString("token", null);
+                    editor.apply();
                     ShowLoginInterface();
                 }
             });
@@ -185,69 +192,57 @@ public class StartUpActivity extends AppCompatActivity {
 
     private void Login(final String username, final String password, final Runnable doFailure){
         loading.setVisibility(View.VISIBLE);
-        AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try {
-                    loading.setVisibility(View.INVISIBLE);
-                    JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                    SharedPreferences.Editor editor = userinfo.edit();
-                    editor.putString("username", username);
-                    editor.putString("password", password);
-                    editor.putString("uid", (String) res.get("uid"));
-                    editor.putString("token", (String) res.get("token"));
-                    editor.apply();
-                    //Toast.makeText(StartUpActivity.this,"Success.", Toast.LENGTH_LONG).show();
-                    StartMainScreen();
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
+                JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
+                loading.setVisibility(View.INVISIBLE);
+                SharedPreferences.Editor editor = userinfo.edit();
+                editor.putString("username", username);
+                editor.putString("password", password);
+                editor.putString("uid", res.optString("uid"));
+                editor.putString("token", res.optString("token"));
+                editor.apply();
+                StartMainScreen();
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if (statusCode == 0) {
+                if(res == null) {
                     Toast.makeText(StartUpActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                } else {
-                    try {
-                        JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                        Toast.makeText(StartUpActivity.this, res.getString("error"), Toast.LENGTH_LONG).show();
-                        if(doFailure!=null)
-                            doFailure.run();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
+                else {
+                    Toast.makeText(StartUpActivity.this, error, Toast.LENGTH_LONG).show();
+                }
+                if (doFailure != null)
+                    doFailure.run();
             }
         };
+
         ConnectionManager.getInstance().Login(this.getBaseContext(), username, password, handler);
     }
 
     private void Register(final String username, final String password, String phone, String email) {
         loading.setVisibility(View.VISIBLE);
-        AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
+
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 Toast.makeText(StartUpActivity.this,"Register Success.", Toast.LENGTH_LONG).show();
                 Login(username, password, null);
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if(statusCode == 0) {
+                if(res == null) {
                     Toast.makeText(StartUpActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
                 }
                 else {
-                    try {
-                        JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                        Toast.makeText(StartUpActivity.this, (String) res.get("error"), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Toast.makeText(StartUpActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
         };

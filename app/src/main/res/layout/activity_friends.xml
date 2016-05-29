@@ -5,11 +5,25 @@
     android:layout_height="match_parent"
     tools:context=".ui.userinfo.FriendsActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/friends_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="@dimen/custom_actionbar_height"
         android:orientation="horizontal"
-        android:id="@+id/linearLayout1"
+        android:id="@+id/RelativeLayout1"
         android:background="@drawable/bg_querybar">
         <ImageButton
             android:id="@+id/btn_back"
@@ -24,12 +38,22 @@
             android:layout_height="match_parent"
             android:text="@string/Nav_item_friends"
             android:gravity="center_vertical"
-            android:textSize="@dimen/custom_actionbar_title_textsize"/>
-    </LinearLayout>
+            android:textSize="@dimen/custom_actionbar_title_textsize"
+            android:layout_toRightOf="@+id/btn_back" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/friends_add_btn"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_add_friend"
+            android:layout_marginRight="20dp" />
+    </RelativeLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
+        android:layout_below="@+id/RelativeLayout1"
         android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +62,7 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/linearLayout1"
                 android:layout_alignParentStart="true"
                 android:id="@+id/layout_user_pending">
@@ -54,12 +78,18 @@
                     android:textSize="12sp"
                     android:gravity="center_vertical"
                     android:textColor="#646464" />
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/friends_pending_list"
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/layout_user_pending"
                 android:layout_alignParentStart="true"
                 android:id="@+id/layout_user_waiting">
@@ -75,12 +105,18 @@
                     android:textSize="12sp"
                     android:gravity="center_vertical"
                     android:textColor="#646464" />
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/friends_waiting_list"
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/layout_user_waiting"
                 android:layout_alignParentStart="true"
                 android:id="@+id/layout_user_accepted">
@@ -96,6 +132,12 @@
                     android:textSize="12sp"
                     android:gravity="center_vertical"
                     android:textColor="#646464" />
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/friends_accepted_list"
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -511,7 +511,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        final ArrayAdapter adapter =new ArrayAdapter<String>(this, R.layout.query_listview_item, new String[]{"StarCraft II", "Dota", "LOL", "Football", "Basketball", "Piano"});
+        final ArrayAdapter adapter =new ArrayAdapter<String>(this, R.layout.listview_item_search, new String[]{"StarCraft II", "Dota", "LOL", "Football", "Basketball", "Piano"});
 
         ListView listView = (ListView) findViewById(R.id.query_listview);
         listView.setAdapter(adapter);

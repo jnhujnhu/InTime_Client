@@ -49,7 +49,7 @@ public class GreenTagInfoActivity extends AppCompatActivity {
 
         shorttitle = (EditText) findViewById(R.id.tag_short_title);
         type = (Spinner) findViewById(R.id.tag_type_spinner);
-        Reward = (EditText) findViewById(R.id.tag_reward);
+        Reward = (EditText) findViewById(R.id.tag_price);
         DetailedDcpt = (EditText) findViewById(R.id.tag_detaildcpt);
 
         assert submit != null;

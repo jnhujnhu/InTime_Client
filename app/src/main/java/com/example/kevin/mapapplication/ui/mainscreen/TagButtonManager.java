@@ -32,15 +32,15 @@ public class TagButtonManager {
     }
 
     public void ShowTagButton() {
-        shiftleftanimation(R.id.btn_redevent, 700);
-        shiftleftanimation(R.id.btn_blueevent, 800);
-        shiftleftanimation(R.id.btn_greenevent, 900);
+        shiftleftanimation(R.id.btn_redevent, 900);
+        shiftleftanimation(R.id.btn_blueevent, 700);
+        shiftleftanimation(R.id.btn_greenevent, 800);
     }
 
     public void HideTagButton() {
-        shiftrightanimation(R.id.btn_redevent, 900);
-        shiftrightanimation(R.id.btn_blueevent, 800);
-        shiftrightanimation(R.id.btn_greenevent, 700);
+        shiftrightanimation(R.id.btn_redevent, 700);
+        shiftrightanimation(R.id.btn_blueevent, 900);
+        shiftrightanimation(R.id.btn_greenevent, 800);
     }
 
     private void shiftleftanimation(int id, int duration) {

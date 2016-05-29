@@ -42,7 +42,7 @@ public class TaginfoDialog {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View layout = inflater.inflate(R.layout.info_dialog, null);
+        View layout = inflater.inflate(R.layout.dialog_tag_detail, null);
 
         builder.setTitle("Details")
                 .setView(layout);

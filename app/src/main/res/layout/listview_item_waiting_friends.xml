@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_friends_user_waiting"
+        android:id="@+id/imageView16"
+        android:layout_margin="10dp"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ZKW"
+        android:layout_toRightOf="@+id/imageView16"
+        android:layout_centerVertical="true"
+        android:id="@+id/friends_waiting_username" />
+
+</RelativeLayout>

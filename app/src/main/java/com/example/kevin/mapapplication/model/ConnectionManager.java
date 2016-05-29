@@ -63,9 +63,13 @@ public class ConnectionManager {
     }
 
     public void GetUserInfo(String uid, String token, AsyncHttpResponseHandler handler) {
-        RequestParams params = new RequestParams();
-        params.put("token", token);
-        client.get(SERVER_ADDR + "/users/" + uid, params, handler);
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/users/" + uid, null, handler);
+    }
+
+    public void GetFriendsList(String uid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/users/" + uid + "/friends", null, handler);
     }
 
 

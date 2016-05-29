@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
-import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,7 +93,7 @@ public class UserDetailActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(UserDetailActivity.this);
                         final AlertDialog dialog = builder.setTitle("Please enter the OLD password")
                                 .setCancelable(false)
-                                .setView(R.layout.input_old_password_dialog)
+                                .setView(R.layout.dialog_input_old_password)
                                 .show();
                         View oldpassword_dialog = dialog.findViewById(R.id.user_detail_oldpassword_dialog);
                         final EditText oldpassword = (EditText) oldpassword_dialog.findViewById(R.id.user_detail_dialog_oldpassword);
@@ -125,12 +125,14 @@ public class UserDetailActivity extends AppCompatActivity {
 
     private void ModifyUserInfo(String oldPassword) {
         loading.setVisibility(View.VISIBLE);
-        if(!username.getText().toString().equals(userinfo.getString("username", null))){
+        String s_username = username.getText().toString();
+        if(!s_username.equals(userinfo.getString("username", null))){
             IsUsernameModified = true;
         }
-        AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
+
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 SharedPreferences.Editor editor = userinfo.edit();
                 editor.putString("username", username.getText().toString());
@@ -142,62 +144,48 @@ public class UserDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if (statusCode == 0) {
+                if (res == null) {
                     Toast.makeText(UserDetailActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                } else {
-                    try {
-                        JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                        Toast.makeText(UserDetailActivity.this, res.getString("error"), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                }
+                else {
+                    Toast.makeText(UserDetailActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
         };
 
-        ConnectionManager.getInstance().ModifyUserInfo(getBaseContext(), userinfo.getString("token", null), userinfo.getString("uid", null), username.getText().toString(), oldPassword, password.getText().toString(), phone.getText().toString(), email.getText().toString(), handler);
+        ConnectionManager.getInstance().ModifyUserInfo(getBaseContext(), userinfo.getString("token", null), userinfo.getString("uid", null), s_username, oldPassword, password.getText().toString(), phone.getText().toString(), email.getText().toString(), handler);
 
     }
 
     private void GetUserInfo(){
 
         loading.setVisibility(View.VISIBLE);
-        ConnectionManager.getInstance().GetUserInfo(userinfo.getString("uid", null), userinfo.getString("token", null), new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try {
-                    loading.setVisibility(View.INVISIBLE);
-                    JSONObject res = new JSONObject(new String(responseBody));
-                    username.setText(res.getString("username"));
-                    if(res.has("email")) {
-                        email.setText(res.getString("email"));
-                    }
-                    phone.setText(res.getString("phone"));
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
+                username.setText(res.optString("username"));
+                email.setText(res.optString("email"));
+                phone.setText(res.optString("phone"));
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if(statusCode == 0) {
+                if (res == null) {
                     Toast.makeText(UserDetailActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
                 }
                 else {
-                    try {
-                        JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
-                        Toast.makeText(UserDetailActivity.this, res.getString("error"), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Toast.makeText(UserDetailActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        };
+
+        ConnectionManager.getInstance().GetUserInfo(userinfo.getString("uid", null), userinfo.getString("token", null), handler);
     }
 
     @Override
