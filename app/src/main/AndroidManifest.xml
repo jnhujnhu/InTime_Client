@@ -33,7 +33,7 @@
             android:name=".ui.mainscreen.MapsActivity"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.mainscreen.tag.RedTagInfoActivity"
             android:label="@string/title_activity_red_tag_info"
@@ -88,10 +88,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.userinfo.UserDetailActivity"
+        <activity
+            android:name=".ui.userinfo.UserDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.userinfo.FriendsDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

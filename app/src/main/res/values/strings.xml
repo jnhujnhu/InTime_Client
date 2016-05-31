@@ -85,4 +85,15 @@
     <string name="user_detail_hint"><font size="12">Required when changing password</font></string>
     <string name="reg_box_email_optional"><font size="15">Optional</font></string>
     <string name="user_detail_email_hint_optional"><font size="13">Optional</font></string>
+
+
+    <!-- Pull to Refresh -->
+    <string name="pull_to_refresh">Pull to refresh</string>
+    <string name="release_to_refresh">Release to refresh</string>
+    <string name="refreshing">Refreshing…</string>
+    <string name="not_updated_yet">Not updated yet</string>
+    <string name="updated_at">Last updated at %1$s</string>
+    <string name="updated_just_now">Just updated</string>
+    <string name="time_error">Time Error!</string>
+
 </resources>

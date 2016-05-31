@@ -3,15 +3,24 @@ package com.example.kevin.mapapplication.ui.userinfo;
 import android.app.LauncherActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Message;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +29,7 @@ import com.example.kevin.mapapplication.model.ConnectionManager;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import com.example.kevin.mapapplication.utils.CustomListItem;
 import com.example.kevin.mapapplication.utils.CustomListViewAdapter;
+import com.example.kevin.mapapplication.utils.RefreshableView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +37,10 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.LogRecord;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -39,7 +52,8 @@ public class FriendsActivity extends AppCompatActivity {
     private SharedPreferences userinfo;
 
     private ListView pendingListView, waitingListView, acceptedListView;
-    private LinearLayout pendinglayout, waitinglayout, acceptedlayout;
+    private Map<String, String> usernametoid;
+    private TextView pendingdivider, waitingdivider, accepteddivider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +70,21 @@ public class FriendsActivity extends AppCompatActivity {
             }
         });
 
+       /* final RefreshableView refreshableView = (RefreshableView) findViewById(R.id.refreshable_view);
+
+        assert refreshableView != null;
+        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshableView.finishRefreshing();
+            }
+        }, 0);*/
+
         loading = (ProgressBar) findViewById(R.id.friends_loading);
         userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
 
@@ -63,9 +92,9 @@ public class FriendsActivity extends AppCompatActivity {
         waitingListView = (ListView) findViewById(R.id.friends_waiting_list);
         acceptedListView = (ListView) findViewById(R.id.friends_accepted_list);
 
-        pendinglayout = (LinearLayout) findViewById(R.id.layout_user_pending);
-        waitinglayout = (LinearLayout) findViewById(R.id.layout_user_waiting);
-        acceptedlayout = (LinearLayout) findViewById(R.id.layout_user_accepted);
+        pendingdivider = (TextView) findViewById(R.id.friends_pending_divider);
+        waitingdivider = (TextView) findViewById(R.id.friends_waiting_divider);
+        accepteddivider = (TextView) findViewById(R.id.friends_accepted_divider);
 
         GetFriendsList();
     }
@@ -73,25 +102,30 @@ public class FriendsActivity extends AppCompatActivity {
     private void GetFriendsList() {
         loading.setVisibility(View.VISIBLE);
 
+        usernametoid = new HashMap<>();
+
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
             public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 JSONArray friends_list = new JSONArray(new String(responseBody, StandardCharsets.UTF_8));
 
-                List<CustomListItem> pendinglist = new ArrayList<>(), waitinglist = new ArrayList<>(), acceptedlist = new ArrayList<>();
+                final List<CustomListItem> pendinglist = new ArrayList<>(), waitinglist = new ArrayList<>(), acceptedlist = new ArrayList<>();
 
                 for(int i = 0; i <friends_list.length(); i++) {
                     JSONObject friends_item = friends_list.optJSONObject(i);
                     switch (friends_item.optString("status")) {
                         case "waiting":
                             waitinglist.add(new CustomListItem(friends_item.optString("username")));
+                            usernametoid.put(friends_item.optString("username"), friends_item.optString("uid"));
                             break;
                         case "pending":
                             pendinglist.add(new CustomListItem(friends_item.optString("username")));
+                            usernametoid.put(friends_item.optString("username"), friends_item.optString("uid"));
                             break;
                         case "accepted":
                             acceptedlist.add(new CustomListItem(friends_item.optString("username")));
+                            usernametoid.put(friends_item.optString("username"), friends_item.optString("uid"));
                             break;
                     }
                 }
@@ -99,12 +133,12 @@ public class FriendsActivity extends AppCompatActivity {
 
                 CustomListViewAdapter waitinglistAdapter = new CustomListViewAdapter(FriendsActivity.this, R.layout.listview_item_waiting_friends, waitinglist) {
                     @Override
-                    public View setViewDetail(int position, View convertView) {
+                    public View setViewDetail(int position, View convertView, ViewGroup parent) {
                         View v = convertView;
                         if (v == null) {
                             LayoutInflater vi;
                             vi = LayoutInflater.from(FriendsActivity.this);
-                            v = vi.inflate(R.layout.listview_item_waiting_friends, null);
+                            v = vi.inflate(R.layout.listview_item_waiting_friends, parent, false);
                         }
                         CustomListItem item = getItem(position);
 
@@ -118,12 +152,12 @@ public class FriendsActivity extends AppCompatActivity {
 
                 CustomListViewAdapter pendinglistAdapter = new CustomListViewAdapter(FriendsActivity.this, R.layout.listview_item_pending_friends, pendinglist) {
                     @Override
-                    public View setViewDetail(int position, View convertView) {
+                    public View setViewDetail(int position, View convertView, ViewGroup parent) {
                         View v = convertView;
                         if (v == null) {
                             LayoutInflater vi;
                             vi = LayoutInflater.from(FriendsActivity.this);
-                            v = vi.inflate(R.layout.listview_item_pending_friends, null);
+                            v = vi.inflate(R.layout.listview_item_pending_friends, parent, false);
                         }
                         CustomListItem item = getItem(position);
                         if(item!=null) {
@@ -141,15 +175,16 @@ public class FriendsActivity extends AppCompatActivity {
                     }
                 };
 
-                CustomListViewAdapter acceptedlistAdapter = new CustomListViewAdapter(FriendsActivity.this, R.layout.listview_item_accepted_friends, acceptedlist) {
+                final CustomListViewAdapter acceptedlistAdapter = new CustomListViewAdapter(FriendsActivity.this, R.layout.listview_item_accepted_friends, acceptedlist) {
                     @Override
-                    public View setViewDetail(int position, View convertView) {
+                    public View setViewDetail(int position, View convertView, ViewGroup parent) {
                         View v = convertView;
                         if (v == null) {
                             LayoutInflater vi;
                             vi = LayoutInflater.from(FriendsActivity.this);
-                            v = vi.inflate(R.layout.listview_item_accepted_friends, null);
+                            v = vi.inflate(R.layout.listview_item_accepted_friends, parent, false);
                         }
+
                         CustomListItem item = getItem(position);
 
                         if(item!=null) {
@@ -161,24 +196,61 @@ public class FriendsActivity extends AppCompatActivity {
                 };
 
                 if(waitinglist.isEmpty()) {
-                    waitinglayout.setVisibility(View.GONE);
+                    waitingdivider.setVisibility(View.GONE);
                 }
                 else {
                     waitingListView.setAdapter(waitinglistAdapter);
                 }
                 if(pendinglist.isEmpty()) {
-                    pendinglayout.setVisibility(View.GONE);
+                    pendingdivider.setVisibility(View.GONE);
                 }
                 else {
                     pendingListView.setAdapter(pendinglistAdapter);
                 }
                 if(acceptedlist.isEmpty()) {
-                    acceptedlayout.setVisibility(View.GONE);
+                    accepteddivider.setVisibility(View.GONE);
                 }
                 else {
                     acceptedListView.setAdapter(acceptedlistAdapter);
                 }
+
+
+
+                acceptedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(FriendsActivity.this, FriendsDetailActivity.class);
+                        intent.putExtra("uid", usernametoid.get(acceptedlist.get(position).text));
+                        intent.putExtra("mode", "accepted");
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                    }
+                });
+
+                waitingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(FriendsActivity.this, FriendsDetailActivity.class);
+                        intent.putExtra("uid", usernametoid.get(waitinglist.get(position).text));
+                        intent.putExtra("mode", "waiting");
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                    }
+                });
+
+                pendingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(FriendsActivity.this, FriendsDetailActivity.class);
+                        intent.putExtra("uid", usernametoid.get(pendinglist.get(position).text));
+                        intent.putExtra("mode", "pending");
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                    }
+                });
+
             }
+
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
@@ -193,6 +265,7 @@ public class FriendsActivity extends AppCompatActivity {
         ConnectionManager.getInstance().GetFriendsList(userinfo.getString("uid", null), userinfo.getString("token", null), handler);
 
     }
+
 
     @Override
     public void onBackPressed() {

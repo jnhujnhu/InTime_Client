@@ -22,8 +22,8 @@ public abstract class CustomListViewAdapter extends ArrayAdapter<CustomListItem>
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        return setViewDetail(position, convertView);
+        return setViewDetail(position, convertView, parent);
 
     }
-    public abstract View setViewDetail(int position, View convertView);
+    public abstract View setViewDetail(int position, View convertView, ViewGroup parent);
 }
