@@ -77,4 +77,8 @@ public class ConnectionManager {
         client.get(SERVER_ADDR + "/users?username_like=" + keyword, null, handler);
     }
 
+    public void PostPromotionCode(String uid, String promotionCode, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.post(SERVER_ADDR + String.format("/users/%s/balance/promotion/%s", uid, promotionCode), null, handler);
+    }
 }

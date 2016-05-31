@@ -51,17 +51,16 @@
             <EditText
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText3"
+                android:id="@+id/promotion_code"
                 android:layout_below="@+id/textView8"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:singleLine="true"
-                android:maxLength="5" />
+                android:singleLine="true" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enter Promo Code:"
+                android:text="Enter Promotion Code:"
                 android:id="@+id/textView8"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
@@ -70,14 +69,30 @@
 
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="APPLY"
-                android:id="@+id/button"
-                android:layout_below="@+id/editText3"
+                android:id="@+id/promotion_apply"
+                android:layout_below="@+id/promotion_code"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"
+                android:background="@drawable/bg_promotion_apply_button"
+                android:enabled="false"
+                android:layout_marginTop="10dp" />
         </RelativeLayout>
     </RelativeLayout>
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/promotion_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
 </RelativeLayout>
