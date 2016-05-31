@@ -195,8 +195,7 @@ public class StartUpActivity extends AppCompatActivity {
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
-                JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 SharedPreferences.Editor editor = userinfo.edit();
                 editor.putString("username", username);
@@ -210,12 +209,7 @@ public class StartUpActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if(res == null) {
-                    Toast.makeText(StartUpActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(StartUpActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(StartUpActivity.this, error, Toast.LENGTH_LONG).show();
                 if (doFailure != null)
                     doFailure.run();
             }
@@ -229,7 +223,7 @@ public class StartUpActivity extends AppCompatActivity {
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 Toast.makeText(StartUpActivity.this,"Register Success.", Toast.LENGTH_LONG).show();
                 Login(username, password, null);
@@ -238,12 +232,8 @@ public class StartUpActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if(res == null) {
-                    Toast.makeText(StartUpActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(StartUpActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(StartUpActivity.this, error, Toast.LENGTH_LONG).show();
+
             }
         };
         ConnectionManager.getInstance().Register(this.getBaseContext(), username, password, phone, email, handler);

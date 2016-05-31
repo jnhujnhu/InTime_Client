@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kevin.mapapplication.ui.userinfo.AddFriendsActivity">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_actionbar_height"
+        android:background="@drawable/bg_querybar"
+        android:id="@+id/linearLayout">
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/custom_actionbar_icon_margin"
+            android:padding="@dimen/custom_actionbar_icon_padding"
+            android:src="@drawable/ic_actionbar_back"
+            android:background="@drawable/bg_backbutton" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/add_friend_search_btn"
+            android:layout_toRightOf="@+id/btn_back"
+            android:layout_marginRight="15dp"
+            android:id="@+id/add_friend_input"
+            android:textCursorDrawable="@null"
+            android:theme="@style/MyAppThemeGray"
+            android:paddingLeft="10dp" />
+        <ImageButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_search_2"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/add_friend_search_btn"
+            android:layout_marginRight="15dp" />
+    </RelativeLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_friend_listview"
+        android:layout_below="@+id/linearLayout" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/add_friend_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
+
+</RelativeLayout>

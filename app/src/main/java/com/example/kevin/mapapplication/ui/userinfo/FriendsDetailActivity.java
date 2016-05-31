@@ -29,6 +29,7 @@ public class FriendsDetailActivity extends AppCompatActivity {
     private TextView username, phone, email;
     private ProgressBar loading;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,9 +93,8 @@ public class FriendsDetailActivity extends AppCompatActivity {
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccessWithJSON(int statusCode, Header[] headers, byte[] responseBody) throws JSONException {
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
                 username.setText(res.optString("username"));
                 phone.setText(res.optString("phone"));
                 email.setText(res.optString("email"));
@@ -103,12 +103,9 @@ public class FriendsDetailActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if(res == null) {
-                    Toast.makeText(FriendsDetailActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(FriendsDetailActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+
+                Toast.makeText(FriendsDetailActivity.this, error, Toast.LENGTH_LONG).show();
+
             }
         };
 

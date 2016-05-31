@@ -72,5 +72,9 @@ public class ConnectionManager {
         client.get(SERVER_ADDR + "/users/" + uid + "/friends", null, handler);
     }
 
+    public void SearchUser(String token, String keyword, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/users?username_like=" + keyword, null, handler);
+    }
 
 }

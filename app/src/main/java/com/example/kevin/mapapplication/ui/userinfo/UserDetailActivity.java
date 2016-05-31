@@ -132,7 +132,7 @@ public class UserDetailActivity extends AppCompatActivity {
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 SharedPreferences.Editor editor = userinfo.edit();
                 editor.putString("username", username.getText().toString());
@@ -146,12 +146,7 @@ public class UserDetailActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if (res == null) {
-                    Toast.makeText(UserDetailActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(UserDetailActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(UserDetailActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
 
@@ -165,9 +160,8 @@ public class UserDetailActivity extends AppCompatActivity {
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
                 username.setText(res.optString("username"));
                 email.setText(res.optString("email"));
                 phone.setText(res.optString("phone"));
@@ -176,12 +170,8 @@ public class UserDetailActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if (res == null) {
-                    Toast.makeText(UserDetailActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(UserDetailActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(UserDetailActivity.this, error, Toast.LENGTH_LONG).show();
+
             }
         };
 

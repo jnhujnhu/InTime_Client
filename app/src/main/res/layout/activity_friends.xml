@@ -41,13 +41,13 @@
             android:textSize="@dimen/custom_actionbar_title_textsize"
             android:layout_toRightOf="@+id/btn_back" />
 
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/friends_add_btn"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_add_friend"
+            android:background="@drawable/ic_add_friend"
             android:layout_marginRight="20dp" />
     </RelativeLayout>
     <ScrollView

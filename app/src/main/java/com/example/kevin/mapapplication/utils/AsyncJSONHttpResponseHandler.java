@@ -13,8 +13,13 @@ public abstract class AsyncJSONHttpResponseHandler extends AsyncHttpResponseHand
     @Override
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
         try {
-
-            onSuccessWithJSON(statusCode, headers, responseBody);
+            if(statusCode == 204) {
+                onSuccessWithJSON(statusCode, headers, null);
+            }
+            else {
+                JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
+                onSuccessWithJSON(statusCode, headers, res);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -24,7 +29,7 @@ public abstract class AsyncJSONHttpResponseHandler extends AsyncHttpResponseHand
     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
         try {
             if (statusCode == 0) {
-                onFailureWithJSON(statusCode, headers, null, error.getMessage());
+                onFailureWithJSON(statusCode, headers, null, "Cannot Connect to Server.");
             }
             else {
                 JSONObject res = new JSONObject(new String(responseBody, StandardCharsets.UTF_8));
@@ -36,6 +41,6 @@ public abstract class AsyncJSONHttpResponseHandler extends AsyncHttpResponseHand
         }
     }
 
-    public abstract void onSuccessWithJSON(int statusCode, Header[] headers, byte[] responseBody) throws JSONException;
+    public abstract void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException;
     public abstract void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException;
 }

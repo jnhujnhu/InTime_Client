@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogRecord;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -54,6 +53,7 @@ public class FriendsActivity extends AppCompatActivity {
     private ListView pendingListView, waitingListView, acceptedListView;
     private Map<String, String> usernametoid;
     private TextView pendingdivider, waitingdivider, accepteddivider;
+    private ImageButton addfriends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +87,7 @@ public class FriendsActivity extends AppCompatActivity {
 
         loading = (ProgressBar) findViewById(R.id.friends_loading);
         userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
+        addfriends = (ImageButton) findViewById(R.id.friends_add_btn);
 
         pendingListView = (ListView) findViewById(R.id.friends_pending_list);
         waitingListView = (ListView) findViewById(R.id.friends_waiting_list);
@@ -96,7 +97,15 @@ public class FriendsActivity extends AppCompatActivity {
         waitingdivider = (TextView) findViewById(R.id.friends_waiting_divider);
         accepteddivider = (TextView) findViewById(R.id.friends_accepted_divider);
 
-        GetFriendsList();
+
+        addfriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FriendsActivity.this, AddFriendsActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void GetFriendsList() {
@@ -106,9 +115,9 @@ public class FriendsActivity extends AppCompatActivity {
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void onSuccessWithJSON(int statusCode, Header[] headers,  byte[] responseBody) throws JSONException {
+            public void onSuccessWithJSON(int statusCode, Header[] headers,  JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                JSONArray friends_list = new JSONArray(new String(responseBody, StandardCharsets.UTF_8));
+                JSONArray friends_list = res.getJSONArray("friends");
 
                 final List<CustomListItem> pendinglist = new ArrayList<>(), waitinglist = new ArrayList<>(), acceptedlist = new ArrayList<>();
 
@@ -254,16 +263,17 @@ public class FriendsActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                if(res == null) {
-                    Toast.makeText(FriendsActivity.this, "Cannot Connect to Server.", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(FriendsActivity.this, error, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(FriendsActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
         ConnectionManager.getInstance().GetFriendsList(userinfo.getString("uid", null), userinfo.getString("token", null), handler);
 
+    }
+
+    @Override
+    protected void onResume() {
+        GetFriendsList();
+        super.onResume();
     }
 
 
