@@ -21,8 +21,6 @@ import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
-
 import cz.msebera.android.httpclient.Header;
 
 public class UserDetailActivity extends AppCompatActivity {
@@ -150,7 +148,7 @@ public class UserDetailActivity extends AppCompatActivity {
             }
         };
 
-        ConnectionManager.getInstance().ModifyUserInfo(getBaseContext(), userinfo.getString("token", null), userinfo.getString("uid", null), s_username, oldPassword, password.getText().toString(), phone.getText().toString(), email.getText().toString(), handler);
+        ConnectionManager.getInstance().ModifyUserInfo(userinfo.getString("token", null), userinfo.getString("uid", null), s_username, oldPassword, password.getText().toString(), phone.getText().toString(), email.getText().toString(), handler);
 
     }
 

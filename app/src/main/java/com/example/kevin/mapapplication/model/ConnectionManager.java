@@ -35,23 +35,23 @@ public class ConnectionManager {
         return mInstance;
     }
 
-    public void Login(Context context, String username, String password, AsyncHttpResponseHandler handler) {
+    public void Login(String username, String password, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("password", password);
-        client.post(context, SERVER_ADDR + "/login", params,  handler);
+        client.post(SERVER_ADDR + "/login", params,  handler);
     }
 
-    public void Register(Context context, String username, String password, String phone, String email, AsyncHttpResponseHandler handler) {
+    public void Register(String username, String password, String phone, String email, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("password", password);
         params.put("phone", phone);
         params.put("email", email);
-        client.post(context, SERVER_ADDR + "/users", params, handler);
+        client.post(SERVER_ADDR + "/users", params, handler);
     }
 
-    public void ModifyUserInfo(Context context, String token, String uid, String username, String oldpassword, String password, String phone, String email, AsyncHttpResponseHandler handler) {
+    public void ModifyUserInfo(String token, String uid, String username, String oldpassword, String password, String phone, String email, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("password", password);
@@ -59,7 +59,7 @@ public class ConnectionManager {
         params.put("phone", phone);
         params.put("email", email);
         client.addHeader("x-access-token", token);
-        client.put(context, SERVER_ADDR + "/users/" + uid, params, handler);
+        client.put(SERVER_ADDR + "/users/" + uid, params, handler);
     }
 
     public void GetUserInfo(String uid, String token, AsyncHttpResponseHandler handler) {
@@ -80,5 +80,15 @@ public class ConnectionManager {
     public void PostPromotionCode(String uid, String promotionCode, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
         client.post(SERVER_ADDR + String.format("/users/%s/balance/promotion/%s", uid, promotionCode), null, handler);
+    }
+
+    public void PostRegToken(String uid, String regToken, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.post(SERVER_ADDR + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
+    }
+
+    public void DeleteRegToken(String uid, String regToken, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.delete(SERVER_ADDR + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
     }
 }
