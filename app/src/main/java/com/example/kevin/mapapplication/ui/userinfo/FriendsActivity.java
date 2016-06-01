@@ -7,6 +7,7 @@ import android.os.Message;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +57,7 @@ public class FriendsActivity extends AppCompatActivity {
     private Map<String, String> usernametoid;
     private TextView pendingdivider, waitingdivider, accepteddivider;
     private ImageButton addfriends;
+    RelativeLayout no_friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class FriendsActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
             }
         });
+
 
        /* final RefreshableView refreshableView = (RefreshableView) findViewById(R.id.refreshable_view);
 
@@ -97,7 +101,7 @@ public class FriendsActivity extends AppCompatActivity {
         pendingdivider = (TextView) findViewById(R.id.friends_pending_divider);
         waitingdivider = (TextView) findViewById(R.id.friends_waiting_divider);
         accepteddivider = (TextView) findViewById(R.id.friends_accepted_divider);
-
+        no_friend = (RelativeLayout) findViewById(R.id.friend_no_friend_layout);
 
         addfriends.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +116,7 @@ public class FriendsActivity extends AppCompatActivity {
     private void GetFriendsList() {
         loading.setVisibility(View.VISIBLE);
         usernametoid = new HashMap<>();
+        no_friend.setVisibility(View.INVISIBLE);
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
@@ -176,7 +181,7 @@ public class FriendsActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
                                     AcceptFriendRequest(usernametoid.get(item.text));
-                                    GetFriendsList();
+                                    FriendsActivity.this.onResume();
                                 }
                             });
                             username.setText(item.text);
@@ -208,7 +213,10 @@ public class FriendsActivity extends AppCompatActivity {
                 pendingListView.setAdapter(pendinglistAdapter);
                 acceptedListView.setAdapter(acceptedlistAdapter);
 
+                boolean flag1 = true, flag2 = true, flag3 = true;
+
                 if(waitinglist.isEmpty()) {
+                    flag1 = false;
                     waitingdivider.setVisibility(View.GONE);
                 }
                 else {
@@ -216,6 +224,7 @@ public class FriendsActivity extends AppCompatActivity {
                 }
 
                 if(pendinglist.isEmpty()) {
+                    flag2 = false;
                     pendingdivider.setVisibility(View.GONE);
                 }
                 else {
@@ -223,12 +232,17 @@ public class FriendsActivity extends AppCompatActivity {
                 }
 
                 if(acceptedlist.isEmpty()) {
+                    flag3 = false;
                     accepteddivider.setVisibility(View.GONE);
                 }
                 else {
                     accepteddivider.setVisibility(View.VISIBLE);
                 }
 
+                if(!flag1&&!flag2&&!flag3) {
+
+                    no_friend.setVisibility(View.VISIBLE);
+                }
 
                 acceptedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

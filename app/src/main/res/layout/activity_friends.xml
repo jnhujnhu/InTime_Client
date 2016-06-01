@@ -125,4 +125,32 @@
             </LinearLayout>
 
     </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/friend_no_friend_layout">
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/imageView17"
+            android:src="@drawable/ic_error"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="No Friend Found\n Try Press Add Friend Button."
+            android:id="@+id/textView"
+            android:layout_below="@+id/imageView17"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:textColor="#9d9d9d"
+            android:layout_marginTop="10dp" />
+    </RelativeLayout>
+
 </RelativeLayout>

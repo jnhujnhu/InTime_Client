@@ -30,16 +30,8 @@
         <item name="colorAccent">@color/customcolorGray</item>
     </style>
 
-    <style name="MyCustomTheme" parent="@android:style/Theme.Material.Panel">
-        <item name="android:windowAnimationStyle">@style/MyAnimation.Window</item>
-    </style>
-
-    <style name="MyAnimation.Window" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@anim/anim_in</item>
-        <item name="android:windowExitAnimation">@anim/anim_out</item>
-    </style>
-
     <style name="AppTheme.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
