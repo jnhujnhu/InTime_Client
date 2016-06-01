@@ -3,15 +3,13 @@
     <item android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/eventbutton_corner_radius"/>
-            <solid android:color="@color/colorGreenEvent"/>
-            <stroke android:width="1px" android:color="#7ed75b"/>
+            <solid android:color="@color/colorRedEvent"/>
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/eventbutton_corner_radius"/>
-            <solid android:color="#638e60"/>
-            <stroke android:width="1px" android:color="#7ed75b"/>
+            <solid android:color="#a61818"/>
         </shape>
     </item>
 </selector>

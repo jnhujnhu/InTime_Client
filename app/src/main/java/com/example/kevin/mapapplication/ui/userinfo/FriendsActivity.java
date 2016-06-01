@@ -7,6 +7,7 @@ import android.os.Message;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -110,7 +111,6 @@ public class FriendsActivity extends AppCompatActivity {
 
     private void GetFriendsList() {
         loading.setVisibility(View.VISIBLE);
-
         usernametoid = new HashMap<>();
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
@@ -122,6 +122,7 @@ public class FriendsActivity extends AppCompatActivity {
                 final List<CustomListItem> pendinglist = new ArrayList<>(), waitinglist = new ArrayList<>(), acceptedlist = new ArrayList<>();
                 for(int i = 0; i <friends_list.length(); i++) {
                     JSONObject friends_item = friends_list.optJSONObject(i);
+                    Log.i("FRIENDS::", friends_item.optString("username"));
                     switch (friends_item.optString("status")) {
                         case "waiting":
                             waitinglist.add(new CustomListItem(friends_item.optString("username")));
@@ -167,14 +168,15 @@ public class FriendsActivity extends AppCompatActivity {
                             vi = LayoutInflater.from(FriendsActivity.this);
                             v = vi.inflate(R.layout.listview_item_pending_friends, parent, false);
                         }
-                        CustomListItem item = getItem(position);
+                        final CustomListItem item = getItem(position);
                         if(item!=null) {
                             TextView username = (TextView) v.findViewById(R.id.friends_pending_username);
                             Button accept = (Button) v.findViewById(R.id.friends_pending_accept_btn);
                             accept.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    AcceptFriendRequest(usernametoid.get(item.text));
+                                    GetFriendsList();
                                 }
                             });
                             username.setText(item.text);
@@ -202,26 +204,30 @@ public class FriendsActivity extends AppCompatActivity {
                         return v;
                     }
                 };
+                waitingListView.setAdapter(waitinglistAdapter);
+                pendingListView.setAdapter(pendinglistAdapter);
+                acceptedListView.setAdapter(acceptedlistAdapter);
 
                 if(waitinglist.isEmpty()) {
                     waitingdivider.setVisibility(View.GONE);
                 }
                 else {
-                    waitingListView.setAdapter(waitinglistAdapter);
+                    waitingdivider.setVisibility(View.VISIBLE);
                 }
+
                 if(pendinglist.isEmpty()) {
                     pendingdivider.setVisibility(View.GONE);
                 }
                 else {
-                    pendingListView.setAdapter(pendinglistAdapter);
+                    pendingdivider.setVisibility(View.VISIBLE);
                 }
+
                 if(acceptedlist.isEmpty()) {
                     accepteddivider.setVisibility(View.GONE);
                 }
                 else {
-                    acceptedListView.setAdapter(acceptedlistAdapter);
+                    accepteddivider.setVisibility(View.VISIBLE);
                 }
-
 
 
                 acceptedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -229,7 +235,6 @@ public class FriendsActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent intent = new Intent(FriendsActivity.this, FriendsDetailActivity.class);
                         intent.putExtra("uid", usernametoid.get(acceptedlist.get(position).text));
-                        intent.putExtra("mode", "accepted");
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                     }
@@ -240,7 +245,6 @@ public class FriendsActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent intent = new Intent(FriendsActivity.this, FriendsDetailActivity.class);
                         intent.putExtra("uid", usernametoid.get(waitinglist.get(position).text));
-                        intent.putExtra("mode", "waiting");
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                     }
@@ -251,7 +255,6 @@ public class FriendsActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent intent = new Intent(FriendsActivity.this, FriendsDetailActivity.class);
                         intent.putExtra("uid", usernametoid.get(pendinglist.get(position).text));
-                        intent.putExtra("mode", "pending");
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                     }
@@ -267,6 +270,24 @@ public class FriendsActivity extends AppCompatActivity {
         };
         ConnectionManager.getInstance().GetFriendsList(userinfo.getString("uid", null), userinfo.getString("token", null), handler);
 
+    }
+
+    public void AcceptFriendRequest(String uid) {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(FriendsActivity.this, "Friend Request Accepted.", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(FriendsActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        };
+        ConnectionManager.getInstance().AddOrAcceptFriendRequest(userinfo.getString("uid", null), uid, userinfo.getString("token", null), handler);
     }
 
     @Override

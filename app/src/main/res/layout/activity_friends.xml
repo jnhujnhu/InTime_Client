@@ -73,7 +73,8 @@
                     android:textSize="12sp"
                     android:gravity="center_vertical"
                     android:textColor="#f8f8f8"
-                    android:elevation="1dp" />
+                    android:elevation="1dp"
+                    android:visibility="invisible" />
 
                 <com.example.kevin.mapapplication.utils.ListViewForScrollView
                     android:layout_width="match_parent"
@@ -93,7 +94,8 @@
                     android:textSize="12sp"
                     android:gravity="center_vertical"
                     android:textColor="#f8f8f8"
-                    android:elevation="1dp" />
+                    android:elevation="1dp"
+                    android:visibility="invisible" />
 
                 <com.example.kevin.mapapplication.utils.ListViewForScrollView
                     android:layout_width="match_parent"
@@ -112,7 +114,8 @@
                     android:textSize="12sp"
                     android:gravity="center_vertical"
                     android:textColor="#f8f8f8"
-                    android:elevation="1dp" />
+                    android:elevation="1dp"
+                    android:visibility="invisible" />
 
                 <com.example.kevin.mapapplication.utils.ListViewForScrollView
                     android:layout_width="match_parent"
