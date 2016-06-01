@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kevin.mapapplication.ui.userinfo.NotificationActivity">
+    tools:context="com.example.kevin.mapapplication.ui.userinfo.OrderDetailActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -22,9 +22,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/Nav_header_notification"
+            android:text="@string/Nav_header_order_detail"
             android:gravity="center_vertical"
             android:textSize="@dimen/custom_actionbar_title_textsize"/>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/order_oid"
+        android:layout_marginStart="10dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp" />
 
 </RelativeLayout>

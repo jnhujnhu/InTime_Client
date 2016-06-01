@@ -1,4 +1,4 @@
-package com.example.kevin.mapapplication.ui.mainscreen;
+package com.example.kevin.mapapplication.ui.userinfo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
