@@ -27,7 +27,8 @@
             android:id="@+id/add_friend_input"
             android:textCursorDrawable="@null"
             android:theme="@style/MyAppThemeGray"
-            android:paddingLeft="10dp" />
+            android:paddingLeft="10dp"
+            android:singleLine="true" />
         <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"

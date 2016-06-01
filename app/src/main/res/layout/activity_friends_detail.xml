@@ -103,7 +103,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="#ffffff"
             android:background="@drawable/bg_pending_friends_accept_btn"
-            android:elevation="4dp" />
+            android:visibility="invisible" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -138,6 +138,18 @@
             android:layout_alignTop="@+id/friend_detail_email_label"
             android:layout_toRightOf="@+id/friend_detail_email_label"
             android:textSize="17sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/friend_detail_cancel"
+            android:textColor="#ffffff"
+            android:background="@drawable/bg_pending_friends_cancel_btn"
+            android:visibility="invisible"
+            android:layout_below="@+id/friend_detail_modify_btn"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp" />
     </RelativeLayout>
 
 </RelativeLayout>

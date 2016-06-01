@@ -56,6 +56,7 @@ public class PromotionActivity extends AppCompatActivity {
         final TextView text_promotion = (TextView)findViewById(R.id.promotion_code);
         final ProgressBar progress_loading = (ProgressBar)findViewById(R.id.promotion_loading);
 
+        assert button_apply != null;
         button_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +84,7 @@ public class PromotionActivity extends AppCompatActivity {
             }
         });
 
+        assert text_promotion != null;
         text_promotion.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -108,6 +110,9 @@ public class PromotionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent();
+        //intent.putExtra("Choosed","Item id");
+        setResult(RESULT_CODE, intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }

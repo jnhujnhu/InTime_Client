@@ -91,4 +91,15 @@ public class ConnectionManager {
         client.addHeader("x-access-token", token);
         client.delete(SERVER_ADDR + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
     }
+
+    public void CancelFriendRequest(String m_uid, String f_uid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.delete(SERVER_ADDR + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
+    }
+
+    public void AddOrAcceptFriendRequest(String m_uid, String f_uid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.post(SERVER_ADDR + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
+    }
+
 }
