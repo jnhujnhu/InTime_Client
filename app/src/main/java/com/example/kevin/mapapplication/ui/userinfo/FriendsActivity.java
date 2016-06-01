@@ -120,7 +120,6 @@ public class FriendsActivity extends AppCompatActivity {
                 JSONArray friends_list = res.getJSONArray("friends");
 
                 final List<CustomListItem> pendinglist = new ArrayList<>(), waitinglist = new ArrayList<>(), acceptedlist = new ArrayList<>();
-
                 for(int i = 0; i <friends_list.length(); i++) {
                     JSONObject friends_item = friends_list.optJSONObject(i);
                     Log.i("FRIENDS::", friends_item.optString("username"));

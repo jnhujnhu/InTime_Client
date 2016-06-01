@@ -1,16 +1,22 @@
 package com.example.kevin.mapapplication.model;
 
+import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 /**
  * Created by Kevin on 5/23/16.
@@ -90,6 +96,25 @@ public class ConnectionManager {
     public void DeleteRegToken(String uid, String regToken, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
         client.delete(SERVER_ADDR + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
+    }
+
+    public void MarkNotification(String nid, Boolean read, String token, AsyncHttpResponseHandler handler) {
+        try {
+            JSONObject params = new JSONObject();
+            params.put("read", read);
+            StringEntity entity = new StringEntity(params.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            client.addHeader("x-access-token", token);
+            client.put(null, SERVER_ADDR + String.format("/notifications/%s", nid), entity, "application/json", handler);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void GetNotificationList(String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/notifications", null, handler);
     }
 
     public void CancelFriendRequest(String m_uid, String f_uid, String token, AsyncHttpResponseHandler handler) {
