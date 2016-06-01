@@ -29,9 +29,9 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/tag_short_title_label"
         android:singleLine="true"
-        android:maxLength="16"
         android:textCursorDrawable="@drawable/cc_bluepipe"
-        android:theme="@style/MyAppThemeBlue"/>
+        android:theme="@style/MyAppThemeBlue"
+        android:maxLength="16" />
 
     <TextView
         android:layout_width="130dp"
@@ -49,7 +49,8 @@
         android:layout_below="@+id/tag_short_title"
         android:layout_toEndOf="@+id/tag_short_title_label"
         android:spinnerMode="dropdown"
-        android:entries="@array/blue_tag_spinner_content"/>
+        android:entries="@array/blue_tag_spinner_content"
+        android:backgroundTint="@color/customcolorBlue"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -64,7 +65,7 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/tag_cancel_button"
-        android:layout_below="@+id/tag_detaildcpt"
+        android:layout_below="@+id/tag_create_template"
         android:layout_toStartOf="@+id/tag_submit_button"
         android:layout_alignParentBottom="false" />
 
@@ -74,12 +75,12 @@
         android:text="Detailed Description: "
         android:id="@+id/tag_detaildcpt_label"
         android:gravity="center_vertical"
-        android:layout_below="@+id/tag_price_label"
+        android:layout_below="@+id/tag_date_label"
         android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="150dp"
         android:id="@+id/tag_detaildcpt"
         android:singleLine="false"
         android:layout_alignTop="@+id/tag_detaildcpt_label"
@@ -88,16 +89,16 @@
         android:maxHeight="180dp"
         android:maxLength="250"
         android:nestedScrollingEnabled="true"
-        android:gravity="top"
         android:textCursorDrawable="@drawable/cc_bluepipe"
-        android:theme="@style/MyAppThemeBlue"/>
+        android:theme="@style/MyAppThemeBlue"
+        android:gravity="top" />
 
     <TextView
         android:layout_width="130dp"
         android:layout_height="45dp"
-        android:text="Reward: "
+        android:text="Price: "
         android:id="@+id/tag_price_label"
-        android:layout_below="@+id/tag_type_spinner_label"
+        android:layout_below="@+id/tag_enrollment_label"
         android:layout_alignParentStart="true"
         android:gravity="center"
         android:layout_alignEnd="@+id/tag_type_spinner_label" />
@@ -111,9 +112,9 @@
         android:layout_alignTop="@+id/tag_price_label"
         android:layout_alignEnd="@+id/tag_price_unit"
         android:maxLength="5"
+        android:layout_toEndOf="@+id/tag_detaildcpt_label"
         android:textCursorDrawable="@drawable/cc_bluepipe"
-        android:theme="@style/MyAppThemeBlue"
-        android:layout_toEndOf="@+id/tag_price_label" />
+        android:theme="@style/MyAppThemeBlue"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -126,5 +127,91 @@
         android:layout_toEndOf="@+id/tag_cancel_button"
         android:singleLine="true"
         android:textSize="12dp" />
+
+    <TextView
+        android:layout_width="130dp"
+        android:layout_height="45dp"
+        android:text="Enrollment: "
+        android:id="@+id/tag_enrollment_label"
+        android:gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tag_isprivate_label" />
+
+    <TextView
+        android:layout_width="130dp"
+        android:layout_height="45dp"
+        android:text="Expiration Date: "
+        android:id="@+id/tag_date_label"
+        android:gravity="center"
+        android:layout_below="@+id/tag_price_label"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:text="Pick A Date"
+        android:id="@+id/tag_date_picker"
+        android:layout_below="@+id/tag_price"
+        android:layout_toRightOf="@+id/tag_date_label"
+        android:background="@drawable/bg_tag_date_picker_btn"
+        android:stateListAnimator="@null"
+        android:textColor="#8f8f8f"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:layout_width="130dp"
+        android:layout_height="45dp"
+        android:text="Privacy:"
+        android:id="@+id/tag_isprivate_label"
+        android:gravity="center"
+        android:layout_below="@+id/tag_type_spinner_label"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:id="@+id/tag_isprivate_checkbox"
+        android:layout_toRightOf="@+id/tag_isprivate_label"
+        android:layout_alignTop="@+id/tag_isprivate_label"
+        android:text="Make this request private"
+        android:textColor="#616161"
+        android:checked="false"
+        android:buttonTint="@color/customcolorBlue"/>
+
+    <com.example.kevin.mapapplication.utils.HorizontalPicker
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:theme="@style/BlueHorizontalNumberPickerTheme"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="2"
+        app:values="@array/tag_number_picker"
+        android:layout_alignTop="@+id/tag_enrollment_label"
+        android:layout_toRightOf="@+id/tag_enrollment_label"
+        android:layout_toLeftOf="@+id/tag_enrollment_persons_label"
+        android:id="@+id/tag_enrollment_numberpicker"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:text="Person(s)"
+        android:id="@+id/tag_enrollment_persons_label"
+        android:layout_alignTop="@+id/tag_enrollment_label"
+        android:layout_alignParentEnd="true"
+        android:gravity="center_vertical" />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:id="@+id/tag_create_template"
+        android:text="Create a template"
+        android:textColor="#616161"
+        android:checked="false"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/tag_detaildcpt"
+        android:layout_alignLeft="@+id/tag_cancel_button"
+        android:buttonTint="@color/customcolorBlue"/>
 
 </RelativeLayout>

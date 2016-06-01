@@ -56,7 +56,20 @@
         <item name="android:colorAccent">@color/colorBlueEvent</item>
     </style>
 
-    <style name="HorizontalNumberPickerTheme">
+    <style name="RedHorizontalNumberPickerTheme">
+        <item name="android:colorPrimary">@color/colorRedEvent</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@drawable/color_number_picker</item>
+    </style>
+
+    <style name="BlueHorizontalNumberPickerTheme">
+        <item name="android:colorPrimary">@color/customcolorBlue</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@drawable/color_number_picker</item>
+    </style>
+
+    <style name="GreenHorizontalNumberPickerTheme">
+        <item name="android:colorPrimary">@color/customcolorGreen</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@drawable/color_number_picker</item>
     </style>

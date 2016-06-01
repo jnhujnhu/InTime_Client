@@ -1,5 +1,6 @@
 package com.example.kevin.mapapplication.ui.mainscreen.tag;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public class BlueTagInfoActivity extends AppCompatActivity {
     private Spinner type;
     private EditText Reward;
     private EditText DetailedDcpt;
+    private Button DateSelector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,16 @@ public class BlueTagInfoActivity extends AppCompatActivity {
         type = (Spinner) findViewById(R.id.tag_type_spinner);
         Reward = (EditText) findViewById(R.id.tag_price);
         DetailedDcpt = (EditText) findViewById(R.id.tag_detaildcpt);
+
+        DateSelector = (Button) findViewById(R.id.tag_date_picker);
+
+
+        DateSelector.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(BlueTagInfoActivity.this, R.style.BlueDatePickerDialogTheme, null, 2016, 5, 27).show();
+            }
+        });
 
         assert submit != null;
         submit.setOnClickListener(new View.OnClickListener() {
