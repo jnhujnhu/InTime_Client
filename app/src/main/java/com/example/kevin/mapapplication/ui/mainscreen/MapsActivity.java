@@ -41,6 +41,7 @@ import com.example.kevin.mapapplication.ui.startup.StartUpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
 import com.example.kevin.mapapplication.ui.userinfo.FriendsActivity;
+import com.example.kevin.mapapplication.ui.userinfo.NotificationActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.UserDetailActivity;
@@ -316,6 +317,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         drawer.closeDrawer(GravityCompat.START);
 
         switch (id) {
+            case R.id.navigation_notifications:
+                final Intent intent_7 = new Intent(this, NotificationActivity.class);
+                StartActivityWithDelay(intent_7);
+                break;
             case R.id.navigation_setting :
                 final Intent intent_1 = new Intent(this, SettingsActivity.class);
                 StartActivityWithDelay(intent_1);

@@ -111,4 +111,9 @@ public class ConnectionManager {
             e.printStackTrace();
         }
     }
+
+    public void GetNotificationList(String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/notifications", null, handler);
+    }
 }

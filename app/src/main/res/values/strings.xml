@@ -69,6 +69,7 @@
     <string name="title_activity_green_tag_info">+ OFFER</string>
     <string name="query_placeholder">Pretend that you can search..</string>
     <string name="Search_result_title">Search Result For:</string>
+    <string name="Nav_item_notifications">Notifications</string>
     <string name="Nav_item_friends">Friends</string>
     <string name="Nav_item_wallet">Wallet</string>
     <string name="Nav_item_history">History</string>

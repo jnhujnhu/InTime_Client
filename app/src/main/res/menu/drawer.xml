@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
+            android:id="@+id/navigation_notifications"
+            android:icon="@drawable/ic_notifications"
+            android:title="@string/Nav_item_notifications"/>
+        <item
             android:id="@+id/navigation_friends"
             android:icon="@drawable/ic_friends"
             android:title="@string/Nav_item_friends"/>

@@ -149,7 +149,9 @@
             android:name=".ui.userinfo.OrderDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.userinfo.NotificationActivity"></activity>
+        <activity android:name=".ui.userinfo.NotificationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
