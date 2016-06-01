@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
+import com.example.kevin.mapapplication.model.ConnectionManager;
 import com.example.kevin.mapapplication.model.MarkerManager;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.BlueTagInfoActivity;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.GreenTagInfoActivity;
@@ -44,6 +45,7 @@ import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.UserDetailActivity;
 import com.example.kevin.mapapplication.ui.userinfo.WalletActivity;
+import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import com.example.kevin.mapapplication.utils.DirectionManager;
 import com.example.kevin.mapapplication.utils.LocationTracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -61,6 +63,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
         QueryFragment.OnFragmentInteractionListener, GoogleMap.InfoWindowAdapter, TaginfoDialog.OnAcceptClickedCallBack
@@ -337,7 +341,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 StartActivityWithDelay(intent_6);
                 break;
             case R.id.navigation_logout :
-
+                deleteRegistrationFromServer();
                 SharedPreferences userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
                 SharedPreferences.Editor editor = userinfo.edit();
                 editor.putString("username", null);
@@ -363,7 +367,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
+    private void deleteRegistrationFromServer() {
+        ConnectionManager.getInstance().DeleteRegToken(userinfo.getString("uid", null), userinfo.getString("regToken", null), userinfo.getString("token", null), new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
 
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+
+            }
+        });
+    }
 
     @Override
     public void onFragmentInteraction(int OperationCode, String Content) {

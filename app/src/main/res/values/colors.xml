@@ -10,4 +10,5 @@
     <color name="customcolorGreen">#75c117</color>
     <color name="customcolorGray">#409fcc</color>
     <color name="customcolorHint">#adadad</color>
+    <color name="colorDisabled">#adadad</color>
 </resources>

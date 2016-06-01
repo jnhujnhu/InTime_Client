@@ -21,14 +21,12 @@ import android.widget.Toast;
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
 
+import com.example.kevin.mapapplication.services.RegistrationIntentService;
 import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.nio.charset.StandardCharsets;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -185,6 +183,8 @@ public class StartUpActivity extends AppCompatActivity {
     }
 
     private void StartMainScreen() {
+        Intent regIntent = new Intent(StartUpActivity.this, RegistrationIntentService.class);
+        startService(regIntent);
         Intent intent = new Intent(StartUpActivity.this, MapsActivity.class);
         StartUpActivity.this.startActivity(intent);
         finish();
@@ -215,7 +215,7 @@ public class StartUpActivity extends AppCompatActivity {
             }
         };
 
-        ConnectionManager.getInstance().Login(this.getBaseContext(), username, password, handler);
+        ConnectionManager.getInstance().Login(username, password, handler);
     }
 
     private void Register(final String username, final String password, String phone, String email) {
@@ -236,7 +236,7 @@ public class StartUpActivity extends AppCompatActivity {
 
             }
         };
-        ConnectionManager.getInstance().Register(this.getBaseContext(), username, password, phone, email, handler);
+        ConnectionManager.getInstance().Register(username, password, phone, email, handler);
     }
 
     private void DisableLoginPanel() {

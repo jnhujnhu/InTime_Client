@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "788165761397",
+    "project_id": "jnhujnhu"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788165761397:android:ff3e945842cc9fac",
+        "android_client_info": {
+          "package_name": "com.example.kevin.mapapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7lxxd8VXIaNYjZCy-L_DGCPgJytrC8_s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
