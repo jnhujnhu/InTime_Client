@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kevin.mapapplication.ui.userinfo.NotificationActivity">
+    tools:context="com.example.kevin.mapapplication.ui.userinfo.TemplatesActivity">
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -15,7 +15,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="25dp"
         android:visibility="invisible"
-        android:id="@+id/notifications_loading"
+        android:id="@+id/templates_loading"
         android:indeterminateTint="#646464"
         android:indeterminateTintMode="src_atop" />
 
@@ -36,39 +36,30 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/Nav_header_notification"
+            android:text="@string/Nav_item_templates"
             android:gravity="center_vertical"
             android:textSize="@dimen/custom_actionbar_title_textsize"
             android:layout_toRightOf="@+id/btn_back" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Clear All"
-            android:id="@+id/notification_clear"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="20dp" />
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/notifications_scrollview"
+        android:id="@+id/templates_scrollview"
         android:layout_below="@+id/RelativeLayout1"
         android:layout_alignParentStart="true"
         android:fillViewport="true">
 
         <LinearLayout
             android:orientation="vertical"
-            android:id="@+id/notifications_linearlayout"
+            android:id="@+id/templates_linearlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.example.kevin.mapapplication.utils.ListViewForScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/notification_list"
+                android:id="@+id/template_list"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
     </ScrollView>

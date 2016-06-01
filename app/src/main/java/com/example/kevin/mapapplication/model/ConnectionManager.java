@@ -127,4 +127,8 @@ public class ConnectionManager {
         client.post(SERVER_ADDR + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
     }
 
+    public void GetTemplateList(String uid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + String.format("/templates?uid=%s", uid), null, handler);
+    }
 }

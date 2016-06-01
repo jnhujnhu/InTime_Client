@@ -111,7 +111,6 @@ public class PromotionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        //intent.putExtra("Choosed","Item id");
         setResult(RESULT_CODE, intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
