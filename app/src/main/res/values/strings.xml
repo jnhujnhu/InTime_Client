@@ -71,6 +71,7 @@
     <string name="Search_result_title">Search Result For:</string>
     <string name="Nav_item_notifications">Notifications</string>
     <string name="Nav_item_friends">Friends</string>
+    <string name="Nav_item_templates">Templates</string>
     <string name="Nav_item_wallet">Wallet</string>
     <string name="Nav_item_history">History</string>
     <string name="Nav_item_promotion">Promotion</string>
@@ -84,7 +85,6 @@
     <string name="Nav_item_logout">Logout</string>
     <string name="Nav_header_user_detail">User Detail</string>
     <string name="Nav_header_order_detail">Order Detail</string>
-    <string name="Nav_header_notification">Notifications</string>
     <string name="user_detail_hint"><font size="12">Required when changing password</font></string>
     <string name="reg_box_email_optional"><font size="15">Optional</font></string>
     <string name="user_detail_email_hint_optional"><font size="13">Optional</font></string>

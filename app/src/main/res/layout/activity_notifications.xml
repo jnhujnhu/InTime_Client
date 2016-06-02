@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kevin.mapapplication.ui.userinfo.NotificationActivity">
+    tools:context=".ui.userinfo.NotificationsActivity">
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/Nav_header_notification"
+            android:text="@string/Nav_item_notifications"
             android:gravity="center_vertical"
             android:textSize="@dimen/custom_actionbar_title_textsize"
             android:layout_toRightOf="@+id/btn_back" />
@@ -48,7 +48,9 @@
             android:id="@+id/notification_clear"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="20dp" />
+            android:layout_marginRight="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp" />
     </RelativeLayout>
 
     <ScrollView

@@ -41,9 +41,10 @@ import com.example.kevin.mapapplication.ui.startup.StartUpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
 import com.example.kevin.mapapplication.ui.userinfo.FriendsActivity;
-import com.example.kevin.mapapplication.ui.userinfo.NotificationActivity;
+import com.example.kevin.mapapplication.ui.userinfo.NotificationsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
+import com.example.kevin.mapapplication.ui.userinfo.TemplatesActivity;
 import com.example.kevin.mapapplication.ui.userinfo.UserDetailActivity;
 import com.example.kevin.mapapplication.ui.userinfo.WalletActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
@@ -318,7 +319,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         switch (id) {
             case R.id.navigation_notifications:
-                final Intent intent_7 = new Intent(this, NotificationActivity.class);
+                final Intent intent_7 = new Intent(this, NotificationsActivity.class);
                 StartActivityWithDelay(intent_7);
                 break;
             case R.id.navigation_setting :
@@ -344,6 +345,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.navigation_wallet :
                 final Intent intent_6 = new Intent(this, WalletActivity.class);
                 StartActivityWithDelay(intent_6);
+                break;
+            case R.id.navigation_templates :
+                final Intent intent_8 = new Intent(this, TemplatesActivity.class);
+                StartActivityWithDelay(intent_8);
                 break;
             case R.id.navigation_logout :
                 deleteRegistrationFromServer();

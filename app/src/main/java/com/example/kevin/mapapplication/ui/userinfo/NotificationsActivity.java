@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,9 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class NotificationActivity extends AppCompatActivity {
+public class NotificationsActivity extends AppCompatActivity {
+
+    public static final int RESULT_CODE = 233;
 
     private SharedPreferences userinfo;
 
@@ -43,7 +44,7 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification);
+        setContentView(R.layout.activity_notifications);
 
         userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
 
@@ -71,7 +72,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
-                        Toast.makeText(NotificationActivity.this, error, Toast.LENGTH_LONG).show();
+                        Toast.makeText(NotificationsActivity.this, error, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -91,7 +92,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                Toast.makeText(NotificationActivity.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(NotificationsActivity.this, error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -111,13 +112,13 @@ public class NotificationActivity extends AppCompatActivity {
 
         Collections.reverse(itemList);
 
-        notificationList.setAdapter(new ArrayAdapter<Bundle>(NotificationActivity.this, R.layout.listview_item_default, itemList) {
+        notificationList.setAdapter(new ArrayAdapter<Bundle>(NotificationsActivity.this, R.layout.listview_item_default, itemList) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = convertView;
                 if (v == null) {
                     LayoutInflater vi;
-                    vi = LayoutInflater.from(NotificationActivity.this);
+                    vi = LayoutInflater.from(NotificationsActivity.this);
                     v = vi.inflate(R.layout.listview_item_default, parent, false);
                 }
                 Bundle item = getItem(position);
@@ -128,6 +129,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                     if (item.getBoolean("read")) {
                         icon.setImageResource(R.drawable.ic_notification_read);
+                        text.setTypeface(null, Typeface.NORMAL);
                     }
                     else {
                         icon.setImageResource(R.drawable.ic_notification_unread);
@@ -144,7 +146,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle item = itemList.get(position);
-                Intent intent = new Intent(NotificationActivity.this, NotificationDetailActivity.class);
+                Intent intent = new Intent(NotificationsActivity.this, NotificationDetailActivity.class);
                 intent.putExtras(item);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
@@ -161,6 +163,8 @@ public class NotificationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(RESULT_CODE, intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
