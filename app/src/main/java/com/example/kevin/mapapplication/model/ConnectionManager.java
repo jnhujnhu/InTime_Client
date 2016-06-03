@@ -131,4 +131,66 @@ public class ConnectionManager {
         client.addHeader("x-access-token", token);
         client.get(SERVER_ADDR + String.format("/templates?uid=%s", uid), null, handler);
     }
+
+    public void GetTemplateDetail(String tid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + String.format("/templates/%s", tid), null, handler);
+    }
+
+    public void DeleteTemplate(String tid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.delete(SERVER_ADDR + String.format("/templates/%s", tid), null, handler);
+    }
+
+    public void CreateTemplate(String type, String title, String content, String category, int price, int number, String place, float latitude, float longitude, Boolean isPrivate, String token, AsyncHttpResponseHandler handler) {
+        try {
+            JSONObject params = new JSONObject();
+            params.put("type", type);
+            params.put("title", title);
+            params.put("content", content);
+            params.put("category", category);
+            params.put("price", price);
+            params.put("number", number);
+            params.put("place", place);
+            JSONObject coordinate = new JSONObject();
+            coordinate.put("latitude", latitude);
+            coordinate.put("longitude", longitude);
+            params.put("coordinate", coordinate);
+            params.put("isPrivate", isPrivate);
+
+            StringEntity entity = new StringEntity(params.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            client.addHeader("x-access-token", token);
+            client.post(null, SERVER_ADDR + "/templates", entity, "application/json", handler);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ModifyTemplate(String tid, String type, String title, String content, String category, int price, int number, String place, float latitude, float longitude, Boolean isPrivate, String token, AsyncHttpResponseHandler handler) {
+        try {
+            JSONObject params = new JSONObject();
+            params.put("type", type);
+            params.put("title", title);
+            params.put("content", content);
+            params.put("category", category);
+            params.put("price", price);
+            params.put("number", number);
+            params.put("place", place);
+            JSONObject coordinate = new JSONObject();
+            coordinate.put("latitude", latitude);
+            coordinate.put("longitude", longitude);
+            params.put("coordinate", coordinate);
+            params.put("isPrivate", isPrivate);
+
+            StringEntity entity = new StringEntity(params.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            client.addHeader("x-access-token", token);
+            client.put(null, SERVER_ADDR + String.format("/templates/%s", tid), entity, "application/json", handler);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
