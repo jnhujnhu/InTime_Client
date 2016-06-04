@@ -25,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -95,6 +97,13 @@ public class OrdersFragment extends Fragment {
 
             itemList.add(bundle);
         }
+
+        Collections.sort(itemList, new Comparator<Bundle>() {
+            @Override
+            public int compare(Bundle lhs, Bundle rhs) {
+                return -lhs.getString("oid").compareTo(rhs.getString("oid"));
+            }
+        });
 
         orderList.setAdapter(new ArrayAdapter<Bundle>(getActivity(), R.layout.listview_item_orders, itemList) {
             @Override

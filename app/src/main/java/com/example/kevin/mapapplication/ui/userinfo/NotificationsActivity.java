@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -110,7 +111,12 @@ public class NotificationsActivity extends AppCompatActivity {
             itemList.add(bundle);
         }
 
-        Collections.reverse(itemList);
+        Collections.sort(itemList, new Comparator<Bundle>() {
+            @Override
+            public int compare(Bundle lhs, Bundle rhs) {
+                return -lhs.getString("nid").compareTo(rhs.getString("nid"));
+            }
+        });
 
         notificationList.setAdapter(new ArrayAdapter<Bundle>(NotificationsActivity.this, R.layout.listview_item_default, itemList) {
             @Override
