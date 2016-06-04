@@ -120,7 +120,7 @@ public class TemplatesActivity extends AppCompatActivity {
                         case "offer":
                             icon.setImageResource(R.drawable.ic_greentag);
                             break;
-                        case "notification":
+                        case "prompt":
                             icon.setImageResource(R.drawable.ic_bluetag);
                             break;
                     }

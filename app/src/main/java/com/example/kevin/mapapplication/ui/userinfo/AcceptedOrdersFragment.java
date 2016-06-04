@@ -60,7 +60,7 @@ public class AcceptedOrdersFragment extends OrdersFragment {
                 text_points.setVisibility(View.VISIBLE);
                 text_points.setText(String.format("%s Points", item.getInt("points")));
                 break;
-            case "notification":
+            case "prompt":
                 text_points.setVisibility(View.GONE);
                 break;
         }

@@ -134,7 +134,7 @@ public class TemplateDetailActivity extends AppCompatActivity {
                         text_type.setTextColor(ContextCompat.getColor(TemplateDetailActivity.this, R.color.colorGreenEvent));
                         image_type.setImageResource(R.drawable.ic_greentag);
                         break;
-                    case "notification":
+                    case "prompt":
                         text_type.setText("prompt");
                         text_type.setTextColor(ContextCompat.getColor(TemplateDetailActivity.this, R.color.colorBlueEvent));
                         image_type.setImageResource(R.drawable.ic_bluetag);

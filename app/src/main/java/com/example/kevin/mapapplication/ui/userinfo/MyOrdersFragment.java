@@ -64,7 +64,7 @@ public class MyOrdersFragment extends OrdersFragment {
                 text_points.setText(String.format("%s Points", item.getInt("points")));
                 text_number.setText(String.format("x%d", item.getInt("number")));
                 break;
-            case "notification":
+            case "prompt":
                 text_points.setVisibility(View.GONE);
                 text_number.setVisibility(View.GONE);
                 break;
