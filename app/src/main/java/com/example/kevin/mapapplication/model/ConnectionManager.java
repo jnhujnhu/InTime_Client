@@ -193,4 +193,9 @@ public class ConnectionManager {
             e.printStackTrace();
         }
     }
+
+    public void GetOrderList(String uid, String status, String keyword, String acceptUser, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s", uid, status, keyword, acceptUser), null, handler);
+    }
 }

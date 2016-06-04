@@ -42,6 +42,7 @@ import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
 import com.example.kevin.mapapplication.ui.userinfo.FriendsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.NotificationsActivity;
+import com.example.kevin.mapapplication.ui.userinfo.OrdersActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.TemplatesActivity;
@@ -124,46 +125,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //Bundle bundle=data.getExtras();   ////////////To get extra data
                     //String str=bundle.getString("back");
                     //Toast.makeText(MapsActivity.this, str, Toast.LENGTH_LONG).show();
-                    new Thread(new Runnable() {
-                        @Override
+
+                    new android.os.Handler().postDelayed(new Runnable() {
                         public void run() {
-                            try {
-                                Thread.sleep(300);
-                                drawhandler.sendMessage(new Message());
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            drawer.openDrawer(GravityCompat.START);
                         }
-                    }).start();
+                    }, 300);
                     break;
                 case SearchResultActivity.RESULT_CODE:
-
                     break;
                 case RedTagInfoActivity.RESULT_CODE:
+                case GreenTagInfoActivity.RESULT_CODE:
+                case BlueTagInfoActivity.RESULT_CODE:
                     Bundle bundle = data.getExtras();
                     String str = bundle.getString("Form");
                     if(str!=null && str.equals("Confirmed")) {
                         tagButtonManager.HideTagButton();
                         ChangeEverything();
-                        TagAngChangePackage(BitmapDescriptorFactory.HUE_RED);
-                    }
-                    break;
-                case GreenTagInfoActivity.RESULT_CODE:
-                    bundle = data.getExtras();
-                    str = bundle.getString("Form");
-                    if(str!=null && str.equals("Confirmed")) {
-                        tagButtonManager.HideTagButton();
-                        ChangeEverything();
-                        TagAngChangePackage(BitmapDescriptorFactory.HUE_GREEN);
-                    }
-                    break;
-                case BlueTagInfoActivity.RESULT_CODE:
-                    bundle = data.getExtras();
-                    str = bundle.getString("Form");
-                    if(str!=null && str.equals("Confirmed")) {
-                        tagButtonManager.HideTagButton();
-                        ChangeEverything();
-                        TagAngChangePackage(BitmapDescriptorFactory.HUE_BLUE);
+                        addTag(BitmapDescriptorFactory.HUE_BLUE);
                     }
                     break;
                 case UserDetailActivity.RESULT_CODE:
@@ -180,45 +159,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void TagAngChangePackage(final float Color) {
-        new Thread(new Runnable() {
-            @Override
+    private void addTag(final float Color) {
+        new android.os.Handler().postDelayed(new Runnable() {
             public void run() {
-                try {
-                    Thread.sleep(500);
-                    Message msg = new Message();
-                    msg.obj = Color;
-                    showtaghandler.sendMessage(msg);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    Handler showtaghandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            final Marker marker = AddEventTag((float) msg.obj);
-            Fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_addtag));
-                        marker.setDraggable(false);
-                        MarkerManager.getInstance().ConfirmLatLng(marker.getId(), marker.getPosition().latitude, marker.getPosition().longitude);
-                        SetEnabledActionBar(true);
-                        SetInfoWindowListener();
-                        action_bar_mask.setVisibility(View.GONE);
-                        SetFabFunction();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                final Marker marker = AddEventTag(Color);
+                Fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_addtag));
+                            marker.setDraggable(false);
+                            MarkerManager.getInstance().ConfirmLatLng(marker.getId(), marker.getPosition().latitude, marker.getPosition().longitude);
+                            SetEnabledActionBar(true);
+                            SetInfoWindowListener();
+                            action_bar_mask.setVisibility(View.GONE);
+                            SetFabFunction();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-        }
-    };
+                });
+            }
+        }, 500);
+    }
 
     private void ChangeEverything () {
         DisableInfoWindowListener();
@@ -237,15 +200,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         search.setEnabled(enable);
         detail.setEnabled(enable);
     }
-
-
-
-    Handler drawhandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            drawer.openDrawer(GravityCompat.START);
-        }
-    };
 
     /**
      * Manipulates the map once available.
@@ -331,7 +285,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 StartActivityWithDelay(intent_2);
                 break;
             case R.id.navigation_history :
-                final Intent intent_3 = new Intent(this, HistoryActivity.class);
+                final Intent intent_3 = new Intent(this, OrdersActivity.class);
                 StartActivityWithDelay(intent_3);
                 break;
             case R.id.navigation_friends :

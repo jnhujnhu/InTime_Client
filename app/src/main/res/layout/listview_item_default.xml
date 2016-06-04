@@ -8,7 +8,6 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:id="@+id/listview_item_icon"
-        android:src="@drawable/ic_friends_user_accepted"
         android:layout_margin="10dp"
         android:layout_centerVertical="true" />
 

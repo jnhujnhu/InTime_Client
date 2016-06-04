@@ -11,4 +11,9 @@
     <color name="customcolorGray">#409fcc</color>
     <color name="customcolorHint">#adadad</color>
     <color name="colorDisabled">#adadad</color>
+    <color name="status_waiting">#ff9321</color>
+    <color name="status_accepted">#00a906</color>
+    <color name="status_completed">#3545db</color>
+    <color name="status_canceling">#db3535</color>
+    <color name="status_canceled">#c7c7c7</color>
 </resources>
