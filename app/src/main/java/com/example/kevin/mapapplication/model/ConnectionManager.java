@@ -6,12 +6,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -131,4 +133,14 @@ public class ConnectionManager {
         client.addHeader("x-access-token", token);
         client.get(SERVER_ADDR + String.format("/templates?uid=%s", uid), null, handler);
     }
+
+    public void GetDefaultOrdersList(String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/orders?status=waiting", null, handler);
+    }
+
+    public void GetGeocodingPlace(LatLng coordinate, AsyncHttpResponseHandler handler) {
+        client.get(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&key=AIzaSyD3e_Fju-Zpocen-WIW7-PWY8YNKczIgwA", coordinate.latitude, coordinate.longitude), null, handler);
+    }
+
 }

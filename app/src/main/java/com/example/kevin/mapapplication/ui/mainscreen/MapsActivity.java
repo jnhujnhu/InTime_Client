@@ -1,12 +1,12 @@
 package com.example.kevin.mapapplication.ui.mainscreen;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Handler;
-import android.os.Message;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -27,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ import com.example.kevin.mapapplication.model.MarkerManager;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.BlueTagInfoActivity;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.GreenTagInfoActivity;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.RedTagInfoActivity;
+import com.example.kevin.mapapplication.ui.mainscreen.tag.TagInfoActivity;
 import com.example.kevin.mapapplication.ui.startup.StartUpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
@@ -63,6 +66,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,23 +87,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Circle MyPositionCircle;
     private Marker MyPositionMarker;
 
+    private volatile String app_state;
+
     private static final float ZoomLevel = 18f;
     public static final int REQUEST_CODE = 233;
+    public static final int RESULT_CODE_CANCEL = 240;
+    public static final int RESULT_CODE_OK = 241;
     private static final int TOUCH_USER_DETAIL = 1;
     private static final int TOUCH_QUERY_FOCUSED = 2;
     private static final int TOUCH_QUERY_UNFOCUSED = 3;
     private static final int TOUCH_SEARCH = 4;
-    private boolean isMarkerClicker;
+    private boolean show_isMarkerClicker;
+    private Marker FocusedMarker;
+    private String FocusedMarkerPlaceName;
 
     private DrawerLayout drawer;
 
     private RelativeLayout action_bar_mask;
     private FloatingActionButton Fab;
+    private ProgressBar loading;
     private long timebetweenclicks;
     private int fabclickcount;
 
     private SharedPreferences userinfo;
     private String m_username;
+    private Bundle m_bundle;
 
 
     @Override
@@ -112,63 +124,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        InitUI();
 
+        m_bundle = getIntent().getExtras();
+        if(m_bundle!=null && m_bundle.getBoolean("forResult") && m_bundle.getString("state").equals("add")) {
+            InitParams();
+        }
+        else {
+            InitParams();
+            InitUI();
+        }
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode==REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE) {
             switch (resultCode) {
                 case SettingsActivity.RESULT_CODE:
-                    //Bundle bundle=data.getExtras();   ////////////To get extra data
-                    //String str=bundle.getString("back");
-                    //Toast.makeText(MapsActivity.this, str, Toast.LENGTH_LONG).show();
-                    new Thread(new Runnable() {
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                Thread.sleep(300);
-                                drawhandler.sendMessage(new Message());
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            drawer.openDrawer(GravityCompat.START);
                         }
-                    }).start();
+                    }, 300);
                     break;
                 case SearchResultActivity.RESULT_CODE:
-
                     break;
-                case RedTagInfoActivity.RESULT_CODE:
+                case TagInfoActivity.RESULT_CODE:
                     Bundle bundle = data.getExtras();
-                    String str = bundle.getString("Form");
-                    if(str!=null && str.equals("Confirmed")) {
-                        tagButtonManager.HideTagButton();
-                        ChangeEverything();
-                        TagAngChangePackage(BitmapDescriptorFactory.HUE_RED);
-                    }
-                    break;
-                case GreenTagInfoActivity.RESULT_CODE:
-                    bundle = data.getExtras();
-                    str = bundle.getString("Form");
-                    if(str!=null && str.equals("Confirmed")) {
-                        tagButtonManager.HideTagButton();
-                        ChangeEverything();
-                        TagAngChangePackage(BitmapDescriptorFactory.HUE_GREEN);
-                    }
-                    break;
-                case BlueTagInfoActivity.RESULT_CODE:
-                    bundle = data.getExtras();
-                    str = bundle.getString("Form");
-                    if(str!=null && str.equals("Confirmed")) {
-                        tagButtonManager.HideTagButton();
-                        ChangeEverything();
-                        TagAngChangePackage(BitmapDescriptorFactory.HUE_BLUE);
+                    bundle.putString("state", "show");
+                    setState(bundle);
+                    if (bundle.getBoolean("IsCanceled")) {
+                        FocusedMarker.remove();
                     }
                     break;
                 case UserDetailActivity.RESULT_CODE:
                     bundle = data.getExtras();
-                    if(bundle.getBoolean("IsUsernameModified")) {
+                    if (bundle.getBoolean("IsUsernameModified")) {
                         m_username = userinfo.getString("username", null);
                         NavigationView navigationview = (NavigationView) findViewById(R.id.nav_view);
                         View headerview = navigationview.getHeaderView(0);
@@ -180,55 +172,278 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void TagAngChangePackage(final float Color) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(500);
-                    Message msg = new Message();
-                    msg.obj = Color;
-                    showtaghandler.sendMessage(msg);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public void setState(Bundle bundle) {
+        String state = bundle.getString("state");
+        assert state != null;
+        switch (state) {
+            case "show":
+                app_state = "show";
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                tagButtonManager.hideTagButton();
+                Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_addtag));
+                tagButtonManager.setButtonListener(true);
+                modifyScreen(true);
+                mMap.setInfoWindowAdapter(this);
+                break;
+            case "add":
+                app_state = "add";
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                float color = bundle.getFloat("color");
+                addMarkerAndRelatedListener(color, true, false, true, 0, 0);
+                Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
+                setInfoWindowWithPlaceDetail(false, null, null);
+                modifyScreen(false);
+                break;
+            case "modify":
+                app_state = "modify";
+                modifyScreen(false);
+                setInfoWindowWithPlaceDetail(false, null, null);
+                addMarkerAndRelatedListener(bundle.getFloat("color"), false, true, false, bundle.getDouble("latitude"), bundle.getDouble("longitude"));
+                tagButtonManager.hideTagButton();
+                Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
+                ImageButton back = (ImageButton) findViewById(R.id.btn_back);
+                back.setVisibility(View.VISIBLE);
+                back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setResult(RESULT_CODE_CANCEL);
+                        onBackPressed();
+                        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+                    }
+                });
+                Fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent mdf_intent = new Intent();
+                        mdf_intent.putExtra("place", FocusedMarkerPlaceName);
+                        mdf_intent.putExtra("latitude", FocusedMarker.getPosition().latitude);
+                        mdf_intent.putExtra("longitude", FocusedMarker.getPosition().longitude);
+                        setResult(RESULT_CODE_OK, mdf_intent);
+                        onBackPressed();
+                        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+                    }
+                });
+                break;
+            case "watch":
+                break;
+        }
     }
 
-    Handler showtaghandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            final Marker marker = AddEventTag((float) msg.obj);
-            Fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_addtag));
-                        marker.setDraggable(false);
-                        MarkerManager.getInstance().ConfirmLatLng(marker.getId(), marker.getPosition().latitude, marker.getPosition().longitude);
-                        SetEnabledActionBar(true);
-                        SetInfoWindowListener();
-                        action_bar_mask.setVisibility(View.GONE);
-                        SetFabFunction();
+    private void getPlaceName() {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                String premise_name = "", district_name = "";
+                JSONArray results = res.optJSONArray("results");
+                if(results!=null) {
+                    JSONObject place_info = results.optJSONObject(0);
+                    JSONArray address_component = place_info.optJSONArray("address_components");
+                    for (int i = 0; i < address_component.length(); i++) {
+                        JSONObject comp = address_component.optJSONObject(i);
+                        String name = comp.optString("long_name");
+                        JSONArray types = comp.optJSONArray("types");
+                        for (int j = 0; j < types.length(); j++) {
+                            if (types.optString(j).equals("premise")) {
+                                premise_name = name;
+                            } else if (types.optString(j).equals("street_number")) {
+                                premise_name = name + " ";
+                            } else if (types.optString(j).equals("route")) {
+                                premise_name += name;
+                            }
+                            if (types.optString(j).equals("sublocality")) {
+                                district_name = name;
+                            } else if (types.optString(j).equals("locality")) {
+                                district_name += ", " + name;
+                            }
+                        }
+                    }
+                    FocusedMarkerPlaceName = premise_name;
+                    setInfoWindowWithPlaceDetail(true, premise_name, district_name);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    /////////Manual Refresh.....//////////
+                    if (FocusedMarker.isInfoWindowShown()) {
+                        FocusedMarker.hideInfoWindow();
+                        FocusedMarker.showInfoWindow();
                     }
                 }
-            });
-        }
-    };
+            }
 
-    private void ChangeEverything () {
-        DisableInfoWindowListener();
-        Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
-        DisableFabFunction();
-        action_bar_mask.setVisibility(View.VISIBLE);
-        SetEnabledActionBar(false);
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(MapsActivity.this, "Cannot connect to Google Geocoding service", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        ConnectionManager.getInstance().GetGeocodingPlace(FocusedMarker.getPosition(), handler);
     }
 
-    private void SetEnabledActionBar(boolean enable) {
+    private void setInfoWindowWithPlaceDetail(final boolean enable, final String premise_name, final String district_name) {
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                if(enable) {
+                    if (marker.equals(FocusedMarker)) {
+
+                        LayoutInflater inflater = LayoutInflater.from(MapsActivity.this);
+                        View v = inflater.inflate(R.layout.infowindow_marker_onadd, null);
+                        final TextView placename = (TextView) v.findViewById(R.id.markerinfowindow_placename);
+                        final TextView districtname = (TextView) v.findViewById(R.id.markerinfowindow_district);
+                        if(premise_name != null) {
+                            placename.setText(premise_name);
+                            districtname.setText(district_name);
+                        }
+                        return v;
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
+
+    private void modifyScreen(boolean enable) {
+        setQueryBar(enable);
+        setInfoWindowListener(enable);
+        setFabFunction(enable);
+        if(enable)
+            action_bar_mask.setVisibility(View.GONE);
+        else action_bar_mask.setVisibility(View.VISIBLE);
+    }
+
+
+    private void addMarkerAndRelatedListener(final float Color, final boolean hasAnimation, final boolean hasDefaultPos, final boolean enableFab, final double latitude, final double longitude) {
+        int Anim_Delay = 500;
+        if(!hasAnimation) {
+            Anim_Delay = 0;
+        }
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                final Marker marker = addEventTag(Color, hasAnimation, hasDefaultPos, latitude, longitude);
+                FocusedMarker = marker;
+                setInfoWindowWithPlaceDetail(true, null, null);
+
+                if(hasAnimation) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            FocusedMarker.showInfoWindow();
+                        }
+                    }, 900);
+                }
+                else {
+                    FocusedMarker.showInfoWindow();
+                }
+
+                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                    @Override
+                    public void onMarkerDragStart(Marker marker) {
+                        setInfoWindowWithPlaceDetail(false, null, null);
+                        marker.hideInfoWindow();
+                    }
+
+                    @Override
+                    public void onMarkerDrag(Marker marker) {
+
+                    }
+
+                    @Override
+                    public void onMarkerDragEnd(Marker marker) {
+                        setInfoWindowWithPlaceDetail(true, null, null);
+                        marker.showInfoWindow();
+                        getPlaceName();
+                    }
+                });
+                getPlaceName();
+
+                if(enableFab) {
+                    Fab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            marker.setDraggable(false);
+                            marker.hideInfoWindow();
+                            if (Color == BitmapDescriptorFactory.HUE_BLUE) {
+                                final Intent intent = new Intent(MapsActivity.this, BlueTagInfoActivity.class);
+                                intent.putExtra("place", FocusedMarkerPlaceName);
+                                intent.putExtra("latitude", marker.getPosition().latitude);
+                                intent.putExtra("longitude", marker.getPosition().longitude);
+                                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MapsActivity.this
+                                        , findViewById(R.id.btn_blueevent), "bluetag");
+                                startActivityForResult(intent, MapsActivity.REQUEST_CODE, options.toBundle());
+                            } else if (Color == BitmapDescriptorFactory.HUE_RED) {
+                                final Intent intent = new Intent(MapsActivity.this, RedTagInfoActivity.class);
+                                intent.putExtra("place", FocusedMarkerPlaceName);
+                                intent.putExtra("latitude", marker.getPosition().latitude);
+                                intent.putExtra("longitude", marker.getPosition().longitude);
+                                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MapsActivity.this
+                                        , findViewById(R.id.btn_redevent), "redtag");
+                                startActivityForResult(intent, MapsActivity.REQUEST_CODE, options.toBundle());
+                            } else if (Color == BitmapDescriptorFactory.HUE_GREEN) {
+                                final Intent intent = new Intent(MapsActivity.this, GreenTagInfoActivity.class);
+                                intent.putExtra("place", FocusedMarkerPlaceName);
+                                intent.putExtra("latitude", marker.getPosition().latitude);
+                                intent.putExtra("longitude", marker.getPosition().longitude);
+                                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MapsActivity.this
+                                        , findViewById(R.id.btn_greenevent), "greentag");
+                                startActivityForResult(intent, MapsActivity.REQUEST_CODE, options.toBundle());
+                            }
+                        }
+                    });
+                }
+            }
+        }, Anim_Delay);
+    }
+
+    private Marker addEventTag(float Color, final boolean hasAnimation, boolean hasDefaultPos, double latitude, double longitude) {
+        LatLng target = mMap.getCameraPosition().target;
+        if(hasDefaultPos) {
+            target = new LatLng(latitude, longitude);
+        }
+        final Marker marker = mMap.addMarker(new MarkerOptions().draggable(true)
+                .icon(BitmapDescriptorFactory.defaultMarker(Color))
+                .position(target));
+        if(hasAnimation) {
+            PinDropAnimation(marker, target);
+        }
+        return marker;
+    }
+
+    private void PinDropAnimation (final Marker marker,final  LatLng target) {
+        final long duration = 900;
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = mMap.getProjection();
+
+        Point startPoint = proj.toScreenLocation(target);
+        startPoint.y = 0;
+        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        marker.setPosition(startLatLng);
+
+        final Interpolator interpolator = new BounceInterpolator();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed / duration);
+                double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
+                double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
+                marker.setPosition(new LatLng(lat, lng));
+                if (t < 1.0) {
+                    handler.postDelayed(this, 10);
+                }
+            }
+        });
+    }
+
+    private void setQueryBar(boolean enable) {
         EditText queryinput = (EditText) findViewById(R.id.queryinput);
         ImageButton search, detail;
         search = (ImageButton) findViewById(R.id.querystart);
@@ -238,14 +453,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         detail.setEnabled(enable);
     }
 
-
-
-    Handler drawhandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            drawer.openDrawer(GravityCompat.START);
-        }
-    };
 
     /**
      * Manipulates the map once available.
@@ -259,28 +466,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Mapinit();
-
-        //////////////TEST_ONLY//////////////////////////////////////////////////////////////////////////
-        Marker markerG = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                .position(CurrentPosition));
-        Marker markerB = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                .position(CurrentPosition));
-        Marker markerR = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                .position(CurrentPosition));
-
-        try {
-            markerB.setPosition(new LatLng((double) MarkerManager.getInstance().Get("m2").get("Lat"), (double)MarkerManager.getInstance().Get("m2").get("Lng")));
-            markerG.setPosition(new LatLng((double) MarkerManager.getInstance().Get("m1").get("Lat"), (double)MarkerManager.getInstance().Get("m1").get("Lng")));
-            markerR.setPosition(new LatLng((double) MarkerManager.getInstance().Get("m3").get("Lat"), (double)MarkerManager.getInstance().Get("m3").get("Lng")));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        m_bundle = getIntent().getExtras();
+        if(m_bundle!=null && m_bundle.getBoolean("forResult") && m_bundle.getString("state").equals("add")) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(m_bundle.getDouble("latitude"), m_bundle.getDouble("longitude")), ZoomLevel));
+            Mapinit_location();
+            app_state = "modify";
+            m_bundle.putString("state", "modify");
+            setState(m_bundle);
         }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////
+        else {
+            Mapinit();
+        }
     }
 
     @Override
@@ -299,13 +495,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-
-        if(drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if(app_state.equals("add")) {
+            Bundle bundle = new Bundle();
+            bundle.putString("state", "show");
+            setState(bundle);
+            FocusedMarker.remove();
         }
-        else {
-            MarkerManager.getInstance().Restore();
+        else if(app_state.equals("show")){
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                MarkerManager.getInstance().Restore();
+                super.onBackPressed();
+            }
+        }
+        else if(app_state.equals("modify")){
             super.onBackPressed();
+            overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
         }
     }
 
@@ -320,35 +526,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (id) {
             case R.id.navigation_notifications:
                 final Intent intent_7 = new Intent(this, NotificationsActivity.class);
-                StartActivityWithDelay(intent_7);
+                startActivityWithDelay(intent_7);
                 break;
             case R.id.navigation_setting :
                 final Intent intent_1 = new Intent(this, SettingsActivity.class);
-                StartActivityWithDelay(intent_1);
+                startActivityWithDelay(intent_1);
                 break;
             case R.id.navigation_help :
                 final Intent intent_2 = new Intent(this, HelpActivity.class);
-                StartActivityWithDelay(intent_2);
+                startActivityWithDelay(intent_2);
                 break;
             case R.id.navigation_history :
                 final Intent intent_3 = new Intent(this, HistoryActivity.class);
-                StartActivityWithDelay(intent_3);
+                startActivityWithDelay(intent_3);
                 break;
             case R.id.navigation_friends :
                 final Intent intent_4 = new Intent(this, FriendsActivity.class);
-                StartActivityWithDelay(intent_4);
+                startActivityWithDelay(intent_4);
                 break;
             case R.id.navigation_promotion :
                 final Intent intent_5 = new Intent(this, PromotionActivity.class);
-                StartActivityWithDelay(intent_5);
+                startActivityWithDelay(intent_5);
                 break;
             case R.id.navigation_wallet :
                 final Intent intent_6 = new Intent(this, WalletActivity.class);
-                StartActivityWithDelay(intent_6);
+                startActivityWithDelay(intent_6);
                 break;
             case R.id.navigation_templates :
                 final Intent intent_8 = new Intent(this, TemplatesActivity.class);
-                StartActivityWithDelay(intent_8);
+                startActivityWithDelay(intent_8);
                 break;
             case R.id.navigation_logout :
                 deleteRegistrationFromServer();
@@ -359,19 +565,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 editor.putString("uid", null);
                 editor.putString("token", null);
                 editor.apply();
-                new Thread(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            Thread.sleep(150);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         Intent intent_7 = new Intent(MapsActivity.this, StartUpActivity.class);
                         startActivity(intent_7);
                         finish();
                     }
-                }).start();
+                }, 150);
                 break;
         }
         return true;
@@ -425,88 +626,111 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     @Override
     public void DrawDirectionAndSet(JSONObject data) {
-        try {
-            dm = new DirectionManager(CurrentPosition, new LatLng((double)data.get("Lat"), (double)data.get("Lng")), mMap);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")), mMap);
         DisableInfoWindowListener();
-        DisableFabFunction();
+        setFabFunction(false);
 
     }
 
     @Override
     public void ClearMapAndSetInfoWindow() {
         dm.ClearPolyline();
-        SetInfoWindowListener();
-        SetFabFunction();
+        setInfoWindowListener(true);
+        setFabFunction(false);
     }
 
-    private void StartActivityWithDelay (final Intent intent) {
-        new Thread(new Runnable() {
+    private void setDefaultMarkers() {
+        loading.setVisibility(View.VISIBLE);
+        /////////////////////////////////GetDefaultOrdersList////////////////////////////////////////
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
             @Override
-            public void run() {
-                try {
-                    Thread.sleep(150);
-                    startActivityForResult(intent, REQUEST_CODE);
-                    overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+
+                JSONArray orders_list = res.getJSONArray("orders");
+                int markers_num = orders_list.length();
+
+                for(int i = 0;i < markers_num;i ++) {
+                    JSONObject order = orders_list.getJSONObject(i);
+                    order.put("Id", i + 1);
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(CurrentPosition));
+                    MarkerManager.getInstance().Put(marker, order);
+                    switch (MarkerManager.getInstance().Get(marker.getId()).optString("type")) {
+                        case "request":
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                            break;
+                        case "offer":
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                            break;
+                        case "prompt":
+                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            break;
+                    }
+                    marker.setPosition(new LatLng(MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("latitude"), MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("longitude")));
                 }
             }
-        }).start();
-    }
-
-    private void DisableFabFunction() {
-        Fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(MapsActivity.this, error, Toast.LENGTH_LONG).show();
             }
-        });
+        };
+        ConnectionManager.getInstance().GetDefaultOrdersList(userinfo.getString("token", null), handler);
     }
 
-    private void SetFabFunction() {
+    private void startActivityWithDelay(final Intent intent) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivityForResult(intent, REQUEST_CODE);
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+            }
+        }, 150);
+    }
+
+    private void setFabFunction(final boolean enable) {
         fabclickcount = 0;
         timebetweenclicks = 0;
         Fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (timebetweenclicks == 0 || System.currentTimeMillis() - timebetweenclicks > 800) {
-                    if (fabclickcount % 2 == 0) {
-                        Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_add_plusstate));
-                        fabclickcount++;
-                        tagButtonManager.ShowTagButton();
-                    } else {
-                        Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_addtag));
-                        fabclickcount++;
-                        tagButtonManager.HideTagButton();
+                if(enable) {
+                    if (timebetweenclicks == 0 || System.currentTimeMillis() - timebetweenclicks > 800) {
+                        if (fabclickcount % 2 == 0) {
+                            Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_add_plusstate));
+                            fabclickcount++;
+                            tagButtonManager.showTagButton();
+                        } else {
+                            Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_addtag));
+                            fabclickcount++;
+                            tagButtonManager.hideTagButton();
+                        }
                     }
+                    timebetweenclicks = System.currentTimeMillis();
                 }
-                timebetweenclicks = System.currentTimeMillis();
             }
         });
     }
 
-    private void InitUI() {
-        NavigationView navigationview = (NavigationView) findViewById(R.id.nav_view);
-        navigationview.setNavigationItemSelectedListener(this);
-
+    private void InitParams() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         Fab = (FloatingActionButton) findViewById(R.id.fab_addbutton);
 
         action_bar_mask = (RelativeLayout) findViewById(R.id.action_bar_mask);
 
+        loading = (ProgressBar) findViewById(R.id.main_loading);
+
         tagButtonManager = new TagButtonManager(this);
 
-        tagButtonManager.SetButtonListener();
-
-        SetFabFunction();
+        tagButtonManager.setButtonListener(true);
 
         taskInformer = new TaskInformer(this);
 
         taskInformer.SetTaskInformer();
+        FocusedMarker = null;
+        FocusedMarkerPlaceName = "";
+        app_state = "show";
 
         //////////////////GET_USER_INFO/////////////////////
         userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
@@ -516,6 +740,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(MapsActivity.this, "Error!", Toast.LENGTH_LONG).show();
         }
         ////////////////////////////////////////////////////
+    }
+
+    private void InitUI() {
+        NavigationView navigationview = (NavigationView) findViewById(R.id.nav_view);
+        navigationview.setNavigationItemSelectedListener(this);
+
+        setFabFunction(true);
 
         View headerview = navigationview.getHeaderView(0);
         TextView drawer_header_username = (TextView) headerview.findViewById(R.id.drawer_header_username);
@@ -526,14 +757,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, UserDetailActivity.class);
-                StartActivityWithDelay(intent);
+                startActivityWithDelay(intent);
             }
         });
         user_detail_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, UserDetailActivity.class);
-                StartActivityWithDelay(intent);
+                startActivityWithDelay(intent);
             }
         });
 
@@ -552,7 +783,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void SetMyPositionMarker() {
+    private void setMyPositionMarker() {
         if(MyPositionCircle!=null && MyPositionMarker!=null) {
             MyPositionCircle.remove();
             MyPositionMarker.remove();
@@ -565,15 +796,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
     }
 
+    private void Mapinit_location() {
+        CurrentPosition = mLocationTracker.getCurrentLatlng();
+        CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
+
+        FloatingActionButton locatebutton = (FloatingActionButton) findViewById(R.id.fab_locationbutton);
+        locatebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CurrentPosition = mLocationTracker.getCurrentLatlng();
+                CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
+                setMyPositionMarker();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));
+            }
+        });
+    }
+
 
     private void Mapinit() {
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setInfoWindowAdapter(this);
 
-        CurrentPosition = mLocationTracker.getCurrentLatlng();
-        CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
+        Mapinit_location();
 
-        SetMyPositionMarker();
+        setMyPositionMarker();
 
         LatLng TestScene = new LatLng(31.19326239, 121.59417715);
 
@@ -592,10 +838,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        //////////////To enable update of the marker position
+        //////////////To enable update of the marker position//////////////
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
+
             }
 
             @Override
@@ -608,43 +855,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        SetInfoWindowListener();
+        setInfoWindowListener(true);
 
-        FloatingActionButton locatebutton = (FloatingActionButton) findViewById(R.id.fab_locationbutton);
-        locatebutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CurrentPosition = mLocationTracker.getCurrentLatlng();
-                CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
-                SetMyPositionMarker();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));
-            }
-        });
+        setDefaultMarkers();
 
-        isMarkerClicker = false;
+        show_isMarkerClicker = false;
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(!isMarkerClicker) {
+                if(app_state.equals("show") && !show_isMarkerClicker) {
                     Toast.makeText(MapsActivity.this, "Tap on the Window to see more detail.", Toast.LENGTH_LONG).show();
-                    isMarkerClicker = true;
+                    show_isMarkerClicker = true;
                 }
                 return false;
             }
         });
     }
 
-    private void SetInfoWindowListener() {
+    private void setInfoWindowListener(final boolean enable) {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                if (!marker.getId().equals("m0")) {
-                    try {
-                        TaginfoDialog taginfoDialog = new TaginfoDialog(MapsActivity.this);
-                        taginfoDialog.SetCallBack(MapsActivity.this);
-                        taginfoDialog.BuildDialog(marker, taskInformer);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                if(enable) {
+                    if (!marker.getId().equals("m0")) {
+                        try {
+                            TaginfoDialog taginfoDialog = new TaginfoDialog(MapsActivity.this);
+                            taginfoDialog.SetCallBack(MapsActivity.this);
+                            taginfoDialog.BuildDialog(marker, taskInformer);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -672,42 +912,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         drawer.openDrawer(GravityCompat.START);
     }
 
-    private Marker AddEventTag(float Color) {
-        final LatLng target = mMap.getCameraPosition().target;
-        final Marker marker = mMap.addMarker(new MarkerOptions().draggable(true)
-                .icon(BitmapDescriptorFactory.defaultMarker(Color))
-                .position(target));
-        PinDropAnimation(marker, target);
-        return marker;
-    }
 
-    private void PinDropAnimation (final Marker marker,final  LatLng target) {
-        final long duration = 900;
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = mMap.getProjection();
 
-        Point startPoint = proj.toScreenLocation(target);
-        startPoint.y = 0;
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        marker.setPosition(startLatLng);
 
-        final Interpolator interpolator = new BounceInterpolator();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed / duration);
-                double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
-                double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
-                if (t < 1.0) {
-                    // Post again 10ms later.
-                    handler.postDelayed(this, 10);
-                } else {
-                    // animation ended
-                }
-            }
-        });
-    }
 }

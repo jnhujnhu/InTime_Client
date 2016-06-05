@@ -1,10 +1,20 @@
 package com.example.kevin.mapapplication.model;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
+import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Kevin on 3/11/16.
@@ -13,13 +23,17 @@ public class MarkerManager {
 
     private static MarkerManager mInstance;
 
+    private Map<Integer, Marker> mMarkerMap;
+
     public int index;
 
     private JSONArray mMarkerData;
 
+
     private MarkerManager() {
-        index = 0;
+        index = 1;
         mMarkerData = new JSONArray();
+        mMarkerMap = new HashMap<>();
         try {
             InitData();
         } catch (JSONException e) {
@@ -27,23 +41,31 @@ public class MarkerManager {
         }
     }
 
-    public JSONObject BuildData(int id, String Color, String shorttitle, String type, int reward, String DetailedDcpt) throws JSONException{
+
+    public JSONObject BuildData(int id,String uid,  String Type, String Title, String Category, int Points, int Number,  String Content, String Time, boolean isPrivate) throws JSONException{
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("Id", id);
-        jsonObject.put("Color", Color);
-        jsonObject.put("ShortTitle", shorttitle);
-        jsonObject.put("Type", type);
-        jsonObject.put("Reward", reward);
-        jsonObject.put("DetailedDcpt", DetailedDcpt);
-        Put(jsonObject);
+        jsonObject.put("uid", uid);
+        jsonObject.put("type", Type);
+        jsonObject.put("title", Title);
+        jsonObject.put("category", Category);
+        jsonObject.put("points", Points);
+        jsonObject.put("number", Number);
+        jsonObject.put("content", Content);
+        jsonObject.put("time", Time);
+        jsonObject.put("isPrivate", isPrivate);
+        //Put(jsonObject);
         return jsonObject;
     }
 
-    public void ConfirmLatLng (String markerid, double Lat, double Lng) throws JSONException{
-        Get(markerid).put("Lat", Lat);
-        Get(markerid).put("Lng", Lng);
-    }
+    /*public void ConfirmLatLng (String markerid, double Lat, double Lng, String Place) throws JSONException{
+        JSONObject coordinate = new JSONObject();
+        coordinate.put("longitude", Lng);
+        coordinate.put("latitude", Lat);
+        Get(markerid).put("coordinate", coordinate);
+        Get(markerid).put("place", Place);
+    }*/
 
     public int getID() {
         return index;
@@ -64,10 +86,10 @@ public class MarkerManager {
 
         LocationMarker.put("Id", 0);
         LocationMarker.put("Dcpt", "Your Location");
-        Put(LocationMarker);
+        mMarkerData.put(index, LocationMarker);
 
         //////////////////TEST_ONLY(Could change to HTTP_GET from server)//////////////
-        JSONObject ExampleGreen = new JSONObject(), ExampleBlue = new JSONObject(), ExampleRed = new JSONObject();
+        /*JSONObject ExampleGreen = new JSONObject(), ExampleBlue = new JSONObject(), ExampleRed = new JSONObject();
         ExampleGreen.put("Id", 1);
         ExampleGreen.put("Color", "Green");
         ExampleGreen.put("Lat", 31.1925720582);
@@ -97,18 +119,25 @@ public class MarkerManager {
         ExampleRed.put("Reward", 100);
         ExampleRed.put("DetailedDcpt", "I am so nervous, I need to go to Hangzhou this weekend, but my car broke down. Could any" +
                 "one give me a ride?");
-        Put(ExampleRed);
+        Put(ExampleRed);*/
 
     }
 
-    public void Put (JSONObject markerdetail) throws JSONException {
+    public void Put (Marker marker, JSONObject markerdetail) throws JSONException {
         mMarkerData.put(index, markerdetail);
+        mMarkerMap.put(index, marker);
         index ++;
     }
 
-    public JSONObject Get(String markerid) throws JSONException{
+
+    public JSONObject Get(String markerid) {
         int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));
-        return (JSONObject) mMarkerData.get(markerindex);
+        return mMarkerData.optJSONObject(markerindex);
+    }
+
+    public Marker GetMarker(String markerid) {
+        int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));
+        return  mMarkerMap.get(markerindex);
     }
 
     public static synchronized MarkerManager getInstance() {
