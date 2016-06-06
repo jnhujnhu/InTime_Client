@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -90,6 +91,13 @@ public class TemplatesActivity extends AppCompatActivity {
             itemList.add(bundle);
         }
 
+        Collections.sort(itemList, new Comparator<Bundle>() {
+            @Override
+            public int compare(Bundle lhs, Bundle rhs) {
+                return -lhs.getString("tid").compareTo(rhs.getString("tid"));
+            }
+        });
+
         templateList.setAdapter(new ArrayAdapter<Bundle>(TemplatesActivity.this, R.layout.listview_item_default, itemList) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -112,7 +120,7 @@ public class TemplatesActivity extends AppCompatActivity {
                         case "offer":
                             icon.setImageResource(R.drawable.ic_greentag);
                             break;
-                        case "notification":
+                        case "prompt":
                             icon.setImageResource(R.drawable.ic_bluetag);
                             break;
                     }

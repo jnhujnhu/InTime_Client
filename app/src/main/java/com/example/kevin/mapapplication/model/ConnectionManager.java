@@ -1,28 +1,14 @@
 package com.example.kevin.mapapplication.model;
 
-import android.app.Application;
-import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-
-import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 
-/**
- * Created by Kevin on 5/23/16.
- */
 public class ConnectionManager {
 
     private static final String SERVER_ADDR = "http://intime.halcyons.org:3000/api";
@@ -132,6 +118,73 @@ public class ConnectionManager {
     public void GetTemplateList(String uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
         client.get(SERVER_ADDR + String.format("/templates?uid=%s", uid), null, handler);
+    }
+
+    public void GetTemplateDetail(String tid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + String.format("/templates/%s", tid), null, handler);
+    }
+
+    public void DeleteTemplate(String tid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.delete(SERVER_ADDR + String.format("/templates/%s", tid), null, handler);
+    }
+
+    public void CreateTemplate(String type, String title, String content, String category, int price, int number, String place, float latitude, float longitude, Boolean isPrivate, String token, AsyncHttpResponseHandler handler) {
+        try {
+            JSONObject params = new JSONObject();
+            params.put("type", type);
+            params.put("title", title);
+            params.put("content", content);
+            params.put("category", category);
+            params.put("price", price);
+            params.put("number", number);
+            params.put("place", place);
+            JSONObject coordinate = new JSONObject();
+            coordinate.put("latitude", latitude);
+            coordinate.put("longitude", longitude);
+            params.put("coordinate", coordinate);
+            params.put("isPrivate", isPrivate);
+
+            StringEntity entity = new StringEntity(params.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            client.addHeader("x-access-token", token);
+            client.post(null, SERVER_ADDR + "/templates", entity, "application/json", handler);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ModifyTemplate(String tid, String type, String title, String content, String category, int price, int number, String place, float latitude, float longitude, Boolean isPrivate, String token, AsyncHttpResponseHandler handler) {
+        try {
+            JSONObject params = new JSONObject();
+            params.put("type", type);
+            params.put("title", title);
+            params.put("content", content);
+            params.put("category", category);
+            params.put("price", price);
+            params.put("number", number);
+            params.put("place", place);
+            JSONObject coordinate = new JSONObject();
+            coordinate.put("latitude", latitude);
+            coordinate.put("longitude", longitude);
+            params.put("coordinate", coordinate);
+            params.put("isPrivate", isPrivate);
+
+            StringEntity entity = new StringEntity(params.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            client.addHeader("x-access-token", token);
+            client.put(null, SERVER_ADDR + String.format("/templates/%s", tid), entity, "application/json", handler);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void GetOrderList(String uid, String status, String keyword, String acceptUser, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s", uid, status, keyword, acceptUser), null, handler);
     }
 
     public void GetDefaultOrdersList(String token, AsyncHttpResponseHandler handler) {

@@ -45,6 +45,7 @@ import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
 import com.example.kevin.mapapplication.ui.userinfo.FriendsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.NotificationsActivity;
+import com.example.kevin.mapapplication.ui.userinfo.OrdersActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.TemplatesActivity;
@@ -465,7 +466,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         detail.setEnabled(enable);
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -549,7 +549,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivityWithDelay(intent_2);
                 break;
             case R.id.navigation_history :
-                final Intent intent_3 = new Intent(this, HistoryActivity.class);
+                final Intent intent_3 = new Intent(this, OrdersActivity.class);
                 startActivityWithDelay(intent_3);
                 break;
             case R.id.navigation_friends :

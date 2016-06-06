@@ -40,6 +40,8 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +146,15 @@ public class FriendsActivity extends AppCompatActivity {
                     }
                 }
 
+                Comparator<CustomListItem> comparator = new Comparator<CustomListItem>() {
+                    @Override
+                    public int compare(CustomListItem lhs, CustomListItem rhs) {
+                        return lhs.text.compareTo(rhs.text);
+                    }
+                };
+                Collections.sort(pendinglist, comparator);
+                Collections.sort(waitinglist, comparator);
+                Collections.sort(acceptedlist, comparator);
 
                 CustomListViewAdapter waitinglistAdapter = new CustomListViewAdapter(FriendsActivity.this, R.layout.listview_item_waiting_friends, waitinglist) {
                     @Override
