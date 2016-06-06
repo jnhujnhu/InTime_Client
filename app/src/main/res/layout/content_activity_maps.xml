@@ -77,7 +77,8 @@
             android:layout_height="match_parent"
             android:text="@string/Mask_actionbar_title"
             android:textSize="20sp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:id="@+id/mask_header" />
     </RelativeLayout>
 
     <ListView

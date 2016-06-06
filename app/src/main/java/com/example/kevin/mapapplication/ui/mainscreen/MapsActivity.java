@@ -125,9 +125,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
         m_bundle = getIntent().getExtras();
-        if(m_bundle!=null && m_bundle.getBoolean("forResult") && m_bundle.getString("state").equals("add")) {
+        if(m_bundle!=null &&(m_bundle.getString("state").equals("modify")||m_bundle.getString("state").equals("showOne"))) {
             InitParams();
         }
         else {
@@ -175,6 +174,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setState(Bundle bundle) {
         String state = bundle.getString("state");
+        boolean isMarkerDraggable = true;
+        String Custom_Place = null;
         assert state != null;
         switch (state) {
             case "show":
@@ -190,16 +191,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 app_state = "add";
                 drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 float color = bundle.getFloat("color");
-                addMarkerAndRelatedListener(color, true, false, true, 0, 0);
+                addMarkerAndRelatedListener(color, true, false, true, true, null, 0, 0);
                 Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
-                setInfoWindowWithPlaceDetail(false, null, null);
+                setInfoWindowWithPlaceDetail(false, null,  null, null);
                 modifyScreen(false);
                 break;
+            case "showOne":
+                Fab.setVisibility(View.GONE);
+                isMarkerDraggable = false;
+                Custom_Place = bundle.getString("place");
+                TextView Header = (TextView) findViewById(R.id.mask_header);
+                Header.setText("Position");
             case "modify":
                 app_state = "modify";
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 modifyScreen(false);
-                setInfoWindowWithPlaceDetail(false, null, null);
-                addMarkerAndRelatedListener(bundle.getFloat("color"), false, true, false, bundle.getDouble("latitude"), bundle.getDouble("longitude"));
+                setInfoWindowWithPlaceDetail(false, null, null, null);
+                addMarkerAndRelatedListener(bundle.getFloat("color"), false, true, false, isMarkerDraggable, Custom_Place, bundle.getDouble("latitude"), bundle.getDouble("longitude"));
                 tagButtonManager.hideTagButton();
                 Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
                 ImageButton back = (ImageButton) findViewById(R.id.btn_back);
@@ -224,8 +232,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
                     }
                 });
-                break;
-            case "watch":
                 break;
         }
     }
@@ -261,7 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                     FocusedMarkerPlaceName = premise_name;
-                    setInfoWindowWithPlaceDetail(true, premise_name, district_name);
+                    setInfoWindowWithPlaceDetail(true, null, premise_name, district_name);
 
                     /////////Manual Refresh.....//////////
                     if (FocusedMarker.isInfoWindowShown()) {
@@ -281,7 +287,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ConnectionManager.getInstance().GetGeocodingPlace(FocusedMarker.getPosition(), handler);
     }
 
-    private void setInfoWindowWithPlaceDetail(final boolean enable, final String premise_name, final String district_name) {
+    private void setInfoWindowWithPlaceDetail(final boolean enable, final String Custom_Place, final String premise_name, final String district_name) {
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -302,6 +308,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             placename.setText(premise_name);
                             districtname.setText(district_name);
                         }
+                        if(Custom_Place != null) {
+                            placename.setText(Custom_Place);
+                            districtname.setVisibility(View.GONE);
+                        }
                         return v;
                     }
                 }
@@ -321,16 +331,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void addMarkerAndRelatedListener(final float Color, final boolean hasAnimation, final boolean hasDefaultPos, final boolean enableFab, final double latitude, final double longitude) {
+    private void addMarkerAndRelatedListener(final float Color, final boolean hasAnimation, final boolean hasDefaultPos, final boolean enableFab, final boolean isMarkerDraggable, final String Custom_Place, final double latitude, final double longitude) {
         int Anim_Delay = 500;
         if(!hasAnimation) {
             Anim_Delay = 0;
         }
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                final Marker marker = addEventTag(Color, hasAnimation, hasDefaultPos, latitude, longitude);
+                final Marker marker = addEventTag(Color, hasAnimation, hasDefaultPos, isMarkerDraggable, latitude, longitude);
                 FocusedMarker = marker;
-                setInfoWindowWithPlaceDetail(true, null, null);
+
+                setInfoWindowWithPlaceDetail(true, Custom_Place, null, null);
 
                 if(hasAnimation) {
                     new Handler().postDelayed(new Runnable() {
@@ -347,7 +358,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                     @Override
                     public void onMarkerDragStart(Marker marker) {
-                        setInfoWindowWithPlaceDetail(false, null, null);
+                        setInfoWindowWithPlaceDetail(false, null, null, null);
                         marker.hideInfoWindow();
                     }
 
@@ -358,13 +369,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     @Override
                     public void onMarkerDragEnd(Marker marker) {
-                        setInfoWindowWithPlaceDetail(true, null, null);
+                        setInfoWindowWithPlaceDetail(true, null, null, null);
                         marker.showInfoWindow();
                         getPlaceName();
                     }
                 });
-                getPlaceName();
-
+                if(Custom_Place == null) {
+                    getPlaceName();
+                }
                 if(enableFab) {
                     Fab.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -403,12 +415,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }, Anim_Delay);
     }
 
-    private Marker addEventTag(float Color, final boolean hasAnimation, boolean hasDefaultPos, double latitude, double longitude) {
+    private Marker addEventTag(float Color, final boolean hasAnimation, boolean hasDefaultPos, boolean isMarkerDraggable, double latitude, double longitude) {
         LatLng target = mMap.getCameraPosition().target;
         if(hasDefaultPos) {
             target = new LatLng(latitude, longitude);
         }
-        final Marker marker = mMap.addMarker(new MarkerOptions().draggable(true)
+        final Marker marker = mMap.addMarker(new MarkerOptions().draggable(isMarkerDraggable)
                 .icon(BitmapDescriptorFactory.defaultMarker(Color))
                 .position(target));
         if(hasAnimation) {
@@ -467,11 +479,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         m_bundle = getIntent().getExtras();
-        if(m_bundle!=null && m_bundle.getBoolean("forResult") && m_bundle.getString("state").equals("add")) {
+        if(m_bundle!=null && (m_bundle.getString("state").equals("modify")||m_bundle.getString("state").equals("showOne"))) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(m_bundle.getDouble("latitude"), m_bundle.getDouble("longitude")), ZoomLevel));
+            mMap.getUiSettings().setMapToolbarEnabled(false);
             Mapinit_location();
             app_state = "modify";
-            m_bundle.putString("state", "modify");
             setState(m_bundle);
         }
         else {
@@ -654,7 +666,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     JSONObject order = orders_list.getJSONObject(i);
                     order.put("Id", i + 1);
                     Marker marker = mMap.addMarker(new MarkerOptions().position(CurrentPosition));
-                    MarkerManager.getInstance().Put(marker, order);
+                    MarkerManager.getInstance().Put(order);
                     switch (MarkerManager.getInstance().Get(marker.getId()).optString("type")) {
                         case "request":
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
@@ -838,23 +850,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        //////////////To enable update of the marker position//////////////
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-
-            }
-        });
-
         setInfoWindowListener(true);
 
         setDefaultMarkers();
@@ -911,8 +906,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.openDrawer(GravityCompat.START);
     }
-
-
-
 
 }

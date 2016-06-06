@@ -17,6 +17,12 @@ import com.google.android.gms.maps.model.Marker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by Kevin on 3/12/16.
  */
@@ -90,7 +96,15 @@ public class TaginfoDialog {
         u_dcpt.setText("                      " + description);
         u_points.setText(Integer.toString(point));
         u_enrollment.setText(Integer.toString(enrollment));
-        u_exptime.setText(exptime);
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH);
+        try {
+            cal.setTime(sdf.parse(exptime));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        ////
+        u_exptime.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d-%02d", Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR, Calendar.MINUTE));
         u_place.setText(place);
 
         /*if (type.equals("offer")) {
