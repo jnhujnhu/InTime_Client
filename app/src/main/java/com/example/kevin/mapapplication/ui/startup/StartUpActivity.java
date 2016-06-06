@@ -98,17 +98,24 @@ public class StartUpActivity extends AppCompatActivity {
         subtitle = (TextView) findViewById(R.id.subtitle);
         title.startAnimation(fadein);
 
-        new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(2000);
-                    TitleSlideUpHandler.sendMessage(new Message());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Animation slideup = AnimationUtils.loadAnimation(StartUpActivity.this, R.anim.slide_up);
+                slideup.setFillAfter(true);
+                title.startAnimation(slideup);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Animation fadeinF = AnimationUtils.loadAnimation(StartUpActivity.this, R.anim.fade_in_fast);
+                        fadeinF.setFillAfter(true);
+                        login_panel.startAnimation(fadeinF);
+                        subtitle.startAnimation(fadeinF);
+                        EnableLoginPanel();
+                    }
+                }, 1100);
             }
-        }).start();
+        }, 2000);
 
         login_btn = (Button) findViewById(R.id.login_btn);
         register_btn = (Button) findViewById(R.id.register_btn);
@@ -265,34 +272,4 @@ public class StartUpActivity extends AppCompatActivity {
         }
         register_panel.setVisibility(View.VISIBLE);
     }
-
-    Handler TitleSlideUpHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Animation slideup = AnimationUtils.loadAnimation(StartUpActivity.this, R.anim.slide_up);
-            slideup.setFillAfter(true);
-            title.startAnimation(slideup);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1100);
-                        PanelFadeInHandler.sendMessage(new Message());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-    };
-    Handler PanelFadeInHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Animation fadeinF = AnimationUtils.loadAnimation(StartUpActivity.this, R.anim.fade_in_fast);
-            fadeinF.setFillAfter(true);
-            login_panel.startAnimation(fadeinF);
-            subtitle.startAnimation(fadeinF);
-            EnableLoginPanel();
-        }
-    };
 }

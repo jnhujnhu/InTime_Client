@@ -48,49 +48,58 @@ public class TaginfoDialog {
                 .setView(layout);
         final DialogInterface dialog = builder.show();
         String id = marker.getId();
-            final JSONObject data = MarkerManager.getInstance().Get(id);
-            String color = (String) data.get("Color");
-            String title = (String) data.get("ShortTitle");
-            String type = (String) data.get("Type");
-            int reward = (int) data.get("Reward");
-            String description = (String) data.get("DetailedDcpt");
+        final JSONObject data = MarkerManager.getInstance().Get(id);
+        String type = data.optString("type");
+        String title = data.optString("title");
+        String category = data.optString("category");
+        int point = data.optInt("points");
+        int enrollment = data.optInt("number");
+        String exptime = data.optString("time");
+        String description = data.optString("content");
+        String place = data.optString("place");
 
 
-            TextView u_title = (TextView) layout.findViewById(R.id.dialog_title);
-            TextView u_type = (TextView) layout.findViewById(R.id.dialog_type);
-            TextView u_dcpt = (TextView) layout.findViewById(R.id.dialog_description);
-            TextView u_reward = (TextView) layout.findViewById(R.id.dialog_reward);
-            ImageView u_image = (ImageView) layout.findViewById(R.id.dialog_imagetag);
-            Button accept = (Button) layout.findViewById(R.id.dialog_accept);
-            Button cancel = (Button) layout.findViewById(R.id.dialog_cancel);
+        TextView u_title = (TextView) layout.findViewById(R.id.dialog_title);
+        TextView u_category = (TextView) layout.findViewById(R.id.dialog_category);
+        TextView u_dcpt = (TextView) layout.findViewById(R.id.dialog_description);
+        TextView u_points = (TextView) layout.findViewById(R.id.dialog_points);
+        TextView u_enrollment = (TextView) layout.findViewById(R.id.dialog_enrollment);
+        TextView u_exptime = (TextView) layout.findViewById(R.id.dialog_exptime);
+        TextView u_place = (TextView) layout.findViewById(R.id.dialog_destination);
+        //ImageView u_image = (ImageView) layout.findViewById(R.id.dialog_imagetag);
+        Button accept = (Button) layout.findViewById(R.id.dialog_accept);
+        Button cancel = (Button) layout.findViewById(R.id.dialog_cancel);
 
-            accept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onaccept.DrawDirectionAndSet(data);
-                    taskInformer.ShowTaskInformer();
-                    dialog.dismiss();
-                }
-            });
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-
-            u_title.setText(title);
-            u_type.setText(type);
-            u_dcpt.setText("                      " + description);
-            u_reward.setText(Integer.toString(reward));
-
-            if (color.equals("Green")) {
-                u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_greentag));
-            } else if (color.equals("Blue")) {
-                u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_bluetag));
-            } else {
-                u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_redtag));
+        accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onaccept.DrawDirectionAndSet(data);
+                taskInformer.ShowTaskInformer();
+                dialog.dismiss();
             }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        u_title.setText(title);
+        u_category.setText(category);
+        u_dcpt.setText("                      " + description);
+        u_points.setText(Integer.toString(point));
+        u_enrollment.setText(Integer.toString(enrollment));
+        u_exptime.setText(exptime);
+        u_place.setText(place);
+
+        /*if (type.equals("offer")) {
+            u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_greentag));
+        } else if (type.equals("prompt")) {
+            u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_bluetag));
+        } else {
+            u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_redtag));
+        }*/
     }
 
 }

@@ -26,19 +26,6 @@
                 tools:context=".ui.mainscreen.MapsActivity" />
         </LinearLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_addbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="15dp"
-            android:src="@drawable/ic_addtag"
-            android:clickable="true"
-            app:backgroundTint="#4654f4"
-            app:fabSize="normal"
-            app:rippleColor="#4693e7"
-            app:pressedTranslationZ="6dp"
-            app:elevation="6dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_locationbutton"
@@ -53,8 +40,21 @@
             app:backgroundTint="#e6e6e6"
             app:rippleColor="#a1a1a1"
             app:pressedTranslationZ="3dp"
-            app:elevation="2dp" />
+            app:elevation="4dp" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_addbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_addtag"
+            android:clickable="true"
+            app:backgroundTint="#4654f4"
+            app:fabSize="normal"
+            app:rippleColor="#4693e7"
+            app:pressedTranslationZ="6dp"
+            app:elevation="4dp" />
     </android.support.design.widget.CoordinatorLayout>
 
     <RelativeLayout
@@ -63,6 +63,15 @@
         android:background="@drawable/bg_querybar"
         android:id="@+id/action_bar_mask"
         android:visibility="gone">
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/custom_actionbar_icon_margin"
+            android:padding="@dimen/custom_actionbar_icon_padding"
+            android:src="@drawable/ic_actionbar_back"
+            android:background="@drawable/bg_backbutton"
+            android:visibility="gone" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -163,4 +172,14 @@
         android:transitionName="greentag"
         android:enabled="false"/>
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/main_loading"
+        android:indeterminateTint="#f8f8f8"
+        android:indeterminateTintMode="src_atop"
+        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>

@@ -1,26 +1,14 @@
 package com.example.kevin.mapapplication.model;
 
-import android.app.Application;
-import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
-
-import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 
-/**
- * Created by Kevin on 5/23/16.
- */
 public class ConnectionManager {
 
     private static final String SERVER_ADDR = "http://intime.halcyons.org:3000/api";
@@ -198,4 +186,14 @@ public class ConnectionManager {
         client.addHeader("x-access-token", token);
         client.get(SERVER_ADDR + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s", uid, status, keyword, acceptUser), null, handler);
     }
+
+    public void GetDefaultOrdersList(String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + "/orders?status=waiting", null, handler);
+    }
+
+    public void GetGeocodingPlace(LatLng coordinate, AsyncHttpResponseHandler handler) {
+        client.get(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&key=AIzaSyD3e_Fju-Zpocen-WIW7-PWY8YNKczIgwA", coordinate.latitude, coordinate.longitude), null, handler);
+    }
+
 }
