@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -96,15 +97,16 @@ public class TaginfoDialog {
         u_dcpt.setText("                      " + description);
         u_points.setText(Integer.toString(point));
         u_enrollment.setText(Integer.toString(enrollment));
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH);
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         try {
-            cal.setTime(sdf.parse(exptime));
+            Log.i("date", exptime);
+            Date date = inputFormat.parse(exptime);
+            u_exptime.setText(outputFormat.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         ////
-        u_exptime.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d-%02d", Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR, Calendar.MINUTE));
         u_place.setText(place);
 
         /*if (type.equals("offer")) {

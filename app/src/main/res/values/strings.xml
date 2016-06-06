@@ -73,7 +73,7 @@
     <string name="Nav_item_friends">Friends</string>
     <string name="Nav_item_templates">Templates</string>
     <string name="Nav_item_wallet">Wallet</string>
-    <string name="Nav_item_history">History</string>
+    <string name="Nav_item_history">Orders</string>
     <string name="Nav_item_promotion">Promotion</string>
     <string name="Nav_item_help">Help</string>
     <string name="Nav_item_setting">Setting</string>
