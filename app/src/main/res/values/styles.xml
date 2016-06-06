@@ -44,15 +44,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="RedDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+    <style name="RedPickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
         <item name="android:colorAccent">@color/colorRedEvent</item>
     </style>
 
-    <style name="GreenDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+    <style name="GreenPickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
         <item name="android:colorAccent">@color/colorGreenEvent</item>
     </style>
 
-    <style name="BlueDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+    <style name="BluePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
         <item name="android:colorAccent">@color/colorBlueEvent</item>
     </style>
 

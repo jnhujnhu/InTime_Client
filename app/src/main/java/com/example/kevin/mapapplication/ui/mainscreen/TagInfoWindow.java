@@ -34,26 +34,29 @@ public class TagInfoWindow {
         TextView type = new TextView(context);
         TextView cost = new TextView(context);
 
-
-        JSONObject mdata = MarkerManager.getInstance().Get(marker.getId());
-        if(mdata.optInt("Id") == 0) {
-            return null;
-        }
-        else {
-            if(mdata.optString("type").equals("offer")) {
-                infoimage.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_greentag));
-            }
-            else if(mdata.optString("type").equals("prompt")) {
-                infoimage.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_bluetag));
+        try {
+            JSONObject mdata = MarkerManager.getInstance().Get(marker.getId());
+            if(mdata.optInt("Id") == 0) {
+                return null;
             }
             else {
-                infoimage.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_redtag));
+                if(mdata.optString("type").equals("offer")) {
+                    infoimage.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_greentag));
+                }
+                else if(mdata.optString("type").equals("prompt")) {
+                    infoimage.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_bluetag));
+                }
+                else {
+                    infoimage.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_redtag));
+                }
+                shorttitle.setText(mdata.optString("title"));
+                type.setText(mdata.optString("category"));
+                cost.setText("Points: " + Integer.toString(mdata.optInt("points")) + " Points");
             }
-            shorttitle.setText(mdata.optString("title"));
-            type.setText(mdata.optString("category"));
-            cost.setText("Points: " + Integer.toString(mdata.optInt("points")) + " Points");
-        }
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         infoimage.setPadding(0, 15, 0, 0);
 
         shorttitle.setTextSize(16);

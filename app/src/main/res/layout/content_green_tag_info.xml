@@ -91,7 +91,8 @@
         android:nestedScrollingEnabled="true"
         android:textCursorDrawable="@drawable/cc_greenpipe"
         android:theme="@style/MyAppThemeGreen"
-        android:gravity="top" />
+        android:gravity="top"
+        android:layout_alignParentStart="false" />
 
     <TextView
         android:layout_width="130dp"
@@ -219,10 +220,9 @@
         android:layout_height="45dp"
         android:text="Place: "
         android:id="@+id/tag_place_label"
-        android:gravity="center_vertical"
         android:layout_below="@+id/tag_date_label"
         android:layout_alignParentStart="true"
-        android:paddingLeft="35dp" />
+        android:gravity="center" />
 
     <EditText
         android:layout_width="match_parent"
@@ -232,7 +232,8 @@
         android:textCursorDrawable="@drawable/cc_greenpipe"
         android:theme="@style/MyAppThemeGreen"
         android:layout_alignTop="@+id/tag_place_label"
-        android:layout_toRightOf="@+id/tag_place_label" />
+        android:layout_toRightOf="@+id/tag_place_label"
+        android:layout_toLeftOf="@+id/tag_map_btn" />
 
     <Button
         android:layout_width="45dp"
@@ -244,9 +245,8 @@
         android:textColor="#8f8f8f"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:layout_alignParentEnd="false"
+        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/tag_place_label"
-        android:layout_marginTop="6dp"
-        android:layout_toLeftOf="@+id/tag_place" />
+        android:layout_marginTop="6dp" />
 
 </RelativeLayout>

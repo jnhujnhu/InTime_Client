@@ -1,5 +1,7 @@
 package com.example.kevin.mapapplication.ui.mainscreen.tag;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +10,10 @@ import android.transition.Slide;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
@@ -17,6 +21,8 @@ import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 import com.example.kevin.mapapplication.utils.HorizontalPicker;
 
 import org.json.JSONException;
+
+import java.util.Calendar;
 
 public class TagInfoActivity extends AppCompatActivity {
 
@@ -35,9 +41,11 @@ public class TagInfoActivity extends AppCompatActivity {
     protected CheckBox Template;
     protected Intent intent;
 
-    protected String Placename;
+    protected String Placename, Class, oid, tid, b_title, b_category, b_price, b_exptime, b_content;
+    protected int b_enrollment;
+    protected boolean b_privacy, b_template;
     protected double Latitude, Longitude;
-
+    protected int Year, Month, Day, Hour, Minute;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -56,7 +64,7 @@ public class TagInfoActivity extends AppCompatActivity {
         }
     }
 
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTagView();
@@ -78,16 +86,63 @@ public class TagInfoActivity extends AppCompatActivity {
     }
     protected void setOnBackIntent() {}
 
-    protected void setDateSeletor() {}
+    protected void setDateSelector(final int Theme) {
+        DateSelector.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                new DatePickerDialog(TagInfoActivity.this, Theme, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Year = year;
+                        Month = monthOfYear;
+                        Day = dayOfMonth;
+                        Calendar c = Calendar.getInstance();
+                        new TimePickerDialog(TagInfoActivity.this, Theme,
+                                new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                        Hour = hourOfDay;
+                                        Minute = minute;
+                                        DateSelector.setText(String.format("%d-%d-%d %02d:%02d", Year, Month, Day, Hour, Minute));
+                                    }
+                                }
+                                , c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                                true).show();
+                    }
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar
+                        .get(Calendar.DAY_OF_MONTH)).show();
+
+            }
+        });
+    }
+    protected void chooseDateSelectorTheme() {}
 
     protected void setTagView() {}
 
-    protected void setMapBtnIntent(Intent map_intent) {
-
-    }
-
+    protected void setMapBtnIntent(Intent map_intent) {}
 
     protected void buildData(String title, String category, int enrollment, int point, String content, String time, boolean isprivate) throws JSONException {}
+
+    private boolean checkForm() {
+        if(shorttitle.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Title cannot be empty.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if(Place.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Price cannot be empty.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if(DetailedDcpt.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Content cannot be empty.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if(Place.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Place cannot be empty.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
 
     private void SetButtonListener() {
         Button submit, cancel;
@@ -110,20 +165,32 @@ public class TagInfoActivity extends AppCompatActivity {
         Latitude = bundle.getDouble("latitude");
         Longitude = bundle.getDouble("longitude");
 
+        Class = bundle.getString("class");
+        oid = bundle.getString("oid");
+        tid = bundle.getString("tid");
+        b_category = bundle.getString("category");
+        b_title = bundle.getString("title");
+        b_content = bundle.getString("content");
+        b_privacy = bundle.getBoolean("isPrivate");
+        b_template = bundle.getBoolean("isTemplate");
+        b_price = bundle.getString("points");
+        b_enrollment = bundle.getInt("number");
+        b_exptime = bundle.getString("time");
+
         Place.setText(Placename);
         if(enrollment!=null) {
             enrollment.setSelectedItem(0);
         }
 
         intent = new Intent();
-        setDateSeletor();
+
+        chooseDateSelectorTheme();
 
         MapPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent map_intent = new Intent(TagInfoActivity.this, MapsActivity.class);
-                map_intent.putExtra("state", "add");
-                map_intent.putExtra("forResult", true);
+                map_intent.putExtra("state", "modify");
                 map_intent.putExtra("latitude", Latitude);
                 map_intent.putExtra("longitude", Longitude);
                 setMapBtnIntent(map_intent);
@@ -147,24 +214,13 @@ public class TagInfoActivity extends AppCompatActivity {
                 String t_detail = DetailedDcpt.getText().toString();
                 boolean template = Template.isChecked();
 
+                if(Class.equals("template") && tid == null) {
 
-                if (t_shorttile.equals("")) {
-                    Toast.makeText(TagInfoActivity.this, "Short Title cannot be empty.", Toast.LENGTH_SHORT).show();
-                } else if (t_price.equals("")) {
-                    Toast.makeText(TagInfoActivity.this, "Reward cannot be empty.", Toast.LENGTH_SHORT).show();
-                } else if (t_detail.equals("")) {
-                    Toast.makeText(TagInfoActivity.this, "Description cannot be empty.", Toast.LENGTH_SHORT).show();
-                } else {
-                    /*try {
-                        int id = MarkerManager.getInstance().getID();
-                        buildData(t_shorttile, t_category, );
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }*/
-                    intent.putExtra("IsCanceled", false);
-                    TagInfoActivity.this.onBackPressed();
                 }
+
+                intent.putExtra("IsCanceled", false);
+                TagInfoActivity.this.onBackPressed();
+
             }
         });
         assert cancel != null;

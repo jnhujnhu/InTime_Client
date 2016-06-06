@@ -5,14 +5,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
-import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -23,17 +19,14 @@ public class MarkerManager {
 
     private static MarkerManager mInstance;
 
-    private Map<Integer, Marker> mMarkerMap;
-
     public int index;
 
     private JSONArray mMarkerData;
 
 
     private MarkerManager() {
-        index = 1;
+        index = 0;
         mMarkerData = new JSONArray();
-        mMarkerMap = new HashMap<>();
         try {
             InitData();
         } catch (JSONException e) {
@@ -55,7 +48,7 @@ public class MarkerManager {
         jsonObject.put("content", Content);
         jsonObject.put("time", Time);
         jsonObject.put("isPrivate", isPrivate);
-        //Put(jsonObject);
+        Put(jsonObject);
         return jsonObject;
     }
 
@@ -86,7 +79,7 @@ public class MarkerManager {
 
         LocationMarker.put("Id", 0);
         LocationMarker.put("Dcpt", "Your Location");
-        mMarkerData.put(index, LocationMarker);
+        Put(LocationMarker);
 
         //////////////////TEST_ONLY(Could change to HTTP_GET from server)//////////////
         /*JSONObject ExampleGreen = new JSONObject(), ExampleBlue = new JSONObject(), ExampleRed = new JSONObject();
@@ -123,21 +116,14 @@ public class MarkerManager {
 
     }
 
-    public void Put (Marker marker, JSONObject markerdetail) throws JSONException {
+    public void Put (JSONObject markerdetail) throws JSONException {
         mMarkerData.put(index, markerdetail);
-        mMarkerMap.put(index, marker);
         index ++;
     }
 
-
-    public JSONObject Get(String markerid) {
+    public JSONObject Get(String markerid) throws JSONException{
         int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));
-        return mMarkerData.optJSONObject(markerindex);
-    }
-
-    public Marker GetMarker(String markerid) {
-        int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));
-        return  mMarkerMap.get(markerindex);
+        return (JSONObject) mMarkerData.get(markerindex);
     }
 
     public static synchronized MarkerManager getInstance() {

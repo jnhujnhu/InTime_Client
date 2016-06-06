@@ -1,37 +1,25 @@
 package com.example.kevin.mapapplication.ui.mainscreen.tag;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import com.example.kevin.mapapplication.R;
-import com.example.kevin.mapapplication.model.MarkerManager;
-import com.example.kevin.mapapplication.utils.HorizontalPicker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import org.json.JSONException;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 public class RedTagInfoActivity extends TagInfoActivity {
 
     @Override
-    protected void setDateSeletor() {
-        DateSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(RedTagInfoActivity.this, R.style.RedDatePickerDialogTheme, null, 2016, 5, 27).show();
-            }
-        });
+    protected void chooseDateSelectorTheme() {
+        setDateSelector(R.style.RedPickerDialogTheme);
     }
 
     @Override
