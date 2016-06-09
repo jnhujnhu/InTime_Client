@@ -19,19 +19,13 @@ public class MarkerManager {
 
     private static MarkerManager mInstance;
 
-    public int index;
-
     private JSONArray mMarkerData;
 
+    private int locationmarkerid;
 
     private MarkerManager() {
-        index = 0;
+        locationmarkerid = 0;
         mMarkerData = new JSONArray();
-        try {
-            InitData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -48,7 +42,6 @@ public class MarkerManager {
         jsonObject.put("content", Content);
         jsonObject.put("time", Time);
         jsonObject.put("isPrivate", isPrivate);
-        Put(jsonObject);
         return jsonObject;
     }
 
@@ -60,27 +53,15 @@ public class MarkerManager {
         Get(markerid).put("place", Place);
     }*/
 
-    public int getID() {
-        return index;
+    public void setLocationMarkerid(String locationMarkerid) {
+        locationmarkerid = Integer.parseInt(locationMarkerid.substring(1, locationMarkerid.length()));
     }
 
-    public void Restore() {
-        mMarkerData = new JSONArray();
-        index = 0;
-        try {
-            InitData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public String getLocationMarkerid() {
+        return "m" + locationmarkerid;
     }
 
     private void InitData() throws JSONException{
-        JSONObject LocationMarker = new JSONObject();
-
-        LocationMarker.put("Id", 0);
-        LocationMarker.put("Dcpt", "Your Location");
-        Put(LocationMarker);
-
         //////////////////TEST_ONLY(Could change to HTTP_GET from server)//////////////
         /*JSONObject ExampleGreen = new JSONObject(), ExampleBlue = new JSONObject(), ExampleRed = new JSONObject();
         ExampleGreen.put("Id", 1);
@@ -116,13 +97,16 @@ public class MarkerManager {
 
     }
 
-    public void Put (JSONObject markerdetail) throws JSONException {
-        mMarkerData.put(index, markerdetail);
-        index ++;
+    public void Put (String markerid, JSONObject markerdetail) throws JSONException {
+        int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));
+        mMarkerData.put(markerindex, markerdetail);
     }
 
     public JSONObject Get(String markerid) throws JSONException{
         int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));
+        if (markerindex == locationmarkerid) {
+            return null;
+        }
         return (JSONObject) mMarkerData.get(markerindex);
     }
 

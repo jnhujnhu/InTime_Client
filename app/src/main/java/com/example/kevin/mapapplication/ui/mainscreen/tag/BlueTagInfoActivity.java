@@ -28,6 +28,11 @@ public class BlueTagInfoActivity extends TagInfoActivity {
     protected void setOnBackIntent(){
         intent.putExtra("Color", "Blue");
     }
+
+    @Override
+    protected String setType() {
+        return "prompt";
+    }
 }
 
 

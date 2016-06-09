@@ -249,4 +249,18 @@
         android:layout_alignTop="@+id/tag_place_label"
         android:layout_marginTop="6dp" />
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/tag_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
+
 </RelativeLayout>

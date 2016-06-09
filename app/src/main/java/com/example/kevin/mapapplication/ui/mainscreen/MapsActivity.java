@@ -157,6 +157,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (bundle.getBoolean("IsCanceled")) {
                         FocusedMarker.remove();
                     }
+                    else {
+                        restoreMapAndsetMarkers();
+                    }
                     break;
                 case UserDetailActivity.RESULT_CODE:
                     bundle = data.getExtras();
@@ -207,7 +210,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 modifyScreen(false);
                 setInfoWindowWithPlaceDetail(false, null, null, null);
-                addMarkerAndRelatedListener(bundle.getFloat("color"), false, true, false, isMarkerDraggable, Custom_Place, bundle.getDouble("latitude"), bundle.getDouble("longitude"));
+                Double mod_latitude = bundle.getDouble("latitude", 200), mod_longitude = bundle.getDouble("longitude", 200);
+                boolean hasAnimation = false;
+                if (mod_latitude == 200) {
+                    mod_latitude = CurrentPosition.latitude;
+                    mod_longitude = CurrentPosition.longitude;
+                    hasAnimation = true;
+                }
+                addMarkerAndRelatedListener(bundle.getFloat("color"), hasAnimation, true, false, isMarkerDraggable, Custom_Place, mod_latitude, mod_longitude);
                 tagButtonManager.hideTagButton();
                 Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
                 ImageButton back = (ImageButton) findViewById(R.id.btn_back);
@@ -349,7 +359,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void run() {
                             FocusedMarker.showInfoWindow();
                         }
-                    }, 900);
+                    }, 10);
                 }
                 else {
                     FocusedMarker.showInfoWindow();
@@ -386,6 +396,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (Color == BitmapDescriptorFactory.HUE_BLUE) {
                                 final Intent intent = new Intent(MapsActivity.this, BlueTagInfoActivity.class);
                                 intent.putExtra("place", FocusedMarkerPlaceName);
+                                intent.putExtra("class", "order");
                                 intent.putExtra("latitude", marker.getPosition().latitude);
                                 intent.putExtra("longitude", marker.getPosition().longitude);
                                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MapsActivity.this
@@ -394,6 +405,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             } else if (Color == BitmapDescriptorFactory.HUE_RED) {
                                 final Intent intent = new Intent(MapsActivity.this, RedTagInfoActivity.class);
                                 intent.putExtra("place", FocusedMarkerPlaceName);
+                                intent.putExtra("class", "order");
                                 intent.putExtra("latitude", marker.getPosition().latitude);
                                 intent.putExtra("longitude", marker.getPosition().longitude);
                                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MapsActivity.this
@@ -402,6 +414,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             } else if (Color == BitmapDescriptorFactory.HUE_GREEN) {
                                 final Intent intent = new Intent(MapsActivity.this, GreenTagInfoActivity.class);
                                 intent.putExtra("place", FocusedMarkerPlaceName);
+                                intent.putExtra("class", "order");
                                 intent.putExtra("latitude", marker.getPosition().latitude);
                                 intent.putExtra("longitude", marker.getPosition().longitude);
                                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MapsActivity.this
@@ -480,9 +493,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         m_bundle = getIntent().getExtras();
         if(m_bundle!=null && (m_bundle.getString("state").equals("modify")||m_bundle.getString("state").equals("showOne"))) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(m_bundle.getDouble("latitude"), m_bundle.getDouble("longitude")), ZoomLevel));
-            mMap.getUiSettings().setMapToolbarEnabled(false);
             Mapinit_location();
+            setMyPositionMarker();
+            Double mod_latitude = m_bundle.getDouble("latitude", 200), mod_longitude = m_bundle.getDouble("longitude", 200);
+            if (mod_latitude == 200) {
+                mod_latitude = CurrentPosition.latitude;
+                mod_longitude = CurrentPosition.longitude;
+            }
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mod_latitude, mod_longitude), ZoomLevel));
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+
             app_state = "modify";
             setState(m_bundle);
         }
@@ -517,7 +537,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                MarkerManager.getInstance().Restore();
+               // MarkerManager.getInstance().Restore();
                 super.onBackPressed();
             }
         }
@@ -651,6 +671,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setFabFunction(false);
     }
 
+    private void restoreMapAndsetMarkers() {
+        mMap.clear();
+        Mapinit_location();
+        setMyPositionMarker();
+        setDefaultMarkers();
+    }
+
     private void setDefaultMarkers() {
         loading.setVisibility(View.VISIBLE);
         /////////////////////////////////GetDefaultOrdersList////////////////////////////////////////
@@ -664,9 +691,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 for(int i = 0;i < markers_num;i ++) {
                     JSONObject order = orders_list.getJSONObject(i);
-                    order.put("Id", i + 1);
                     Marker marker = mMap.addMarker(new MarkerOptions().position(CurrentPosition));
-                    MarkerManager.getInstance().Put(order);
+                    MarkerManager.getInstance().Put(marker.getId(), order);
                     switch (MarkerManager.getInstance().Get(marker.getId()).optString("type")) {
                         case "request":
                             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
@@ -780,7 +806,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        final ArrayAdapter adapter =new ArrayAdapter<String>(this, R.layout.listview_item_search, new String[]{"StarCraft II", "Dota", "LOL", "Football", "Basketball", "Piano"});
+        final ArrayAdapter adapter =new ArrayAdapter<>(this, R.layout.listview_item_search, new String[]{"StarCraft II", "Dota", "LOL", "Football", "Basketball", "Piano"});
 
         ListView listView = (ListView) findViewById(R.id.query_listview);
         listView.setAdapter(adapter);
@@ -802,10 +828,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         MyPositionCircle = mMap.addCircle(new CircleOptions().center(CurrentPosition)
                 .radius(CurrentAccuracy)
-                .fillColor(Color.argb(100, 91, 93, 255))
-                .strokeColor(Color.argb(80, 0, 0, 170)));
-        MyPositionMarker = mMap.addMarker(new MarkerOptions().position(CurrentPosition).title("Your Location")
+                .fillColor(Color.argb(30, 36, 132, 237))
+                .strokeWidth(1.5f)
+                .strokeColor(Color.argb(130, 36, 132, 246)));
+        MyPositionMarker = mMap.addMarker(new MarkerOptions().position(CurrentPosition)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        MarkerManager.getInstance().setLocationMarkerid(MyPositionMarker.getId());
     }
 
     private void Mapinit_location() {
@@ -833,10 +861,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setMyPositionMarker();
 
-        LatLng TestScene = new LatLng(31.19326239, 121.59417715);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(TestScene));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(TestScene, ZoomLevel));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(CurrentPosition));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -858,9 +884,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(app_state.equals("show") && !show_isMarkerClicker) {
-                    Toast.makeText(MapsActivity.this, "Tap on the Window to see more detail.", Toast.LENGTH_LONG).show();
-                    show_isMarkerClicker = true;
+                if(!marker.getId().equals(MarkerManager.getInstance().getLocationMarkerid())) {
+                    if (app_state.equals("show") && !show_isMarkerClicker) {
+                        Toast.makeText(MapsActivity.this, "Tap on the Bubble to see more detail.", Toast.LENGTH_LONG).show();
+                        show_isMarkerClicker = true;
+                    }
                 }
                 return false;
             }
@@ -872,7 +900,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onInfoWindowClick(Marker marker) {
                 if(enable) {
-                    if (!marker.getId().equals("m0")) {
+                    if (!marker.getId().equals(MarkerManager.getInstance().getLocationMarkerid())) {
                         try {
                             TaginfoDialog taginfoDialog = new TaginfoDialog(MapsActivity.this);
                             taginfoDialog.SetCallBack(MapsActivity.this);

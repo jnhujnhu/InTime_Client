@@ -3,7 +3,9 @@ package com.example.kevin.mapapplication.ui.mainscreen.tag;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
@@ -27,18 +29,19 @@ public class RedTagInfoActivity extends TagInfoActivity {
         map_intent.putExtra("color", BitmapDescriptorFactory.HUE_RED);
     }
 
-
     @Override
     protected void setTagView() {
         setContentView(R.layout.activity_red_tag_info);
     }
 
     @Override
-    protected void buildData(String title, String category, int enrollment, int point, String content, String time, boolean isprivate) throws JSONException {}
-
-    @Override
     protected void setOnBackIntent(){
         intent.putExtra("Color", "Red");
+    }
+
+    @Override
+    protected String setType() {
+        return "request";
     }
 
 }
