@@ -11,7 +11,9 @@
         android:text="Title: "
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:textSize="@dimen/dialog_normal_textsize"/>
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_toRightOf="@+id/dialog_imagetag"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,7 +21,8 @@
         android:text="Points: "
         android:id="@+id/textView15"
         android:layout_below="@+id/textView21"
-        android:textSize="@dimen/dialog_normal_textsize"/>
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_toRightOf="@+id/dialog_imagetag" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -28,7 +31,13 @@
         android:id="@+id/dialog_title"
         android:layout_toEndOf="@+id/textView2"
         android:textColor="#000000"
-        android:textSize="@dimen/dialog_normal_textsize"/>
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_alignTop="@+id/textView2"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,7 +79,8 @@
         android:text="Place: "
         android:id="@+id/textView16"
         android:layout_below="@+id/textView14"
-        android:textSize="@dimen/dialog_normal_textsize" />
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:layout_toRightOf="@+id/dialog_imagetag" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -90,7 +100,12 @@
         android:layout_below="@+id/textView14"
         android:layout_toEndOf="@+id/textView16"
         android:textColor="#000000"
-        android:textSize="@dimen/dialog_normal_textsize" />
+        android:textSize="@dimen/dialog_normal_textsize"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -99,24 +114,26 @@
         android:id="@+id/textView19"
         android:layout_alignParentStart="false"
         android:textSize="@dimen/dialog_normal_textsize"
-        android:layout_below="@+id/textView4" />
+        android:layout_below="@+id/textView4"
+        android:layout_alignLeft="@+id/textView4" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="                      something"
         android:id="@+id/dialog_description"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentStart="false"
         android:textColor="#000000"
         android:layout_alignParentEnd="true"
         android:textSize="@dimen/dialog_normal_textsize"
         android:layout_alignTop="@+id/textView19"
-        android:minHeight="180dp" />
+        android:minHeight="180dp"
+        android:layout_alignLeft="@+id/textView19" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accept"
+        android:text="Details"
         android:id="@+id/dialog_accept"
         android:textSize="12dp"
         android:layout_alignTop="@+id/dialog_cancel"
@@ -125,7 +142,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:text="Close"
         android:id="@+id/dialog_cancel"
         android:textSize="12dp"
         android:layout_below="@+id/dialog_description"
@@ -134,10 +151,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category: "
+        android:text="Type: "
         android:id="@+id/textView21"
         android:textSize="@dimen/dialog_normal_textsize"
-        android:layout_below="@+id/textView2" />
+        android:layout_below="@+id/textView2"
+        android:layout_toRightOf="@+id/dialog_imagetag" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -148,7 +166,12 @@
         android:layout_toEndOf="@+id/textView21"
         android:layout_alignTop="@+id/textView21"
         android:layout_toRightOf="@+id/textView21"
-        android:text="SomeType" />
+        android:text="SomeType"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -170,7 +193,9 @@
         android:text="Expiration Time: "
         android:id="@+id/textView4"
         android:textSize="@dimen/dialog_normal_textsize"
-        android:layout_below="@+id/textView16" />
+        android:layout_below="@+id/dialog_imagetag"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -181,4 +206,10 @@
         android:textSize="@dimen/dialog_normal_textsize"
         android:layout_alignTop="@+id/textView4"
         android:layout_toEndOf="@+id/textView4" />
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/dialog_imagetag"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

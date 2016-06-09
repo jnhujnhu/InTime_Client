@@ -137,7 +137,7 @@ public class ConnectionManager {
             params.put("title", title);
             params.put("content", content);
             params.put("category", category);
-            params.put("price", price);
+            params.put("points", price);
             params.put("number", number);
             params.put("place", place);
             params.put("time", time);
@@ -164,7 +164,7 @@ public class ConnectionManager {
             params.put("title", title);
             params.put("content", content);
             params.put("category", category);
-            params.put("price", price);
+            params.put("points", price);
             params.put("number", number);
             params.put("place", place);
             params.put("time", time);
@@ -191,7 +191,7 @@ public class ConnectionManager {
             params.put("title", title);
             params.put("content", content);
             params.put("category", category);
-            params.put("price", price);
+            params.put("points", price);
             params.put("number", number);
             params.put("place", place);
             params.put("time", time);
@@ -217,7 +217,7 @@ public class ConnectionManager {
             params.put("title", title);
             params.put("content", content);
             params.put("category", category);
-            params.put("price", price);
+            params.put("points", price);
             params.put("number", number);
             params.put("place", place);
             params.put("time", time);

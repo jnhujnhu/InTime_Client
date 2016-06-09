@@ -58,7 +58,7 @@ public class TagInfoActivity extends AppCompatActivity {
     protected double Latitude, Longitude;
     protected int Year, Month, Day, Hour, Minute;
     protected long t_time;
-    protected DatePickerDialog pickerDialog;
+    protected long DateSelectorClickDelta;
     protected SharedPreferences userinfo;
 
     @Override
@@ -101,12 +101,13 @@ public class TagInfoActivity extends AppCompatActivity {
     protected void setOnBackIntent() {}
 
     protected void setDateSelector(final int Theme) {
+        DateSelectorClickDelta = 0;
         DateSelector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                if(pickerDialog == null) {
-                    pickerDialog = new DatePickerDialog(TagInfoActivity.this, Theme, new DatePickerDialog.OnDateSetListener() {
+                if((DateSelectorClickDelta == 0 || System.currentTimeMillis() - DateSelectorClickDelta > 800)) {
+                    new DatePickerDialog(TagInfoActivity.this, Theme, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             Year = year;
@@ -119,8 +120,7 @@ public class TagInfoActivity extends AppCompatActivity {
                                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                             Hour = hourOfDay;
                                             Minute = minute;
-                                            DateSelector.setText(String.format(Locale.ENGLISH,"%d-%d-%d %02d:%02d", Year, Month, Day, Hour, Minute));
-                                            pickerDialog = null;
+                                            DateSelector.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d:%02d", Year, Month, Day, Hour, Minute));
                                             t_time = componentTimeToTimestamp(Year, Month, Day, Hour, Minute);
                                         }
                                     }
@@ -128,10 +128,9 @@ public class TagInfoActivity extends AppCompatActivity {
                                     true).show();
                         }
                     }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar
-                            .get(Calendar.DAY_OF_MONTH));
-                    pickerDialog.show();
+                            .get(Calendar.DAY_OF_MONTH)).show();
                 }
-
+                DateSelectorClickDelta = System.currentTimeMillis();
             }
         });
     }
@@ -146,23 +145,23 @@ public class TagInfoActivity extends AppCompatActivity {
 
     private boolean checkForm() {
         if(shorttitle.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Title cannot be empty.", Toast.LENGTH_LONG).show();
+            Toast.makeText(TagInfoActivity.this, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        else if(Place.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Price cannot be empty.", Toast.LENGTH_LONG).show();
-            return false;
-        }
-        else if(DetailedDcpt.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Content cannot be empty.", Toast.LENGTH_LONG).show();
-            return false;
-        }
-        else if(Place.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Place cannot be empty.", Toast.LENGTH_LONG).show();
+        else if(Price != null && Price.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Price cannot be empty.", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(DateSelector.getText().toString().equals("Pick a Time")) {
-            Toast.makeText(TagInfoActivity.this, "Please choose a time.", Toast.LENGTH_LONG).show();
+            Toast.makeText(TagInfoActivity.this, "Please choose a time.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(Place.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Place cannot be empty.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(DetailedDcpt.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Content cannot be empty.", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -214,7 +213,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                Toast.makeText(TagInfoActivity.this, "Successfully created order", Toast.LENGTH_LONG).show();
+                Toast.makeText(TagInfoActivity.this, "Successfully created " + type, Toast.LENGTH_SHORT).show();
                 intent.putExtra("IsCanceled", false);
                 TagInfoActivity.this.onBackPressed();
             }
@@ -234,7 +233,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                Toast.makeText(TagInfoActivity.this, "Successfully modified order", Toast.LENGTH_LONG).show();
+                Toast.makeText(TagInfoActivity.this, "Successfully modified " + type, Toast.LENGTH_SHORT).show();
                 intent.putExtra("IsCanceled", false);
                 TagInfoActivity.this.onBackPressed();
             }
@@ -292,7 +291,7 @@ public class TagInfoActivity extends AppCompatActivity {
         b_content = bundle.getString("content", "");
         b_privacy = bundle.getBoolean("isPrivate", false);
         b_template = bundle.getBoolean("isTemplate", false);
-        b_price = bundle.getInt("points", 0);
+        b_price = bundle.getInt("points", -1);
         b_enrollment = bundle.getInt("number", 0);
         b_exptime = bundle.getString("time", "Pick a Time");
         /////////////////////////////////////////////////////////////
@@ -312,8 +311,12 @@ public class TagInfoActivity extends AppCompatActivity {
         Place.setText(Placename);
         DetailedDcpt.setText(b_content);
         Privacy.setChecked(b_privacy);
-        Price.setText(Integer.toString(b_price));
-        enrollment.setSelectedItem(b_enrollment);
+        if(Price != null && b_price != -1) {
+            Price.setText(Integer.toString(b_price));
+        }
+        if(enrollment != null) {
+            enrollment.setSelectedItem(b_enrollment);
+        }
         DateSelector.setText(b_exptime);
 
         if(enrollment!=null) {
@@ -346,12 +349,21 @@ public class TagInfoActivity extends AppCompatActivity {
                 boolean privacy = Privacy.isChecked();
                 int number = 0;
                 if(enrollment!=null) {
-                    number = enrollment.getSelectedItem();
+                    number = enrollment.getSelectedItem() + 1;
                 }
-                int t_price = Integer.parseInt(Price.getText().toString());
+                int t_price = 0;
+                if(Price!=null) {
+                    if(Price.getText().toString().equals("")) {
+                        t_price = 0;
+                    }
+                    else {
+                        t_price = Integer.parseInt(Price.getText().toString());
+                    }
+                }
                 String t_category = category.getSelectedItem().toString();
                 String t_detail = DetailedDcpt.getText().toString();
                 boolean istemplate = Template.isChecked();
+                Placename = Place.getText().toString();
 
                 if(Class.equals("template") && tid.equals("")) {
                     createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
@@ -359,14 +371,18 @@ public class TagInfoActivity extends AppCompatActivity {
                 else if(Class.equals("template")) {
                     modifyTemplate(tid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                 }
-                else if(Class.equals("order") && oid.equals("") && checkForm()) {
-                    if(istemplate) {
-                        createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                else if(Class.equals("order") && oid.equals("")) {
+                    if(checkForm()) {
+                        createOrder(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                        if (istemplate) {
+                            createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                        }
                     }
-                    createOrder(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                 }
-                else if(Class.equals("order") && checkForm()) {
-                    modifyOrder(oid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                else if(Class.equals("order")) {
+                    if(checkForm()) {
+                        modifyOrder(oid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                    }
                 }
 
             }

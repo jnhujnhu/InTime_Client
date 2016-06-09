@@ -67,7 +67,7 @@
     <string name="title_activity_red_tag_info">+ REQUEST</string>
     <string name="title_activity_blue_tag_info">+ PROMPT</string>
     <string name="title_activity_green_tag_info">+ OFFER</string>
-    <string name="query_placeholder">Pretend that you can search..</string>
+    <string name="query_placeholder">Find something you need..</string>
     <string name="Search_result_title">Search Result For:</string>
     <string name="Nav_item_notifications">Notifications</string>
     <string name="Nav_item_friends">Friends</string>
