@@ -27,6 +27,11 @@ public class GreenTagInfoActivity extends TagInfoActivity {
     protected void setOnBackIntent(){
         intent.putExtra("Color", "Green");
     }
+
+    @Override
+    protected String setType() {
+        return "offer";
+    }
 }
 
 

@@ -3,7 +3,9 @@ package com.example.kevin.mapapplication.ui.mainscreen;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.MarkerManager;
+import com.example.kevin.mapapplication.ui.userinfo.OrderDetailActivity;
 import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONException;
@@ -29,10 +32,10 @@ import java.util.Locale;
  */
 public class TaginfoDialog {
 
-    private Context context;
+    private MapsActivity handle;
 
-    public TaginfoDialog (Context con) {
-        context = con;
+    public TaginfoDialog (MapsActivity con) {
+        handle = con;
     }
 
     public interface OnAcceptClickedCallBack {
@@ -47,15 +50,13 @@ public class TaginfoDialog {
 
     public void BuildDialog (Marker marker, final TaskInformer taskInformer) throws JSONException{
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(handle);
+        LayoutInflater inflater = LayoutInflater.from(handle);
         View layout = inflater.inflate(R.layout.dialog_tag_detail, null);
 
-        builder.setTitle("Details")
-                .setView(layout);
-        final DialogInterface dialog = builder.show();
         String id = marker.getId();
         final JSONObject data = MarkerManager.getInstance().Get(id);
+        final String oid = data.optString("oid");
         String type = data.optString("type");
         String title = data.optString("title");
         String category = data.optString("category");
@@ -65,24 +66,54 @@ public class TaginfoDialog {
         String description = data.optString("content");
         String place = data.optString("place");
 
+        builder.setTitle(type.toUpperCase())
+                .setView(layout);
+        final DialogInterface dialog = builder.show();
 
-        TextView u_title = (TextView) layout.findViewById(R.id.dialog_title);
-        TextView u_category = (TextView) layout.findViewById(R.id.dialog_category);
+        final TextView u_title = (TextView) layout.findViewById(R.id.dialog_title);
+        final TextView u_category = (TextView) layout.findViewById(R.id.dialog_category);
         TextView u_dcpt = (TextView) layout.findViewById(R.id.dialog_description);
         TextView u_points = (TextView) layout.findViewById(R.id.dialog_points);
         TextView u_enrollment = (TextView) layout.findViewById(R.id.dialog_enrollment);
         TextView u_exptime = (TextView) layout.findViewById(R.id.dialog_exptime);
-        TextView u_place = (TextView) layout.findViewById(R.id.dialog_destination);
-        //ImageView u_image = (ImageView) layout.findViewById(R.id.dialog_imagetag);
-        Button accept = (Button) layout.findViewById(R.id.dialog_accept);
+        final TextView u_place = (TextView) layout.findViewById(R.id.dialog_destination);
+        ImageView u_image = (ImageView) layout.findViewById(R.id.dialog_imagetag);
+        Button details = (Button) layout.findViewById(R.id.dialog_accept);
         Button cancel = (Button) layout.findViewById(R.id.dialog_cancel);
 
-        accept.setOnClickListener(new View.OnClickListener() {
+
+        u_title.setSelected(true);
+        u_category.setSelected(true);
+        u_place.setSelected(true);
+
+        /*u_title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onaccept.DrawDirectionAndSet(data);
+                u_title.setSelected(true);
+            }
+        });
+        u_category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                u_category.setSelected(true);
+            }
+        });
+        u_place.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                u_place.setSelected(true);
+            }
+        });*/
+
+        details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(handle, OrderDetailActivity.class);
+                intent.putExtra("oid", oid);
+                handle.startActivityForResult(intent, MapsActivity.REQUEST_CODE);
+                /*onaccept.DrawDirectionAndSet(data);
                 taskInformer.ShowTaskInformer();
-                dialog.dismiss();
+                dialog.dismiss();*/
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -109,13 +140,13 @@ public class TaginfoDialog {
         ////
         u_place.setText(place);
 
-        /*if (type.equals("offer")) {
-            u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_greentag));
+        if (type.equals("offer")) {
+            u_image.setImageDrawable(ContextCompat.getDrawable(handle.getApplicationContext(), R.drawable.ic_greentag_large));
         } else if (type.equals("prompt")) {
-            u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_bluetag));
+            u_image.setImageDrawable(ContextCompat.getDrawable(handle.getApplicationContext(), R.drawable.ic_bluetag_large));
         } else {
-            u_image.setImageDrawable(ContextCompat.getDrawable(context.getApplicationContext(), R.drawable.ic_redtag));
-        }*/
+            u_image.setImageDrawable(ContextCompat.getDrawable(handle.getApplicationContext(), R.drawable.ic_redtag_large));
+        }
     }
 
 }

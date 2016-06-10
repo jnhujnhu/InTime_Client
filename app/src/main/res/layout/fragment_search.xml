@@ -9,8 +9,8 @@
     <!-- TODO: Update blank fragment layout -->
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:id="@+id/user_detail"
         android:layout_alignParentTop="false"
         android:layout_alignParentLeft="true"
@@ -22,7 +22,7 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="34dp"
         android:id="@+id/queryinput"
         android:background="@drawable/bg_queryinput_border"
         android:layout_gravity="center_horizontal|top"
@@ -40,8 +40,8 @@
         android:layout_alignBottom="@+id/querystart" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:id="@+id/querystart"
         android:layout_gravity="right|top"
         android:layout_alignParentTop="true"

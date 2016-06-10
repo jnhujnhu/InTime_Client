@@ -3,26 +3,36 @@ package com.example.kevin.mapapplication.ui.mainscreen.tag;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
+import com.example.kevin.mapapplication.model.ConnectionManager;
 import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
+import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import com.example.kevin.mapapplication.utils.HorizontalPicker;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import cz.msebera.android.httpclient.Header;
 
 public class TagInfoActivity extends AppCompatActivity {
 
@@ -39,13 +49,17 @@ public class TagInfoActivity extends AppCompatActivity {
     protected HorizontalPicker enrollment;
     protected CheckBox Privacy;
     protected CheckBox Template;
+    protected ProgressBar loading;
     protected Intent intent;
 
-    protected String Placename, Class, oid, tid, b_title, b_category, b_price, b_exptime, b_content;
-    protected int b_enrollment;
+    protected String Placename, Class, oid, tid, b_title, b_category, b_exptime, b_content, type;
+    protected int b_enrollment, b_price;
     protected boolean b_privacy, b_template;
     protected double Latitude, Longitude;
     protected int Year, Month, Day, Hour, Minute;
+    protected long t_time;
+    protected long DateSelectorClickDelta;
+    protected SharedPreferences userinfo;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -87,61 +101,162 @@ public class TagInfoActivity extends AppCompatActivity {
     protected void setOnBackIntent() {}
 
     protected void setDateSelector(final int Theme) {
+        DateSelectorClickDelta = 0;
         DateSelector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                new DatePickerDialog(TagInfoActivity.this, Theme, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        Year = year;
-                        Month = monthOfYear;
-                        Day = dayOfMonth;
-                        Calendar c = Calendar.getInstance();
-                        new TimePickerDialog(TagInfoActivity.this, Theme,
-                                new TimePickerDialog.OnTimeSetListener() {
-                                    @Override
-                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                        Hour = hourOfDay;
-                                        Minute = minute;
-                                        DateSelector.setText(String.format("%d-%d-%d %02d:%02d", Year, Month, Day, Hour, Minute));
+                if((DateSelectorClickDelta == 0 || System.currentTimeMillis() - DateSelectorClickDelta > 800)) {
+                    new DatePickerDialog(TagInfoActivity.this, Theme, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            Year = year;
+                            Month = monthOfYear;
+                            Day = dayOfMonth;
+                            Calendar c = Calendar.getInstance();
+                            new TimePickerDialog(TagInfoActivity.this, Theme,
+                                    new TimePickerDialog.OnTimeSetListener() {
+                                        @Override
+                                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                            Hour = hourOfDay;
+                                            Minute = minute;
+                                            DateSelector.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d:%02d", Year, Month, Day, Hour, Minute));
+                                            t_time = componentTimeToTimestamp(Year, Month, Day, Hour, Minute);
+                                        }
                                     }
-                                }
-                                , c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                                true).show();
-                    }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar
-                        .get(Calendar.DAY_OF_MONTH)).show();
-
+                                    , c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                                    true).show();
+                        }
+                    }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar
+                            .get(Calendar.DAY_OF_MONTH)).show();
+                }
+                DateSelectorClickDelta = System.currentTimeMillis();
             }
         });
     }
+
+    protected String setType() { return null;}
+
     protected void chooseDateSelectorTheme() {}
 
     protected void setTagView() {}
 
     protected void setMapBtnIntent(Intent map_intent) {}
 
-    protected void buildData(String title, String category, int enrollment, int point, String content, String time, boolean isprivate) throws JSONException {}
-
     private boolean checkForm() {
         if(shorttitle.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Title cannot be empty.", Toast.LENGTH_LONG).show();
+            Toast.makeText(TagInfoActivity.this, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(Price != null && Price.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Price cannot be empty.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(DateSelector.getText().toString().equals("Pick a Time")) {
+            Toast.makeText(TagInfoActivity.this, "Please choose a time.", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(Place.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Price cannot be empty.", Toast.LENGTH_LONG).show();
+            Toast.makeText(TagInfoActivity.this, "Place cannot be empty.", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(DetailedDcpt.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Content cannot be empty.", Toast.LENGTH_LONG).show();
-            return false;
-        }
-        else if(Place.getText().toString().equals("")) {
-            Toast.makeText(TagInfoActivity.this, "Place cannot be empty.", Toast.LENGTH_LONG).show();
+            Toast.makeText(TagInfoActivity.this, "Content cannot be empty.", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
+    }
+
+    private void createTemplate(String t_shorttile, String t_detail, String t_category, int t_price, int number, long time, boolean privacy) {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, "Successfully created template", Toast.LENGTH_LONG).show();
+                intent.putExtra("IsCanceled", false);
+                TagInfoActivity.this.onBackPressed();
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        };
+        ConnectionManager.getInstance().CreateTemplate(type, t_shorttile, t_detail, t_category, t_price, number, time, Placename, Latitude, Longitude, privacy, userinfo.getString("token", null), handler);
+    }
+
+    private void modifyTemplate(String tid, String t_shorttile, String t_detail, String t_category, int t_price, int number, long time, boolean privacy) {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, "Successfully modified template", Toast.LENGTH_LONG).show();
+                intent.putExtra("IsCanceled", false);
+                TagInfoActivity.this.onBackPressed();
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        };
+        ConnectionManager.getInstance().ModifyTemplate(tid, type, t_shorttile, t_detail, t_category, t_price, number, time, Placename, Latitude, Longitude, privacy, userinfo.getString("token", null), handler);
+    }
+
+    private void createOrder(String t_shorttile, String t_detail, String t_category, int t_price, int number, long time, boolean privacy) {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, "Successfully created " + type, Toast.LENGTH_SHORT).show();
+                intent.putExtra("IsCanceled", false);
+                TagInfoActivity.this.onBackPressed();
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        };
+        ConnectionManager.getInstance().CreateOrder(type, t_shorttile, t_detail, t_category, t_price, number, time, Placename, Latitude, Longitude, privacy, userinfo.getString("token", null), handler);
+    }
+
+    private void modifyOrder(String oid, String t_shorttile, String t_detail, String t_category, int t_price, int number, long time, boolean privacy) {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, "Successfully modified " + type, Toast.LENGTH_SHORT).show();
+                intent.putExtra("IsCanceled", false);
+                TagInfoActivity.this.onBackPressed();
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        };
+        ConnectionManager.getInstance().ModifyOrder(oid, type, t_shorttile, t_detail, t_category, t_price, number, time, Placename, Latitude, Longitude, privacy, userinfo.getString("token", null), handler);
+    }
+
+    private long componentTimeToTimestamp(int year, int month, int day, int hour, int minute) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);
+        c.set(Calendar.HOUR, hour);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTimeInMillis();
     }
 
     private void SetButtonListener() {
@@ -159,28 +274,55 @@ public class TagInfoActivity extends AppCompatActivity {
         Template = (CheckBox) findViewById(R.id.tag_create_template);
         Place = (EditText) findViewById(R.id.tag_place);
         MapPlace = (Button) findViewById(R.id.tag_map_btn);
+        loading = (ProgressBar) findViewById(R.id.tag_loading);
 
         Bundle bundle = getIntent().getExtras();
-        Placename = bundle.getString("place");
-        Latitude = bundle.getDouble("latitude");
-        Longitude = bundle.getDouble("longitude");
+        Placename = bundle.getString("place", "");
+        Latitude = bundle.getDouble("latitude", 200);
+        Longitude = bundle.getDouble("longitude", 200);
 
-        Class = bundle.getString("class");
-        oid = bundle.getString("oid");
-        tid = bundle.getString("tid");
-        b_category = bundle.getString("category");
-        b_title = bundle.getString("title");
-        b_content = bundle.getString("content");
-        b_privacy = bundle.getBoolean("isPrivate");
-        b_template = bundle.getBoolean("isTemplate");
-        b_price = bundle.getString("points");
-        b_enrollment = bundle.getInt("number");
-        b_exptime = bundle.getString("time");
+        ////////////////////////Get from Intent/////////////////////
+        Class = bundle.getString("class", "error");
+        oid = bundle.getString("oid", "");
+        tid = bundle.getString("tid", "");
 
+        b_category = bundle.getString("category", "null");
+        b_title = bundle.getString("title", "");
+        b_content = bundle.getString("content", "");
+        b_privacy = bundle.getBoolean("isPrivate", false);
+        b_template = bundle.getBoolean("isTemplate", false);
+        b_price = bundle.getInt("points", -1);
+        b_enrollment = bundle.getInt("number", 0);
+        b_exptime = bundle.getString("time", "Pick a Time");
+        /////////////////////////////////////////////////////////////
+
+        t_time = 0;
+        userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
+        type = setType();
+        if (Class.equals("template")) {
+            Template.setVisibility(View.GONE);
+        }
+
+        ///////////////Set Default Content//////////////////////////
+        shorttitle.setText(b_title);
+        if(!b_category.equals("null")) {
+            category.setSelection(((ArrayAdapter<String>) category.getAdapter()).getPosition(b_category));
+        }
         Place.setText(Placename);
+        DetailedDcpt.setText(b_content);
+        Privacy.setChecked(b_privacy);
+        if(Price != null && b_price != -1) {
+            Price.setText(Integer.toString(b_price));
+        }
+        if(enrollment != null) {
+            enrollment.setSelectedItem(b_enrollment);
+        }
+        DateSelector.setText(b_exptime);
+
         if(enrollment!=null) {
             enrollment.setSelectedItem(0);
         }
+        ///////////////////////////////////////////////////////////
 
         intent = new Intent();
 
@@ -207,19 +349,41 @@ public class TagInfoActivity extends AppCompatActivity {
                 boolean privacy = Privacy.isChecked();
                 int number = 0;
                 if(enrollment!=null) {
-                    number = Integer.parseInt(enrollment.getValues()[enrollment.getSelectedItem()].toString());
+                    number = enrollment.getSelectedItem() + 1;
                 }
-                String t_price = Price.getText().toString();
+                int t_price = 0;
+                if(Price!=null) {
+                    if(Price.getText().toString().equals("")) {
+                        t_price = 0;
+                    }
+                    else {
+                        t_price = Integer.parseInt(Price.getText().toString());
+                    }
+                }
                 String t_category = category.getSelectedItem().toString();
                 String t_detail = DetailedDcpt.getText().toString();
-                boolean template = Template.isChecked();
+                boolean istemplate = Template.isChecked();
+                Placename = Place.getText().toString();
 
-                if(Class.equals("template") && tid == null) {
-
+                if(Class.equals("template") && tid.equals("")) {
+                    createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                 }
-
-                intent.putExtra("IsCanceled", false);
-                TagInfoActivity.this.onBackPressed();
+                else if(Class.equals("template")) {
+                    modifyTemplate(tid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                }
+                else if(Class.equals("order") && oid.equals("")) {
+                    if(checkForm()) {
+                        createOrder(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                        if (istemplate) {
+                            createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                        }
+                    }
+                }
+                else if(Class.equals("order")) {
+                    if(checkForm()) {
+                        modifyOrder(oid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
+                    }
+                }
 
             }
         });

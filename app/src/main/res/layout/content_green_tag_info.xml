@@ -31,7 +31,7 @@
         android:singleLine="true"
         android:textCursorDrawable="@drawable/cc_greenpipe"
         android:theme="@style/MyAppThemeGreen"
-        android:maxLength="16" />
+        android:maxLength="30" />
 
     <TextView
         android:layout_width="130dp"
@@ -248,5 +248,19 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/tag_place_label"
         android:layout_marginTop="6dp" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible"
+        android:id="@+id/tag_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop"
+        android:layout_toLeftOf="@+id/tag_cancel_button"
+        android:layout_marginRight="10dp" />
 
 </RelativeLayout>

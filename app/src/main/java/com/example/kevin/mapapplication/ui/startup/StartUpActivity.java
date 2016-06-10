@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -75,16 +74,17 @@ public class StartUpActivity extends AppCompatActivity {
                     editor.putString("uid", null);
                     editor.putString("token", null);
                     editor.apply();
-                    ShowLoginInterface();
+                    showLoginInterface();
                 }
             });
         }
         else {
-            ShowLoginInterface();
+            showLoginInterface();
         }
     }
 
-    private void ShowLoginInterface() {
+
+    private void showLoginInterface() {
         //Toast.makeText(StartUpActivity.this, "Error!", Toast.LENGTH_LONG).show();
 
         login_panel = (RelativeLayout) findViewById(R.id.login_panel);

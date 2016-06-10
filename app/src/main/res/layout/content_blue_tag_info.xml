@@ -31,7 +31,7 @@
         android:singleLine="true"
         android:textCursorDrawable="@drawable/cc_bluepipe"
         android:theme="@style/MyAppThemeBlue"
-        android:maxLength="16" />
+        android:maxLength="30" />
 
     <TextView
         android:layout_width="130dp"
@@ -96,60 +96,25 @@
     <TextView
         android:layout_width="130dp"
         android:layout_height="45dp"
-        android:text="Price: "
-        android:id="@+id/tag_price_label"
-        android:layout_alignParentStart="true"
-        android:gravity="center"
-        android:layout_alignEnd="@+id/tag_type_spinner_label"
-        android:layout_below="@+id/tag_isprivate_label" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:inputType="phone"
-        android:ems="10"
-        android:id="@+id/tag_price"
-        android:layout_alignTop="@+id/tag_price_label"
-        android:layout_alignEnd="@+id/tag_price_unit"
-        android:maxLength="5"
-        android:layout_toEndOf="@+id/tag_detaildcpt_label"
-        android:textCursorDrawable="@drawable/cc_bluepipe"
-        android:theme="@style/MyAppThemeBlue"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:text="Points/hour"
-        android:id="@+id/tag_price_unit"
-        android:layout_alignTop="@+id/tag_price"
-        android:gravity="center"
-        android:layout_alignEnd="@+id/tag_type_spinner"
-        android:layout_toEndOf="@+id/tag_cancel_button"
-        android:singleLine="true"
-        android:textSize="12dp" />
-
-    <TextView
-        android:layout_width="130dp"
-        android:layout_height="45dp"
         android:text="Expiration Time: "
         android:id="@+id/tag_date_label"
         android:gravity="center"
-        android:layout_below="@+id/tag_price_label"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tag_isprivate_label" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="33dp"
         android:text="Pick A Time"
         android:id="@+id/tag_date_picker"
-        android:layout_below="@+id/tag_price"
         android:layout_toRightOf="@+id/tag_date_label"
         android:background="@drawable/bg_tag_date_picker_btn"
         android:stateListAnimator="@null"
         android:textColor="#8f8f8f"
         android:layout_marginTop="6dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/tag_isprivate_label" />
 
     <TextView
         android:layout_width="130dp"
@@ -214,5 +179,19 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/tag_place_label"
         android:layout_marginTop="6dp" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible"
+        android:id="@+id/tag_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop"
+        android:layout_toLeftOf="@+id/tag_cancel_button"
+        android:layout_marginRight="10dp" />
 
 </RelativeLayout>

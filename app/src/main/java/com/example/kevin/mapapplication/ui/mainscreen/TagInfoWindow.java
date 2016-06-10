@@ -36,7 +36,7 @@ public class TagInfoWindow {
 
         try {
             JSONObject mdata = MarkerManager.getInstance().Get(marker.getId());
-            if(mdata.optInt("Id") == 0) {
+            if(mdata == null) {
                 return null;
             }
             else {
