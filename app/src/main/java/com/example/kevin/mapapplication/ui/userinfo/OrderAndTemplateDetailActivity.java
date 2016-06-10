@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
@@ -25,11 +24,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -132,6 +126,7 @@ public class OrderAndTemplateDetailActivity extends AppCompatActivity {
         newBundle.putString("place", res.optString("place"));
         newBundle.putDouble("latitude", res.optJSONObject("coordinate").optDouble("latitude"));
         newBundle.putDouble("longitude", res.optJSONObject("coordinate").optDouble("longitude"));
+        newBundle.putString("time", res.optString("time"));
         newBundle.putString("content", res.optString("content"));
 
         switch (res.optString("type")) {
@@ -157,22 +152,13 @@ public class OrderAndTemplateDetailActivity extends AppCompatActivity {
                 break;
         }
 
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-        try {
-            Date date = inputFormat.parse(res.optString("time"));
-            text_time.setText(outputFormat.format(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
         text_title.setText(res.optString("title"));
         text_category.setText(res.optString("category"));
         text_privacy.setText(res.optBoolean("isPrivate") ? "Visible to friends only" : "Visible to everyone");
         text_number.setText(String.format("%d Person%s", res.optInt("number"), res.optInt("number") > 1 ? "s" : ""));
         text_points.setText(String.format("%d Points/Person", res.optInt("points")));
         text_place.setText(res.optString("place"));
-        text_content.setText(res.optString("content"));
+        text_content.setText(res.optString("content").trim());
     }
 
     protected void refreshDetail() {

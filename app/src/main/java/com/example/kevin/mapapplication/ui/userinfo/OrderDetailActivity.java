@@ -3,18 +3,21 @@ package com.example.kevin.mapapplication.ui.userinfo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
-import com.example.kevin.mapapplication.ui.mainscreen.tag.TagInfoActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -68,6 +71,15 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
     @Override
     protected void onRefreshDetail(JSONObject res) {
         super.onRefreshDetail(res);
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        try {
+            Date date = inputFormat.parse(res.optString("time"));
+            text_time.setText(outputFormat.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         switch (res.optString("status")) {
             case "waiting":
