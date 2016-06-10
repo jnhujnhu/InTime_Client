@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kevin.mapapplication.ui.userinfo.OrderAndTemplateDetailActivity">
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
+        android:id="@+id/template_detail_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_actionbar_height"
+        android:orientation="horizontal"
+        android:id="@+id/RelativeLayout1"
+        android:background="@drawable/bg_querybar">
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/custom_actionbar_icon_margin"
+            android:padding="@dimen/custom_actionbar_icon_padding"
+            android:src="@drawable/ic_actionbar_back"
+            android:background="@drawable/bg_backbutton" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/detail_nav_header"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/custom_actionbar_title_textsize"
+            android:layout_toRightOf="@+id/btn_back" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/template_more"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_more_vert"
+            android:padding="15dp"
+            android:background="#faf8f8"
+            android:layout_marginRight="2dp" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/RelativeLayout1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <RelativeLayout android:id="@+id/detail_item_container_type" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Type: " style="@style/detail_item_label"/>
+                <ImageView android:id="@+id/detail_item_type_icon" style="@style/detail_item_type_icon" />
+                <TextView android:id="@+id/detail_item_type" style="@style/detail_item_text"
+                    android:layout_toEndOf="@id/detail_item_type_icon"
+                    android:layout_alignParentStart="false"
+                    android:layout_marginStart="2dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_title" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Title: " style="@style/detail_item_label"/>
+                <TextView android:id="@+id/detail_item_title" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_category" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Category: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_category" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_privacy" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Privacy: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_privacy" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_number" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Enrollment: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_number" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_points" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Rewards: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_points" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_place" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Location: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_place" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_time" style="@style/detail_item_container" android:visibility="gone">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Expiration Time: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_time" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/detail_item_container_content" style="@style/detail_item_container">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Detailed Description: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_content" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <View style="@style/hr" />
+
+            <RelativeLayout android:id="@+id/detail_item_container_status" style="@style/detail_item_container" android:layout_marginTop="20dp" android:visibility="gone">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Status: " style="@style/detail_item_label" />
+                <TextView android:id="@+id/detail_item_status" style="@style/detail_item_text" />
+            </RelativeLayout>
+
+            <View style="@style/hr" android:layout_marginBottom="10dp" />
+
+            <Button android:id="@+id/detail_button_create" android:text="Create an order" style="@style/large_button_green" android:visibility="gone" />
+            <Button android:id="@+id/detail_button_edit" android:text="Edit" style="@style/large_button_white" android:visibility="gone" />
+            <Button android:id="@+id/detail_button_complete" android:text="Complete" style="@style/large_button_green" android:visibility="gone" />
+            <Button android:id="@+id/detail_button_cancel" android:text="Cancel" style="@style/large_button_red" android:visibility="gone" />
+            <Button android:id="@+id/detail_button_accept" android:text="Accept" style="@style/large_button_green" android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

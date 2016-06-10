@@ -1,5 +1,6 @@
 package com.example.kevin.mapapplication.model;
 
+import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 
@@ -251,4 +252,23 @@ public class ConnectionManager {
         client.get(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&key=AIzaSyD3e_Fju-Zpocen-WIW7-PWY8YNKczIgwA", coordinate.latitude, coordinate.longitude), null, handler);
     }
 
+    public void GetOrderDetail(String oid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.get(SERVER_ADDR + String.format("/orders/%s", oid), null, handler);
+    }
+
+    public void SetOrderStatus(String oid, String status, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.put(SERVER_ADDR + String.format("/orders/%s", oid), new RequestParams("status", status), handler);
+    }
+
+    public void AcceptOrder(String oid, String uid, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.post(SERVER_ADDR + String.format("/orders/%s/accept_users/%s", oid, uid), null, handler);
+    }
+
+    public void SetOrderUserStatus(String oid, String uid, String status, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("x-access-token", token);
+        client.put(SERVER_ADDR + String.format("/orders/%s/accept_users/%s", oid, uid), new RequestParams("status", status), handler);
+    }
 }
