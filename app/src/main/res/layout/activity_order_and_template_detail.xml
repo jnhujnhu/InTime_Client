@@ -75,6 +75,15 @@
                     android:layout_marginStart="2dp"/>
             </RelativeLayout>
 
+            <RelativeLayout android:id="@+id/detail_item_container_user" style="@style/detail_item_container" android:visibility="gone">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Created by: " style="@style/detail_item_label"/>
+                <LinearLayout style="@style/detail_item_text" android:orientation="horizontal">
+                    <TextView android:id="@+id/detail_item_user" style="@style/detail_item_inner_text" />
+                    <ImageView android:id="@+id/detail_item_user_icon" style="@style/detail_item_inner_icon" />
+                </LinearLayout>
+            </RelativeLayout>
+
             <RelativeLayout android:id="@+id/detail_item_container_title" style="@style/detail_item_container">
                 <View style="@style/hr" android:layout_alignParentTop="true" />
                 <TextView android:text="Title: " style="@style/detail_item_label"/>
@@ -108,7 +117,10 @@
             <RelativeLayout android:id="@+id/detail_item_container_place" style="@style/detail_item_container">
                 <View style="@style/hr" android:layout_alignParentTop="true" />
                 <TextView android:text="Location: " style="@style/detail_item_label" />
-                <TextView android:id="@+id/detail_item_place" style="@style/detail_item_text" />
+                <LinearLayout style="@style/detail_item_text" android:orientation="horizontal">
+                    <TextView android:id="@+id/detail_item_place" style="@style/detail_item_inner_text" />
+                    <ImageView android:id="@+id/detail_item_place_icon" style="@style/detail_item_inner_icon" />
+                </LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout android:id="@+id/detail_item_container_time" style="@style/detail_item_container" android:visibility="gone">
@@ -125,10 +137,21 @@
 
             <View style="@style/hr" />
 
+            <RelativeLayout android:id="@+id/detail_item_container_accept" style="@style/detail_item_container" android:layout_marginTop="20dp" android:visibility="gone">
+                <View style="@style/hr" android:layout_alignParentTop="true" />
+                <TextView android:text="Accepted by: " style="@style/detail_item_label" />
+                <LinearLayout style="@style/detail_item_text" android:orientation="vertical" android:layout_marginStart="130dp" android:layout_marginEnd="0dp" android:layout_marginTop="0dp" android:layout_marginBottom="0dp">
+                    <com.example.kevin.mapapplication.utils.ListViewForScrollView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/detail_item_list_accept"  />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <View style="@style/hr" />
+
             <RelativeLayout android:id="@+id/detail_item_container_status" style="@style/detail_item_container" android:layout_marginTop="20dp" android:visibility="gone">
                 <View style="@style/hr" android:layout_alignParentTop="true" />
                 <TextView android:text="Status: " style="@style/detail_item_label" />
-                <TextView android:id="@+id/detail_item_status" style="@style/detail_item_text" />
+                <TextView android:id="@+id/detail_item_status" style="@style/detail_item_text" android:layout_marginStart="130dp" />
             </RelativeLayout>
 
             <View style="@style/hr" android:layout_marginBottom="10dp" />
@@ -138,6 +161,9 @@
             <Button android:id="@+id/detail_button_complete" android:text="Complete" style="@style/large_button_green" android:visibility="gone" />
             <Button android:id="@+id/detail_button_cancel" android:text="Cancel" style="@style/large_button_red" android:visibility="gone" />
             <Button android:id="@+id/detail_button_accept" android:text="Accept" style="@style/large_button_green" android:visibility="gone" />
+            <Button android:id="@+id/detail_button_stay" android:text="Stay" style="@style/large_button_green" android:visibility="gone" />
+            <Button android:id="@+id/detail_button_leave" android:text="Cancel" style="@style/large_button_red" android:visibility="gone" />
+
 
         </LinearLayout>
     </ScrollView>

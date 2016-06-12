@@ -6,19 +6,26 @@ import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
+import com.example.kevin.mapapplication.ui.mainscreen.tag.BlueTagInfoActivity;
+import com.example.kevin.mapapplication.ui.mainscreen.tag.GreenTagInfoActivity;
+import com.example.kevin.mapapplication.ui.mainscreen.tag.RedTagInfoActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -40,6 +47,10 @@ public class TemplatesActivity extends AppCompatActivity {
 
     private ListView templateList;
     private ProgressBar loading;
+    private ImageButton button_add;
+
+    private PopupMenu popupMenu;
+    private MenuInflater menuInflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +70,46 @@ public class TemplatesActivity extends AppCompatActivity {
 
         templateList = (ListView)findViewById(R.id.template_list);
         loading = (ProgressBar)findViewById(R.id.templates_loading);
+        button_add = (ImageButton)findViewById(R.id.templates_add);
+
+        button_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(popupMenu == null){
+                    popupMenu = new PopupMenu(TemplatesActivity.this, button_add);
+
+                    menuInflater = popupMenu.getMenuInflater();
+                    menuInflater.inflate(R.menu.menu_add,popupMenu.getMenu());
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            Intent intent = null;
+
+                            switch(item.getItemId()){
+                                case R.id.action_request:
+                                    intent = new Intent(TemplatesActivity.this, RedTagInfoActivity.class);
+                                    break;
+                                case R.id.action_offer:
+                                    intent = new Intent(TemplatesActivity.this, GreenTagInfoActivity.class);
+                                    break;
+                                case R.id.action_prompt:
+                                    intent = new Intent(TemplatesActivity.this, BlueTagInfoActivity.class);
+                                    break;
+                            }
+
+                            assert intent != null;
+                            intent.putExtra("class", "template");
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+
+                            return true;
+                        }
+                    });
+                }
+                popupMenu.show();
+            }
+        });
     }
 
     public void GetTemplateList() {
