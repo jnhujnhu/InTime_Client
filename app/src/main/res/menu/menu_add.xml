@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_request"
+        android:title="New request template"
+        />
+    <item
+        android:id="@+id/action_offer"
+        android:title="New offer template"
+        />
+    <item
+        android:id="@+id/action_prompt"
+        android:title="New prompt template"
+        />
+</menu>

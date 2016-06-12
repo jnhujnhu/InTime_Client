@@ -40,6 +40,17 @@
             android:gravity="center_vertical"
             android:textSize="@dimen/custom_actionbar_title_textsize"
             android:layout_toRightOf="@+id/btn_back" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/templates_add"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_add_grey"
+            android:padding="15dp"
+            android:background="#faf8f8"
+            android:layout_marginRight="2dp" />
     </RelativeLayout>
 
     <ScrollView
