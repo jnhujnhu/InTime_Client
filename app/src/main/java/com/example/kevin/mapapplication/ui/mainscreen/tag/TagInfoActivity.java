@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,6 +29,8 @@ import com.example.kevin.mapapplication.utils.HorizontalPicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -54,7 +57,7 @@ public class TagInfoActivity extends AppCompatActivity {
 
     protected String Placename, Class, oid, tid, b_title, b_category, b_exptime, b_content, type;
     protected int b_enrollment, b_price;
-    protected boolean b_privacy, b_template;
+    protected boolean b_privacy, b_template, Special;
     protected double Latitude, Longitude;
     protected int Year, Month, Day, Hour, Minute;
     protected long t_time;
@@ -275,6 +278,7 @@ public class TagInfoActivity extends AppCompatActivity {
         Place = (EditText) findViewById(R.id.tag_place);
         MapPlace = (Button) findViewById(R.id.tag_map_btn);
         loading = (ProgressBar) findViewById(R.id.tag_loading);
+        t_time = 0;
 
         Bundle bundle = getIntent().getExtras();
         Placename = bundle.getString("place", "");
@@ -292,11 +296,37 @@ public class TagInfoActivity extends AppCompatActivity {
         b_privacy = bundle.getBoolean("isPrivate", false);
         b_template = bundle.getBoolean("isTemplate", false);
         b_price = bundle.getInt("points", -1);
-        b_enrollment = bundle.getInt("number", 0);
-        b_exptime = bundle.getString("time", "Pick a Time");
+        b_enrollment = bundle.getInt("number", 1);
+        b_exptime = bundle.getString("time", "");
+        Special = bundle.getBoolean("special", false);
+
+        if(Special) {
+            shorttitle.setEnabled(false);
+            category.setEnabled(false);
+            Price.setEnabled(false);
+            DetailedDcpt.setEnabled(false);
+            Place.setEnabled(false);
+            MapPlace.setEnabled(false);
+
+        }
+
+        if(!b_exptime.equals("")) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+            try {
+                Date date = inputFormat.parse(b_exptime);
+                b_exptime = outputFormat.format(date);
+                t_time = date.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            b_exptime = "Pick a Time";
+        }
         /////////////////////////////////////////////////////////////
 
-        t_time = 0;
+
         userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
         type = setType();
         if (Class.equals("template")) {
@@ -315,13 +345,10 @@ public class TagInfoActivity extends AppCompatActivity {
             Price.setText(Integer.toString(b_price));
         }
         if(enrollment != null) {
-            enrollment.setSelectedItem(b_enrollment);
+            enrollment.setSelectedItem(b_enrollment - 1);
         }
         DateSelector.setText(b_exptime);
 
-        if(enrollment!=null) {
-            enrollment.setSelectedItem(0);
-        }
         ///////////////////////////////////////////////////////////
 
         intent = new Intent();
