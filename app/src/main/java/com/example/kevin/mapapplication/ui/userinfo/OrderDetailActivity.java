@@ -318,7 +318,7 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         Intent intent = new Intent(OrderDetailActivity.this, tagClass);
         intent.putExtras(newBundle);
         intent.putExtra("class", "order");
-        intent.putExtra("tid", bundle.getString("oid"));
+        intent.putExtra("oid", bundle.getString("oid"));
         intent.putExtra("special", isAccepted);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
