@@ -1,4 +1,4 @@
-package com.example.kevin.mapapplication.ui.userinfo;
+package com.example.kevin.mapapplication.ui.mainscreen;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,13 @@ import android.widget.TextView;
 
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.model.ConnectionManager;
+import com.example.kevin.mapapplication.ui.userinfo.FriendsDetailActivity;
+import com.example.kevin.mapapplication.ui.userinfo.OrdersFragment;
 
-public class AcceptedOrdersFragment extends OrdersFragment {
+public class SearchResultFragment extends OrdersFragment {
     public void GetOrderList() {
         super.GetOrderList();
-        ConnectionManager.getInstance().GetOrderList("", "", "", userinfo.getString("uid", null), false, userinfo.getString("token", null), responseHandler);
+        ConnectionManager.getInstance().GetOrderList("", "waiting", getActivity().getIntent().getStringExtra("keywords"), "", true, userinfo.getString("token", null), responseHandler);
     }
 
     @Override
@@ -25,10 +27,16 @@ public class AcceptedOrdersFragment extends OrdersFragment {
         TextView text_status = (TextView)v.findViewById(R.id.listview_item_status);
         TextView text_points = (TextView)v.findViewById(R.id.listview_item_points);
         TextView text_number = (TextView)v.findViewById(R.id.listview_item_number);
+        ImageView image_user = (ImageView)v.findViewById(R.id.listview_item_user_icon);
         RelativeLayout layout_user = (RelativeLayout)v.findViewById(R.id.listview_item_user);
         RelativeLayout layout_details = (RelativeLayout)v.findViewById(R.id.listview_item_details);
 
-        switch (item.getString("userStatus")) {
+        switch (item.getString("status")) {
+            case "waiting":
+                text_status.setTextColor(ContextCompat.getColor(getActivity(), R.color.status_waiting));
+                text_status.setText("Waiting");
+                layout_details.setAlpha(1f);
+                break;
             case "accepted":
                 text_status.setTextColor(ContextCompat.getColor(getActivity(), R.color.status_accepted));
                 text_status.setText("Accepted");
@@ -53,26 +61,35 @@ public class AcceptedOrdersFragment extends OrdersFragment {
 
         layout_user.setVisibility(View.VISIBLE);
         text_username.setText(item.getString("username"));
-        layout_user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FriendsDetailActivity.class);
-                intent.putExtra("uid", item.getString("uid"));
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-            }
-        });
 
-        text_number.setVisibility(View.GONE);
+        if (item.getString("uid").equals(userinfo.getString("uid", null))) {
+            image_user.setVisibility(View.GONE);
+            layout_user.setOnClickListener(null);
+        }
+        else {
+            image_user.setVisibility(View.VISIBLE);
+            layout_user.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), FriendsDetailActivity.class);
+                    intent.putExtra("uid", item.getString("uid"));
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                }
+            });
+        }
 
         switch (item.getString("type")) {
             case "request":
             case "offer":
                 text_points.setVisibility(View.VISIBLE);
+                text_number.setVisibility(View.VISIBLE);
                 text_points.setText(String.format("%s Points", item.getInt("points")));
+                text_number.setText(String.format("%d/%d", item.getInt("acceptCount"), item.getInt("number")));
                 break;
             case "prompt":
                 text_points.setVisibility(View.GONE);
+                text_number.setVisibility(View.GONE);
                 break;
         }
     }

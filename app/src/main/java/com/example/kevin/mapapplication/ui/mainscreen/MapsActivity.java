@@ -646,7 +646,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case TOUCH_SEARCH:
                 if(!Content.equals("")) {
                     Intent intent = new Intent(this, SearchResultActivity.class);
-                    intent.putExtra("Keywords", Content);
+                    intent.putExtra("keywords", Content);
                     startActivityForResult(intent, REQUEST_CODE);
                     overridePendingTransition(R.anim.slide_in_from_bottom, R.anim.anim_empty);
                 }

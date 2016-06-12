@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -124,7 +125,7 @@ public class TagInfoActivity extends AppCompatActivity {
                                             Hour = hourOfDay;
                                             Minute = minute;
                                             DateSelector.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d:%02d", Year, Month + 1, Day, Hour, Minute));
-                                            t_time = componentTimeToTimestamp(Year, Month + 1, Day, Hour, Minute);
+                                            t_time = componentTimeToTimestamp(Year, Month, Day, Hour, Minute);
                                         }
                                     }
                                     , c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
@@ -255,7 +256,7 @@ public class TagInfoActivity extends AppCompatActivity {
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, day);
-        c.set(Calendar.HOUR, hour);
+        c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
@@ -312,6 +313,7 @@ public class TagInfoActivity extends AppCompatActivity {
 
         if(!b_exptime.equals("")) {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            inputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
             try {
                 Date date = inputFormat.parse(b_exptime);

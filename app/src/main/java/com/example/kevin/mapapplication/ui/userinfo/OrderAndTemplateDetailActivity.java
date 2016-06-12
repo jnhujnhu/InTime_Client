@@ -202,6 +202,7 @@ public class OrderAndTemplateDetailActivity extends AppCompatActivity {
         }
         else {
             image_place.setVisibility(View.GONE);
+            layout_place.setOnClickListener(null);
         }
     }
 
