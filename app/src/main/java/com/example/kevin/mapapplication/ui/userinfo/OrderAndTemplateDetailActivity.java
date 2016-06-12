@@ -187,7 +187,7 @@ public class OrderAndTemplateDetailActivity extends AppCompatActivity {
         text_place.setText(res.optString("place"));
         text_content.setText(res.optString("content").trim());
 
-        if (res.has("coordinate")) {
+        if (res.has("coordinate") && !(res.optJSONObject("coordinate").isNull("longitude") || res.optJSONObject("coordinate").isNull("latitude"))) {
             image_place.setVisibility(View.VISIBLE);
             layout_place.setOnClickListener(new View.OnClickListener() {
                 @Override

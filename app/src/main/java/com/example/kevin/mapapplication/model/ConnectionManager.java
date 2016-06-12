@@ -1,5 +1,7 @@
 package com.example.kevin.mapapplication.model;
 
+import android.util.Log;
+
 import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
@@ -142,10 +144,12 @@ public class ConnectionManager {
             params.put("number", number);
             params.put("place", place);
             params.put("time", time);
-            JSONObject coordinate = new JSONObject();
-            coordinate.put("latitude", latitude);
-            coordinate.put("longitude", longitude);
-            params.put("coordinate", coordinate);
+            if(!(latitude == 200 && longitude == 200)) {
+                JSONObject coordinate = new JSONObject();
+                coordinate.put("latitude", latitude);
+                coordinate.put("longitude", longitude);
+                params.put("coordinate", coordinate);
+            }
             params.put("isPrivate", isPrivate);
 
             StringEntity entity = new StringEntity(params.toString());
@@ -172,9 +176,7 @@ public class ConnectionManager {
             JSONObject coordinate = new JSONObject();
             coordinate.put("latitude", latitude);
             coordinate.put("longitude", longitude);
-            if(!(latitude == 200 && longitude == 200)) {
-                params.put("coordinate", coordinate);
-            }
+            params.put("coordinate", coordinate);
             params.put("isPrivate", isPrivate);
 
             StringEntity entity = new StringEntity(params.toString());
@@ -198,10 +200,10 @@ public class ConnectionManager {
             params.put("number", number);
             params.put("place", place);
             params.put("time", time);
-            JSONObject coordinate = new JSONObject();
-            coordinate.put("latitude", latitude);
-            coordinate.put("longitude", longitude);
             if(!(latitude == 200 && longitude == 200)) {
+                JSONObject coordinate = new JSONObject();
+                coordinate.put("latitude", latitude);
+                coordinate.put("longitude", longitude);
                 params.put("coordinate", coordinate);
             }
             params.put("isPrivate", isPrivate);
