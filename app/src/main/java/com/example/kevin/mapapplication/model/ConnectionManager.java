@@ -172,7 +172,9 @@ public class ConnectionManager {
             JSONObject coordinate = new JSONObject();
             coordinate.put("latitude", latitude);
             coordinate.put("longitude", longitude);
-            params.put("coordinate", coordinate);
+            if(!(latitude == 200 && longitude == 200)) {
+                params.put("coordinate", coordinate);
+            }
             params.put("isPrivate", isPrivate);
 
             StringEntity entity = new StringEntity(params.toString());
@@ -199,7 +201,9 @@ public class ConnectionManager {
             JSONObject coordinate = new JSONObject();
             coordinate.put("latitude", latitude);
             coordinate.put("longitude", longitude);
-            params.put("coordinate", coordinate);
+            if(!(latitude == 200 && longitude == 200)) {
+                params.put("coordinate", coordinate);
+            }
             params.put("isPrivate", isPrivate);
 
             StringEntity entity = new StringEntity(params.toString());

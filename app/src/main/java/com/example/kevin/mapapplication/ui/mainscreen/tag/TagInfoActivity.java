@@ -123,8 +123,8 @@ public class TagInfoActivity extends AppCompatActivity {
                                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                             Hour = hourOfDay;
                                             Minute = minute;
-                                            DateSelector.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d:%02d", Year, Month, Day, Hour, Minute));
-                                            t_time = componentTimeToTimestamp(Year, Month, Day, Hour, Minute);
+                                            DateSelector.setText(String.format(Locale.ENGLISH, "%d-%d-%d %02d:%02d", Year, Month + 1, Day, Hour, Minute));
+                                            t_time = componentTimeToTimestamp(Year, Month + 1, Day, Hour, Minute);
                                         }
                                     }
                                     , c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
