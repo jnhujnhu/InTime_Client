@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/InTime_Client.iml" filepath="$PROJECT_DIR$/InTime_Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MapApplication.iml" filepath="$PROJECT_DIR$/MapApplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/android-async-http-1.4.9/android-async-http-1.4.9.iml" filepath="$PROJECT_DIR$/android-async-http-1.4.9/android-async-http-1.4.9.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

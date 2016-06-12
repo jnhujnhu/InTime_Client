@@ -1,12 +1,10 @@
 package com.example.kevin.mapapplication.ui.mainscreen;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +21,6 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -48,7 +45,7 @@ public class TaginfoDialog {
 
     private OnAcceptClickedCallBack onaccept;
 
-    public void BuildDialog (Marker marker, final TaskInformer taskInformer) throws JSONException{
+    public void BuildDialog (Marker marker, final DirectionInformer directionInformer) throws JSONException{
 
         AlertDialog.Builder builder = new AlertDialog.Builder(handle);
         LayoutInflater inflater = LayoutInflater.from(handle);
@@ -82,28 +79,15 @@ public class TaginfoDialog {
         Button cancel = (Button) layout.findViewById(R.id.dialog_cancel);
 
 
-        u_title.setSelected(true);
-        u_category.setSelected(true);
-        u_place.setSelected(true);
-
-        /*u_title.setOnClickListener(new View.OnClickListener() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
+            public void run() {
                 u_title.setSelected(true);
-            }
-        });
-        u_category.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 u_category.setSelected(true);
-            }
-        });
-        u_place.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 u_place.setSelected(true);
             }
-        });*/
+        }, 2000);
 
         details.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +96,7 @@ public class TaginfoDialog {
                 intent.putExtra("oid", oid);
                 handle.startActivityForResult(intent, MapsActivity.REQUEST_CODE);
                 /*onaccept.DrawDirectionAndSet(data);
-                taskInformer.ShowTaskInformer();
+                directionInformer.ShowTaskInformer();
                 dialog.dismiss();*/
             }
         });
@@ -131,13 +115,12 @@ public class TaginfoDialog {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         try {
-            Log.i("date", exptime);
             Date date = inputFormat.parse(exptime);
             u_exptime.setText(outputFormat.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        ////
+
         u_place.setText(place);
 
         if (type.equals("offer")) {

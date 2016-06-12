@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.nfc.Tag;
 import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,11 +31,14 @@ public class TagInfoWindow {
     }
 
     public View BuildTagContent(Marker marker) {
-        LinearLayout hor_layout = new LinearLayout(context), ver_layout = new LinearLayout(context);
-        ImageView infoimage = new ImageView(context);
-        TextView shorttitle = new TextView(context);
-        TextView type = new TextView(context);
-        TextView cost = new TextView(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View v = inflater.inflate(R.layout.infowindow_marker_normal, null);
+
+        ImageView infoimage = (ImageView) v.findViewById(R.id.markerinfowindow_image);
+        TextView shorttitle = (TextView) v.findViewById(R.id.markerinfowindow_title);
+        TextView type = (TextView) v.findViewById(R.id.markerinfowindow_category);
+        TextView cost = (TextView) v.findViewById(R.id.markerinfowindow_points);
+        ImageButton direction = (ImageButton) v.findViewById(R.id.markerinfowindow_dir_btn);
 
         try {
             JSONObject mdata = MarkerManager.getInstance().Get(marker.getId());
@@ -57,21 +63,9 @@ public class TagInfoWindow {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        infoimage.setPadding(0, 15, 0, 0);
 
-        shorttitle.setTextSize(16);
-        shorttitle.setTypeface(Typeface.DEFAULT_BOLD);
 
-        hor_layout.setOrientation(LinearLayout.HORIZONTAL);
-        hor_layout.setPadding(0, 10, 10, 10);
-        ver_layout.setOrientation(LinearLayout.VERTICAL);
-        hor_layout.addView(infoimage);
-        ver_layout.addView(shorttitle);
-        ver_layout.addView(type);
-        ver_layout.addView(cost);
-        hor_layout.addView(ver_layout);
-
-        return hor_layout;
+        return v;
 
     }
 

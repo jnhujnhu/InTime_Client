@@ -1,8 +1,6 @@
 package com.example.kevin.mapapplication.model;
 
-import android.util.Log;
 
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 
@@ -152,7 +150,7 @@ public class ConnectionManager {
             }
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.post(null, SERVER_ADDR + "/templates", entity, "application/json", handler);
@@ -179,7 +177,7 @@ public class ConnectionManager {
             params.put("coordinate", coordinate);
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(),"utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.post(null, SERVER_ADDR + "/orders", entity, "application/json", handler);
@@ -208,7 +206,7 @@ public class ConnectionManager {
             }
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.put(null, SERVER_ADDR + String.format("/templates/%s", tid), entity, "application/json", handler);
@@ -234,7 +232,7 @@ public class ConnectionManager {
             params.put("coordinate", coordinate);
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.put(null, SERVER_ADDR + String.format("/orders/%s", oid), entity, "application/json", handler);
@@ -244,14 +242,13 @@ public class ConnectionManager {
         }
     }
 
-    public void GetOrderList(String uid, String status, String keyword, String acceptUser, String token, AsyncHttpResponseHandler handler) {
+    public void GetOrderList(String uid, String status, String keyword, String acceptUser, boolean notExpired, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s", uid, status, keyword, acceptUser), null, handler);
+        client.get(SERVER_ADDR + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s&time_gte_now=%s", uid, status, keyword, acceptUser, notExpired ? "true" : "false"), null, handler);
     }
 
     public void GetDefaultOrdersList(String token, AsyncHttpResponseHandler handler) {
-        client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + "/orders?status=waiting", null, handler);
+        GetOrderList("", "waiting", "", "", true, token, handler);
     }
 
     public void GetGeocodingPlace(LatLng coordinate, AsyncHttpResponseHandler handler) {

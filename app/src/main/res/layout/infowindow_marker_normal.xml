@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/markerinfowindow_image"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_redtag"
+        android:layout_alignTop="@+id/linearLayout"
+        android:layout_alignBottom="@+id/linearLayout" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/linearLayout"
+        android:layout_toRightOf="@+id/markerinfowindow_image">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:id="@+id/markerinfowindow_title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/markerinfowindow_category"
+            android:text="Physical Work" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Points: 1000 Points"
+            android:id="@+id/markerinfowindow_points" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="2px"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_alignBottom="@+id/markerinfowindow_image"
+        android:layout_alignTop="@+id/markerinfowindow_image"
+        android:background="#a0a0a0"
+        android:id="@+id/linearLayout2"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"></LinearLayout>
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/markerinfowindow_dir_btn"
+        android:layout_toEndOf="@id/linearLayout2"
+        android:background="@null"
+        android:layout_centerVertical="true"
+        android:textColor="#949494"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/ic_directions"
+        android:layout_marginRight="5dp" />
+
+</RelativeLayout>

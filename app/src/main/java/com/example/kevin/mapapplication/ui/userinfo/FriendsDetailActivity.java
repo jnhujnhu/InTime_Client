@@ -83,6 +83,7 @@ public class FriendsDetailActivity extends AppCompatActivity {
                 modify_btn.setVisibility(View.VISIBLE);
                 modify_btn.setBackground(getDrawable(R.drawable.bg_pending_friends_accept_btn));
 
+
                 switch(mode) {
                     case "accepted":
                         modify_btn.setVisibility(View.GONE);
@@ -130,11 +131,14 @@ public class FriendsDetailActivity extends AppCompatActivity {
                         cancel_btn.setVisibility(View.GONE);
                         modify_btn.setText("Add as Friend");
                         modify_btn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                AddOrAcceptFriendRequest("add");
-                            }
-                        });
+                                @Override
+                                public void onClick(View v) {AddOrAcceptFriendRequest("add");
+                                }
+                            });
+                        break;
+                    default:
+                        modify_btn.setVisibility(View.GONE);
+                        cancel_btn.setVisibility(View.GONE);
                         break;
                 }
 

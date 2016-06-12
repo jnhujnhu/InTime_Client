@@ -11,11 +11,11 @@ import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 /**
  * Created by Kevin on 3/12/16.
  */
-public class TaskInformer {
+public class DirectionInformer {
 
     private final MapsActivity handle;
 
-    public TaskInformer(MapsActivity hand) {
+    public DirectionInformer(MapsActivity hand) {
         handle = hand;
         onTaskCancelClicker = hand;
     }
@@ -27,7 +27,7 @@ public class TaskInformer {
     private OnTaskCancelClicker onTaskCancelClicker;
 
     public void SetTaskInformer() {
-        final Button task_cancel = (Button) handle.findViewById(R.id.btn_task_cancel);
+        final Button task_cancel = (Button) handle.findViewById(R.id.btn_direction_hide);
         final LinearLayout taskinformer = (LinearLayout) handle.findViewById(R.id.ll_task_informer);
         task_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,7 +44,7 @@ public class TaskInformer {
     }
 
     public void ShowTaskInformer() {
-        Button task_cancel = (Button)handle.findViewById(R.id.btn_task_cancel);
+        Button task_cancel = (Button)handle.findViewById(R.id.btn_direction_hide);
         LinearLayout taskinformer = (LinearLayout) handle.findViewById(R.id.ll_task_informer);
         TranslateAnimation shiftleft = new TranslateAnimation(700, 0, 0, 0);
         shiftleft.setDuration(700);

@@ -1,5 +1,6 @@
 package com.example.kevin.mapapplication.ui.mainscreen;
 
+import android.animation.TimeInterpolator;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +43,6 @@ import com.example.kevin.mapapplication.ui.mainscreen.tag.RedTagInfoActivity;
 import com.example.kevin.mapapplication.ui.mainscreen.tag.TagInfoActivity;
 import com.example.kevin.mapapplication.ui.startup.StartUpActivity;
 import com.example.kevin.mapapplication.ui.userinfo.HelpActivity;
-import com.example.kevin.mapapplication.ui.userinfo.HistoryActivity;
 import com.example.kevin.mapapplication.ui.userinfo.FriendsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.NotificationsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.OrdersActivity;
@@ -71,19 +71,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import cz.msebera.android.httpclient.Header;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
         QueryFragment.OnFragmentInteractionListener, GoogleMap.InfoWindowAdapter, TaginfoDialog.OnAcceptClickedCallBack
-        , TaskInformer.OnTaskCancelClicker {
+        , DirectionInformer.OnTaskCancelClicker {
 
     private GoogleMap mMap;
     private LatLng CurrentPosition;
     private float CurrentAccuracy;
     private LocationTracker mLocationTracker;
     private DirectionManager dm;
-    private TaskInformer taskInformer;
     private TagButtonManager tagButtonManager;
+
+    public DirectionInformer directionInformer;
+    public ProgressBar loading;
 
     private Circle MyPositionCircle;
     private Marker MyPositionMarker;
@@ -103,17 +108,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String FocusedMarkerPlaceName;
 
     private DrawerLayout drawer;
-
     private RelativeLayout action_bar_mask;
     private FloatingActionButton Fab;
-    private ProgressBar loading;
     private long timebetweenclicks;
     private int fabclickcount;
 
     private SharedPreferences userinfo;
     private String m_username;
     private Bundle m_bundle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -330,7 +332,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
     private void modifyScreen(boolean enable) {
         setQueryBar(enable);
         setInfoWindowListener(enable);
@@ -339,7 +340,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             action_bar_mask.setVisibility(View.GONE);
         else action_bar_mask.setVisibility(View.VISIBLE);
     }
-
 
     private void addMarkerAndRelatedListener(final float Color, final boolean hasAnimation, final boolean hasDefaultPos, final boolean enableFab, final boolean isMarkerDraggable, final String Custom_Place, final double latitude, final double longitude) {
         int Anim_Delay = 500;
@@ -469,6 +469,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    private void PinJumpAnimation(final Marker marker, final LatLng target) {
+
+        final TimeInterpolator timeInterpolator = new TimeInterpolator() {
+            @Override
+            public float getInterpolation(float input) {
+                return (float)Math.abs(Math.sin(input * 2 * 3.1415926));
+            }
+        };
+        final long duration = 900;
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = mMap.getProjection();
+
+        Point startPoint = proj.toScreenLocation(target);
+        startPoint.y = startPoint.y - 50;
+        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        marker.setPosition(startLatLng);
+
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float state = (float) elapsed / duration;
+                float t = timeInterpolator.getInterpolation(state);
+                double lng = target.longitude + t * (startLatLng.longitude - target.longitude) ;
+                double lat = target.latitude + t * (startLatLng.latitude - target.latitude);
+                marker.setPosition(new LatLng(lat, lng));
+                if (state < 1.0) {
+                    handler.postDelayed(this, 10);
+                }
+            }
+        });
+    }
+
     private void setQueryBar(boolean enable) {
         EditText queryinput = (EditText) findViewById(R.id.queryinput);
         ImageButton search, detail;
@@ -546,8 +581,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
         }
     }
-
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -658,17 +691,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     @Override
     public void DrawDirectionAndSet(JSONObject data) {
-        dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")), mMap);
-        DisableInfoWindowListener();
-        setFabFunction(false);
-
+        dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")), mMap, MapsActivity.this);
+        setInfoWindowListener(false);
     }
 
     @Override
     public void ClearMapAndSetInfoWindow() {
         dm.ClearPolyline();
         setInfoWindowListener(true);
-        setFabFunction(false);
     }
 
     private void restoreMapAndsetMarkers() {
@@ -679,6 +709,68 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setDefaultMarkers() {
+        loading.setVisibility(View.VISIBLE);
+        final Set<String> acceptedorderid = new HashSet<>();
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                JSONArray orders = res.optJSONArray("orders");
+                for(int i = 0;i < orders.length();i++) {
+                    JSONObject order = orders.optJSONObject(i);
+                    acceptedorderid.add(order.optString("oid"));
+                    setDefaultMarkerProperty(order, true);
+                }
+                MarkersFilter(acceptedorderid);
+            }
+
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(MapsActivity.this, error, Toast.LENGTH_LONG).show();
+            }
+        };
+        ConnectionManager.getInstance().GetOrderList("", "waiting", "", userinfo.getString("uid", null), false ,userinfo.getString("token", null), handler);
+    }
+
+    private void setDefaultMarkerProperty(JSONObject order, boolean hasAnimation) throws JSONException {
+
+        final Marker marker = mMap.addMarker(new MarkerOptions().position(CurrentPosition));
+        MarkerManager.getInstance().Put(marker.getId(), order);
+        final LatLng position = new LatLng(MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("latitude"), MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("longitude"));
+
+        switch (order.optString("type")) {
+            case "request":
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                break;
+            case "offer":
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                break;
+            case "prompt":
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                break;
+        }
+
+        marker.setPosition(position);
+        if(hasAnimation) {
+            final Handler animate_handler = new Handler();
+            animate_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Handler jumphandler = new Handler();
+                    jumphandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            PinJumpAnimation(marker, position);
+                            animate_handler.postDelayed(this, 1700);
+                        }
+                    });
+                }
+            }, 2000);
+        }
+    }
+
+    private void MarkersFilter(final Set<String> acceptedoid) {
         loading.setVisibility(View.VISIBLE);
         /////////////////////////////////GetDefaultOrdersList////////////////////////////////////////
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
@@ -691,20 +783,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 for(int i = 0;i < markers_num;i ++) {
                     JSONObject order = orders_list.getJSONObject(i);
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(CurrentPosition));
-                    MarkerManager.getInstance().Put(marker.getId(), order);
-                    switch (MarkerManager.getInstance().Get(marker.getId()).optString("type")) {
-                        case "request":
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                            break;
-                        case "offer":
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                            break;
-                        case "prompt":
-                            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                            break;
+                    if(!acceptedoid.contains(order.optString("oid"))) {
+                        setDefaultMarkerProperty( order, false);
                     }
-                    marker.setPosition(new LatLng(MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("latitude"), MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("longitude")));
                 }
             }
             @Override
@@ -760,12 +841,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         loading = (ProgressBar) findViewById(R.id.main_loading);
 
         tagButtonManager = new TagButtonManager(this);
-
         tagButtonManager.setButtonListener(true);
 
-        taskInformer = new TaskInformer(this);
+        directionInformer = new DirectionInformer(this);
+        directionInformer.SetTaskInformer();
 
-        taskInformer.SetTaskInformer();
         FocusedMarker = null;
         FocusedMarkerPlaceName = "";
         app_state = "show";
@@ -852,7 +932,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
     private void Mapinit() {
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setInfoWindowAdapter(this);
@@ -904,20 +983,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             TaginfoDialog taginfoDialog = new TaginfoDialog(MapsActivity.this);
                             taginfoDialog.SetCallBack(MapsActivity.this);
-                            taginfoDialog.BuildDialog(marker, taskInformer);
+                            taginfoDialog.BuildDialog(marker, directionInformer);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-            }
-        });
-    }
-
-    private void DisableInfoWindowListener() {
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
             }
         });
     }

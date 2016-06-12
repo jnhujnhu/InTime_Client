@@ -13,7 +13,7 @@ import com.example.kevin.mapapplication.model.ConnectionManager;
 public class MyOrdersFragment extends OrdersFragment {
     public void GetOrderList() {
         super.GetOrderList();
-        ConnectionManager.getInstance().GetOrderList(userinfo.getString("uid", null), "", "", "", userinfo.getString("token", null), responseHandler);
+        ConnectionManager.getInstance().GetOrderList(userinfo.getString("uid", null), "", "", "", false, userinfo.getString("token", null), responseHandler);
     }
 
     @Override

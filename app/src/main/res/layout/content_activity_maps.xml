@@ -111,15 +111,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Task is in progress."
+            android:text="Searching..."
             android:layout_marginEnd="10dp"
-            android:textSize="@dimen/dialog_normal_textsize"/>
+            android:textSize="@dimen/dialog_normal_textsize"
+            android:id="@+id/direction_info" />
         <Button
             android:layout_width="70dp"
             android:layout_height="30dp"
-            android:text="Cancel"
+            android:text="Hide"
             android:textColor="#a9a9a9"
-            android:id="@+id/btn_task_cancel"
+            android:id="@+id/btn_direction_hide"
             android:background="@drawable/bg_task_informer_button"
             android:stateListAnimator="@null"
             />

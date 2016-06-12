@@ -3,7 +3,10 @@ package com.example.kevin.mapapplication.utils;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
+import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -34,6 +37,8 @@ public class DirectionManager {
 
     private Polyline DirectionLine;
 
+    private MapsActivity context;
+
     private GoogleMap mGoogleMap;
 
     public void ClearPolyline() {
@@ -42,10 +47,12 @@ public class DirectionManager {
         }
     }
 
-    public DirectionManager(LatLng origin, LatLng destination, GoogleMap mMap) {
+    public DirectionManager(LatLng origin, LatLng destination, GoogleMap mMap, MapsActivity m_context) {
 
         str_URL = BuildDirectionUrl(origin, destination);
         mGoogleMap = mMap;
+        context = m_context;
+        context.loading.setVisibility(View.VISIBLE);
         new DownloadUrl().execute();
     }
 
@@ -56,7 +63,7 @@ public class DirectionManager {
         String str_destination = "destination=" + destination.latitude + "," + destination.longitude;
 
         String url = "https://maps.googleapis.com/maps/api/directions/json?" + str_origin + "&" + str_destination
-                + "&" + "mode=driving";
+                + "&" + "mode=driving&key=AIzaSyD3e_Fju-Zpocen-WIW7-PWY8YNKczIgwA";
         return url;
     }
 
@@ -168,9 +175,12 @@ public class DirectionManager {
             }
             if(lineOptions!=null) {
                 DirectionLine = mGoogleMap.addPolyline(lineOptions);
+                context.directionInformer.ShowTaskInformer();
+                context.loading.setVisibility(View.INVISIBLE);
             }
             else {
-                Log.i("Direction Failed", "Cannot reach destination");
+                context.loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(context, "Direction error.", Toast.LENGTH_LONG).show();
             }
         }
     }
