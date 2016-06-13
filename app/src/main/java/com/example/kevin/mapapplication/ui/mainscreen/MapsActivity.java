@@ -520,6 +520,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         detail.setEnabled(enable);
     }
 
+    public static int getPixelsFromDp(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale + 0.5f);
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -534,7 +539,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.mapwrapperlayout);
-        mapWrapperLayout.init(mMap, 0);
+        mapWrapperLayout.init(mMap, getPixelsFromDp(this, -10));
 
         m_bundle = getIntent().getExtras();
         if(m_bundle!=null && (m_bundle.getString("state").equals("modify")||m_bundle.getString("state").equals("showOne"))) {

@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.Marker;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -71,7 +72,7 @@ public class MapWrapperLayout extends LinearLayout {
         if (marker != null && marker.isInfoWindowShown() && map != null && infoWindow != null) {
             // Get a marker position on the screen
             Point point = map.getProjection().toScreenLocation(marker.getPosition());
-
+            
             // Make a copy of the MotionEvent and adjust it's location
             // so it is relative to the infoWindow left top corner
             MotionEvent copyEv = MotionEvent.obtain(ev);

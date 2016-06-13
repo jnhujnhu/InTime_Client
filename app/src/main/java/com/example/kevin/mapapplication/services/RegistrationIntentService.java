@@ -23,6 +23,7 @@ import cz.msebera.android.httpclient.Header;
 public class RegistrationIntentService extends IntentService {
 
     private static final String TAG = "RegIntentService";
+    private static final String PROJECT_NUMBER = "788165761397";
     private static final String[] TOPICS = {"global"};
 
     private  SharedPreferences userinfo;
@@ -37,8 +38,7 @@ public class RegistrationIntentService extends IntentService {
 
         try {
             InstanceID instanceID = InstanceID.getInstance(this);
-            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            Log.i(TAG, "GCM Registration Token: " + token);
+            String token = instanceID.getToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             userinfo.edit().putString("regToken", token).apply();
 
             sendRegistrationToServer(token);

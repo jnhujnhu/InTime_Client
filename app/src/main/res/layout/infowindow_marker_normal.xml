@@ -54,11 +54,11 @@
         android:background="#a0a0a0"
         android:id="@+id/linearLayout2"
         android:layout_marginTop="2dp"
-        android:layout_marginLeft="10dp"></LinearLayout>
+        android:layout_marginLeft="10dp"/>
 
     <ImageButton
         android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:id="@+id/markerinfowindow_dir_btn"
         android:layout_toEndOf="@id/linearLayout2"
         android:background="@null"
@@ -66,6 +66,8 @@
         android:textColor="#949494"
         android:layout_marginLeft="10dp"
         android:src="@drawable/ic_directions"
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="5dp"
+        android:layout_alignTop="@+id/linearLayout"
+        android:layout_alignBottom="@+id/linearLayout" />
 
 </RelativeLayout>
