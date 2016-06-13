@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -35,6 +38,7 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
 
     private boolean isAccepted = false;
     private boolean isOwner = false;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +121,7 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         }
 
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        inputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         try {
             Date date = inputFormat.parse(res.optString("time"));
@@ -129,7 +134,6 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
             case "waiting":
                 text_status.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.status_waiting));
                 text_status.setText("Waiting");
-
                 break;
             case "accepted":
                 text_status.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.status_accepted));
@@ -200,6 +204,8 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         }
 
         isOwner = res.optString("uid").equals(userinfo.getString("uid", null));
+        isAccepted = false;
+        type = res.optString("type");
 
         if (res.optJSONArray("accept_users").length() > 0) {
             layout_accept.setVisibility(View.VISIBLE);
@@ -207,6 +213,18 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         }
         else {
             layout_accept.setVisibility(View.GONE);
+        }
+
+        try {
+            Date date = inputFormat.parse(res.optString("time"));
+            Date now = new Date();
+            if (!isAccepted && now.after(date)) {
+                text_status.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.status_canceled));
+                text_status.setText("Expired");
+            }
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -256,6 +274,9 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         ImageView image_accept = (ImageView)v.findViewById(R.id.detail_item_accept_icon);
         TextView text_status = (TextView)v.findViewById(R.id.detail_item_accept_status);
         ImageView image_cancel = (ImageView)v.findViewById(R.id.detail_item_accept_cancel);
+        LinearLayout layout_stay_or_leave = (LinearLayout)v.findViewById(R.id.detail_item_accept_stay_or_leave);
+        Button button_stay = (Button)v.findViewById(R.id.detail_item_accept_stay);
+        Button button_leave = (Button)v.findViewById(R.id.detail_item_accept_leave);
 
         text_accept.setText(item.getString("username"));
 
@@ -265,8 +286,6 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         else {
             image_accept.setVisibility(View.GONE);
         }
-
-        isAccepted = false;
 
         switch (item.getString("status")) {
             case "accepted":
@@ -306,10 +325,31 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
             image_cancel.setVisibility(View.GONE);
         }
 
+        if (isOwner && item.getString("status").equals("canceling") && type.equals("offer")) {
+            layout_stay_or_leave.setVisibility(View.VISIBLE);
+        }
+        else {
+            layout_stay_or_leave.setVisibility(View.GONE);
+        }
+
         image_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelUser(item.getString("uid"));
+                setUserStatus(item.getString("uid"), "cancel");
+            }
+        });
+
+        button_stay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setUserStatus(item.getString("uid"), "accepted");
+            }
+        });
+
+        button_leave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setUserStatus(item.getString("uid"), "cancel");
             }
         });
     }
@@ -439,10 +479,10 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         });
     }
 
-    private void cancelUser(String uid) {
+    private void setUserStatus(String uid, String status) {
         loading.setVisibility(View.VISIBLE);
 
-        ConnectionManager.getInstance().SetOrderUserStatus(bundle.getString("oid"), uid, "cancel", userinfo.getString("token", null), new AsyncJSONHttpResponseHandler() {
+        ConnectionManager.getInstance().SetOrderUserStatus(bundle.getString("oid"), uid, status, userinfo.getString("token", null), new AsyncJSONHttpResponseHandler() {
             @Override
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);

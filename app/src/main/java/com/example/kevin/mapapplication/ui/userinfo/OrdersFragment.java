@@ -85,15 +85,26 @@ public class OrdersFragment extends Fragment {
             bundle.putString("status", orderItem.optString("status"));
             bundle.putInt("points", orderItem.optInt("points"));
             bundle.putInt("number", orderItem.optInt("number"));
+            bundle.putString("time", orderItem.optString("time"));
 
             JSONArray acceptUsers = orderItem.optJSONArray("accept_users");
+            Boolean isAccepted = false;
+            Integer acceptCount = 0;
             for (int j = 0; j < acceptUsers.length(); j++) {
                 JSONObject acceptUser = acceptUsers.optJSONObject(j);
                 if (acceptUser.optString("uid").equals(userinfo.getString("uid", null))) {
                     bundle.putString("userStatus", acceptUser.optString("status"));
-                    break;
+                }
+                if (acceptUser.optString("status").equals("accepted") || acceptUser.optString("status").equals("canceling")) {
+                    isAccepted = true;
+                }
+                if (!acceptUser.optString("status").equals("canceled")) {
+                    acceptCount++;
                 }
             }
+
+            bundle.putBoolean("isAccepted", isAccepted);
+            bundle.putInt("acceptCount", acceptCount);
 
             itemList.add(bundle);
         }
@@ -155,16 +166,6 @@ public class OrdersFragment extends Fragment {
 
         text_title.setText(item.getString("title"));
         text_content.setText(item.getString("content"));
-
-        layout_user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FriendsDetailActivity.class);
-                intent.putExtra("uid", item.getString("uid"));
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-            }
-        });
     }
 
     @Override

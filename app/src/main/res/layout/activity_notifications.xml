@@ -5,20 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.userinfo.NotificationsActivity">
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp"
-        android:visibility="invisible"
-        android:id="@+id/notifications_loading"
-        android:indeterminateTint="#646464"
-        android:indeterminateTintMode="src_atop" />
-
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="@dimen/custom_actionbar_height"
@@ -53,26 +39,24 @@
             android:paddingBottom="20dp" />
     </RelativeLayout>
 
-    <ScrollView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/notifications_scrollview"
-        android:layout_below="@+id/RelativeLayout1"
-        android:layout_alignParentStart="true"
-        android:fillViewport="true">
+        android:id="@+id/notification_list"
+        android:layout_below="@+id/RelativeLayout1" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/notifications_linearlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.example.kevin.mapapplication.utils.ListViewForScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/notification_list"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </ScrollView>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/notifications_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
 
 </RelativeLayout>

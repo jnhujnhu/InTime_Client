@@ -25,18 +25,12 @@
             android:text="@string/Search_result_title"
             android:gravity="center_vertical"
             android:textSize="@dimen/custom_actionbar_title_textsize"/>
-        <TextView
-            android:id="@+id/search_keyword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/custom_actionbar_title_textsize"
-            />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/query_result_listview"
+    <fragment
+        android:id="@+id/fragment1"
+        android:name="com.example.kevin.mapapplication.ui.mainscreen.SearchResultFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_backbutton" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 </LinearLayout>

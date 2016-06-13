@@ -23,7 +23,6 @@ public class SearchResultActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-                overridePendingTransition(R.anim.anim_empty, R.anim.slide_out_to_bottom);
             }
         });
     }
@@ -36,7 +35,6 @@ public class SearchResultActivity extends AppCompatActivity {
 
     private void SendBackMessage() {
         Intent intent = new Intent();
-        intent.putExtra("Choosed","Item id");
         setResult(RESULT_CODE, intent);
         super.onBackPressed();
     }

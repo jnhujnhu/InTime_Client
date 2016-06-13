@@ -25,7 +25,7 @@
         <ImageView
             android:layout_width="12dp"
             android:layout_height="12dp"
-            android:id="@+id/listview_item_user_forward"
+            android:id="@+id/listview_item_user_icon"
             android:src="@drawable/ic_actionbar_back"
             android:rotation="180"
             android:layout_toRightOf="@id/listview_item_username"

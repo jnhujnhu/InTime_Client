@@ -10,11 +10,10 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:id="@+id/imageView"
-        android:src="@drawable/user_portrait"
+        android:src="@drawable/ic_default_avatar"
         android:layout_marginLeft="16dp"
         android:contentDescription="@string/User_portrait"
         android:layout_gravity="center_vertical|bottom"
-        android:background="@drawable/bg_userportriat_border"
         android:padding="3dp"
         android:layout_marginBottom="20dp" />
 

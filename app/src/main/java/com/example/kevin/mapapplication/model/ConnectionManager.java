@@ -1,6 +1,5 @@
 package com.example.kevin.mapapplication.model;
 
-
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 

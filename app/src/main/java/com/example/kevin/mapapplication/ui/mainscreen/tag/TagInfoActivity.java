@@ -312,6 +312,7 @@ public class TagInfoActivity extends AppCompatActivity {
 
         if(!b_exptime.equals("")) {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            inputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
             try {
                 Date date = inputFormat.parse(b_exptime);
