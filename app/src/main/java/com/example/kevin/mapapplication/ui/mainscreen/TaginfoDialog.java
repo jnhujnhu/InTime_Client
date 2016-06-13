@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Kevin on 3/12/16.
@@ -101,6 +102,7 @@ public class TaginfoDialog {
         u_points.setText(Integer.toString(point));
         u_enrollment.setText(Integer.toString(enrollment));
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        inputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         try {
             Date date = inputFormat.parse(exptime);

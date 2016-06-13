@@ -5,20 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.kevin.mapapplication.ui.userinfo.FriendsDetailActivity">
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp"
-        android:visibility="invisible"
-        android:id="@+id/friend_detail_loading"
-        android:indeterminateTint="#646464"
-        android:indeterminateTintMode="src_atop" />
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="@dimen/custom_actionbar_height"
@@ -55,12 +41,11 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:id="@+id/imageView"
-            android:src="@drawable/ic_friends_user_accepted_large"
+            android:src="@drawable/ic_default_avatar"
             android:layout_marginLeft="16dp"
             android:contentDescription="@string/User_portrait"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_userportriat_border"
             android:padding="3dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="35dp" />
@@ -151,5 +136,19 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="10dp" />
     </RelativeLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:visibility="invisible"
+        android:id="@+id/friend_detail_loading"
+        android:indeterminateTint="#646464"
+        android:indeterminateTintMode="src_atop" />
 
 </RelativeLayout>
