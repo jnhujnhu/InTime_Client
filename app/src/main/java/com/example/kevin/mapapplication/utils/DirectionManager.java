@@ -37,9 +37,20 @@ public class DirectionManager {
 
     private Polyline DirectionLine;
 
+    private LatLng ori, dest;
+
     private MapsActivity context;
 
     private GoogleMap mGoogleMap;
+
+    public interface onDirectionShownCallBack {
+        void onDirectionShown(LatLng origin, LatLng destination);
+    }
+    public void setOnDirectionShowCallBack(onDirectionShownCallBack callBack) {
+        onShown = callBack;
+    }
+
+    private onDirectionShownCallBack onShown;
 
     public void ClearPolyline() {
         if(DirectionLine!=null) {
@@ -48,7 +59,8 @@ public class DirectionManager {
     }
 
     public DirectionManager(LatLng origin, LatLng destination, GoogleMap mMap, MapsActivity m_context) {
-
+        ori = origin;
+        dest = destination;
         str_URL = BuildDirectionUrl(origin, destination);
         mGoogleMap = mMap;
         context = m_context;
@@ -175,7 +187,7 @@ public class DirectionManager {
             }
             if(lineOptions!=null) {
                 DirectionLine = mGoogleMap.addPolyline(lineOptions);
-                context.directionInformer.ShowTaskInformer();
+                onShown.onDirectionShown(ori, dest);
                 context.loading.setVisibility(View.INVISIBLE);
             }
             else {

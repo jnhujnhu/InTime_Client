@@ -35,17 +35,8 @@ public class TaginfoDialog {
         handle = con;
     }
 
-    public interface OnAcceptClickedCallBack {
-        void DrawDirectionAndSet(JSONObject data);
-    }
 
-    public void SetCallBack(OnAcceptClickedCallBack onAcceptClickedCallBack) {
-        onaccept = onAcceptClickedCallBack;
-    }
-
-    private OnAcceptClickedCallBack onaccept;
-
-    public void BuildDialog (Marker marker, final DirectionInformer directionInformer) throws JSONException{
+    public void BuildDialog (Marker marker) throws JSONException{
 
         AlertDialog.Builder builder = new AlertDialog.Builder(handle);
         LayoutInflater inflater = LayoutInflater.from(handle);
@@ -95,9 +86,6 @@ public class TaginfoDialog {
                 Intent intent = new Intent(handle, OrderDetailActivity.class);
                 intent.putExtra("oid", oid);
                 handle.startActivityForResult(intent, MapsActivity.REQUEST_CODE);
-                /*onaccept.DrawDirectionAndSet(data);
-                directionInformer.ShowTaskInformer();
-                dialog.dismiss();*/
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {

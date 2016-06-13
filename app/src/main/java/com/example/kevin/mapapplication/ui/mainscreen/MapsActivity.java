@@ -18,6 +18,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -54,6 +55,7 @@ import com.example.kevin.mapapplication.ui.userinfo.WalletActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import com.example.kevin.mapapplication.utils.DirectionManager;
 import com.example.kevin.mapapplication.utils.LocationTracker;
+import com.example.kevin.mapapplication.utils.MapWrapperLayout;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -66,6 +68,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +80,7 @@ import java.util.Set;
 import cz.msebera.android.httpclient.Header;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
-        QueryFragment.OnFragmentInteractionListener, GoogleMap.InfoWindowAdapter, TaginfoDialog.OnAcceptClickedCallBack
+        QueryFragment.OnFragmentInteractionListener, GoogleMap.InfoWindowAdapter, DirectionManager.onDirectionShownCallBack
         , DirectionInformer.OnTaskCancelClicker {
 
     private GoogleMap mMap;
@@ -86,8 +89,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationTracker mLocationTracker;
     private DirectionManager dm;
     private TagButtonManager tagButtonManager;
+    private MapWrapperLayout mapWrapperLayout;
+    private TagInfoWindow tagInfoWindow;
+    private View InfoWindow;
 
-    public DirectionInformer directionInformer;
+    private DirectionInformer directionInformer;
     public ProgressBar loading;
 
     private Circle MyPositionCircle;
@@ -526,6 +532,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.mapwrapperlayout);
+        mapWrapperLayout.init(mMap, 0);
+
         m_bundle = getIntent().getExtras();
         if(m_bundle!=null && (m_bundle.getString("state").equals("modify")||m_bundle.getString("state").equals("showOne"))) {
             Mapinit_location();
@@ -546,17 +556,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public float getZoomLevel(float distance) {
+        float zoomLevel;
+        double scale = distance / 500;
+        zoomLevel = (float) (16 - Math.log(scale) / Math.log(2));
+        return zoomLevel;
+    }
+
+    @Override
+    public void onDirectionShown(LatLng origin, LatLng destination) {
+        directionInformer.ShowTaskInformer();
+        double distance = SphericalUtil.computeDistanceBetween(origin, destination);
+        LatLng Center = new LatLng((origin.latitude + destination.latitude) / 2, (origin.longitude + destination.longitude) / 2);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Center, getZoomLevel((float) distance)));
+    }
+
     @Override
     public View getInfoContents(Marker marker) {
 
-        TagInfoWindow tagInfoWindow = new TagInfoWindow(MapsActivity.this);
+        if(marker.getId().equals(MarkerManager.getInstance().getLocationMarkerid())) {
+            return null;
+        }
 
-        return tagInfoWindow.BuildTagContent(marker);
+        tagInfoWindow.setTagContent(InfoWindow, marker, mMap);
+        mapWrapperLayout.setMarkerWithInfoWindow(marker, InfoWindow);
+        return InfoWindow;
     }
 
     @Override
     public View getInfoWindow (Marker marker) {
-
         return null;
     }
 
@@ -689,9 +717,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
         }
     }
-    @Override
+
     public void DrawDirectionAndSet(JSONObject data) {
         dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")), mMap, MapsActivity.this);
+        dm.setOnDirectionShowCallBack(this);
         setInfoWindowListener(false);
     }
 
@@ -843,9 +872,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         tagButtonManager = new TagButtonManager(this);
         tagButtonManager.setButtonListener(true);
 
-        directionInformer = new DirectionInformer(this);
-        directionInformer.SetTaskInformer();
-
         FocusedMarker = null;
         FocusedMarkerPlaceName = "";
         app_state = "show";
@@ -940,6 +966,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setMyPositionMarker();
 
+        directionInformer = new DirectionInformer(this, mMap);
+        directionInformer.SetTaskInformer();
+
+        tagInfoWindow  = new TagInfoWindow(MapsActivity.this);
+        InfoWindow = tagInfoWindow.BuildTagContent();
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(CurrentPosition));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -982,8 +1014,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (!marker.getId().equals(MarkerManager.getInstance().getLocationMarkerid())) {
                         try {
                             TaginfoDialog taginfoDialog = new TaginfoDialog(MapsActivity.this);
-                            taginfoDialog.SetCallBack(MapsActivity.this);
-                            taginfoDialog.BuildDialog(marker, directionInformer);
+                            taginfoDialog.BuildDialog(marker);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

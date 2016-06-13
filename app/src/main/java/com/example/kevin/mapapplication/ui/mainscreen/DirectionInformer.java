@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 
 import com.example.kevin.mapapplication.R;
 import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
+import com.google.android.gms.maps.GoogleMap;
 
 /**
  * Created by Kevin on 3/12/16.
@@ -15,9 +16,12 @@ public class DirectionInformer {
 
     private final MapsActivity handle;
 
-    public DirectionInformer(MapsActivity hand) {
+    private final GoogleMap map;
+
+    public DirectionInformer(MapsActivity hand, GoogleMap mMap) {
         handle = hand;
         onTaskCancelClicker = hand;
+        map = mMap;
     }
 
     public interface OnTaskCancelClicker {
@@ -39,6 +43,7 @@ public class DirectionInformer {
                 taskinformer.startAnimation(shiftright);
                 taskinformer.setVisibility(View.INVISIBLE);
                 task_cancel.setEnabled(false);
+                map.setInfoWindowAdapter(handle);
             }
         });
     }
