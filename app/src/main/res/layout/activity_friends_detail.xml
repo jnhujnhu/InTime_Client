@@ -41,12 +41,11 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:id="@+id/imageView"
-            android:src="@drawable/ic_friends_user_accepted_large"
+            android:src="@drawable/ic_default_avatar"
             android:layout_marginLeft="16dp"
             android:contentDescription="@string/User_portrait"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="10dp"
-            android:background="@drawable/bg_userportriat_border"
             android:padding="3dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="35dp" />
