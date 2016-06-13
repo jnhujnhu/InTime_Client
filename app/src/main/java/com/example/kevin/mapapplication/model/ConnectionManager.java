@@ -149,7 +149,7 @@ public class ConnectionManager {
             }
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.post(null, SERVER_ADDR + "/templates", entity, "application/json", handler);
@@ -176,7 +176,7 @@ public class ConnectionManager {
             params.put("coordinate", coordinate);
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(),"utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.post(null, SERVER_ADDR + "/orders", entity, "application/json", handler);
@@ -205,7 +205,7 @@ public class ConnectionManager {
             }
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.put(null, SERVER_ADDR + String.format("/templates/%s", tid), entity, "application/json", handler);
@@ -231,7 +231,7 @@ public class ConnectionManager {
             params.put("coordinate", coordinate);
             params.put("isPrivate", isPrivate);
 
-            StringEntity entity = new StringEntity(params.toString());
+            StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
             client.put(null, SERVER_ADDR + String.format("/orders/%s", oid), entity, "application/json", handler);

@@ -6,9 +6,10 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+        <com.example.kevin.mapapplication.utils.MapWrapperLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/mapwrapperlayout"
             android:orientation="vertical">
             <fragment
                 android:id="@+id/queryfragment"
@@ -24,7 +25,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 tools:context=".ui.mainscreen.MapsActivity" />
-        </LinearLayout>
+        </com.example.kevin.mapapplication.utils.MapWrapperLayout>
 
 
         <android.support.design.widget.FloatingActionButton
@@ -108,18 +109,12 @@
         android:layout_marginTop="90dp"
         android:visibility="invisible"
         android:id="@+id/ll_task_informer">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Task is in progress."
-            android:layout_marginEnd="10dp"
-            android:textSize="@dimen/dialog_normal_textsize"/>
         <Button
-            android:layout_width="70dp"
+            android:layout_width="150dp"
             android:layout_height="30dp"
-            android:text="Cancel"
+            android:text="Hide Direction"
             android:textColor="#a9a9a9"
-            android:id="@+id/btn_task_cancel"
+            android:id="@+id/btn_direction_hide"
             android:background="@drawable/bg_task_informer_button"
             android:stateListAnimator="@null"
             />
@@ -180,7 +175,7 @@
         android:layout_marginBottom="25dp"
         android:visibility="invisible"
         android:id="@+id/main_loading"
-        android:indeterminateTint="#f8f8f8"
+        android:indeterminateTint="#949494"
         android:indeterminateTintMode="src_atop"
         android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>

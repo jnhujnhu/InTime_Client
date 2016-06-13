@@ -32,6 +32,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:9.0.2'
     compile 'com.google.android.gms:play-services-gcm:9.0.2'
     compile 'com.loopj.android:android-async-http:1.4.9'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
 }
 
 apply plugin: 'com.google.gms.google-services'

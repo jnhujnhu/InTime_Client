@@ -29,7 +29,7 @@ public class MarkerManager {
     }
 
 
-    public JSONObject BuildData(int id,String uid,  String Type, String Title, String Category, int Points, int Number,  String Content, String Time, boolean isPrivate) throws JSONException{
+    /*public JSONObject BuildData(int id,String uid,  String Type, String Title, String Category, int Points, int Number,  String Content, String Time, boolean isPrivate) throws JSONException{
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("Id", id);
@@ -61,9 +61,9 @@ public class MarkerManager {
         return "m" + locationmarkerid;
     }
 
-    private void InitData() throws JSONException{
+    /*private void InitData() throws JSONException{
         //////////////////TEST_ONLY(Could change to HTTP_GET from server)//////////////
-        /*JSONObject ExampleGreen = new JSONObject(), ExampleBlue = new JSONObject(), ExampleRed = new JSONObject();
+        JSONObject ExampleGreen = new JSONObject(), ExampleBlue = new JSONObject(), ExampleRed = new JSONObject();
         ExampleGreen.put("Id", 1);
         ExampleGreen.put("Color", "Green");
         ExampleGreen.put("Lat", 31.1925720582);
@@ -93,9 +93,9 @@ public class MarkerManager {
         ExampleRed.put("Reward", 100);
         ExampleRed.put("DetailedDcpt", "I am so nervous, I need to go to Hangzhou this weekend, but my car broke down. Could any" +
                 "one give me a ride?");
-        Put(ExampleRed);*/
+        Put(ExampleRed);
 
-    }
+    }*/
 
     public void Put (String markerid, JSONObject markerdetail) throws JSONException {
         int markerindex = Integer.parseInt(markerid.substring(1, markerid.length()));

@@ -308,7 +308,6 @@ public class TagInfoActivity extends AppCompatActivity {
             DetailedDcpt.setEnabled(false);
             Place.setEnabled(false);
             MapPlace.setEnabled(false);
-
         }
 
         if(!b_exptime.equals("")) {
@@ -375,6 +374,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String t_shorttile = shorttitle.getText().toString();
+
                 boolean privacy = Privacy.isChecked();
                 int number = 0;
                 if(enrollment!=null) {
