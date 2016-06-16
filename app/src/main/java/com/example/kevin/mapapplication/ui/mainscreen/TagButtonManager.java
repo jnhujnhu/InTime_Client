@@ -95,7 +95,7 @@ public class TagButtonManager {
         Button button = (Button) handle.findViewById(id);
         TranslateAnimation shiftright = new TranslateAnimation(0, 300, 0, 0);
         shiftright.setDuration(duration);
-        shiftright.setFillAfter(true);
+        //shiftright.setFillAfter(true);
         button.setEnabled(false);
         button.startAnimation(shiftright);
         button.setVisibility(View.GONE);

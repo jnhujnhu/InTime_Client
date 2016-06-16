@@ -20,7 +20,7 @@ public class LocationTracker implements LocationListener {
 
     public LocationTracker(Context context) {
         mContext = context;
-        getLocation();
+        //getLocation();
     }
 
     public float getCurrentAccuracy() {
@@ -56,9 +56,22 @@ public class LocationTracker implements LocationListener {
                 se.printStackTrace();
             }
         }
+
         if (lastLocation == null) {
             Log.i("Location", "Error!");
             Toast.makeText(mContext, "No Location Service Available", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void setLocationListener() {
+        getLocation();
+    }
+
+    public void removeLocationListener() {
+        try {
+            mLocationManager.removeUpdates(this);
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 

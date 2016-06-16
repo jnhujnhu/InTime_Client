@@ -39,9 +39,9 @@ public class DirectionInformer {
                 onTaskCancelClicker.ClearMapAndSetInfoWindow();
                 TranslateAnimation shiftright = new TranslateAnimation(0, 700, 0, 0);
                 shiftright.setDuration(700);
-                shiftright.setFillAfter(true);
+                //shiftright.setFillAfter(true);
                 taskinformer.startAnimation(shiftright);
-                taskinformer.setVisibility(View.INVISIBLE);
+                taskinformer.setVisibility(View.GONE);
                 task_cancel.setEnabled(false);
                 map.setInfoWindowAdapter(handle);
             }

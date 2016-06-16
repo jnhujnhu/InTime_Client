@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -110,6 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int TOUCH_QUERY_UNFOCUSED = 3;
     private static final int TOUCH_SEARCH = 4;
     private boolean show_isMarkerClicker;
+    private boolean isFirstCreate = true;
     private Marker FocusedMarker;
     private String FocusedMarkerPlaceName;
 
@@ -122,12 +124,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SharedPreferences userinfo;
     private String m_username;
     private Bundle m_bundle;
+    private ceaselessMethods ceaselessMethods;
+
+    class ceaselessMethods {
+
+        private final Handler handler = new Handler();
+
+        Runnable locationUpdate = new Runnable() {
+            @Override
+            public void run() {
+                CurrentPosition = mLocationTracker.getCurrentLatlng();
+                CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
+                moveMyPositionMarker();
+
+                handler.postDelayed(this, 1000);
+            }
+        };
+        public void startCeaselessMethods() {
+            handler.post(locationUpdate);
+
+        }
+
+        public void stopCeaselessMethods() {
+            handler.removeCallbacks(locationUpdate);
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mLocationTracker = new LocationTracker(this);
+        ceaselessMethods = new ceaselessMethods();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -141,6 +170,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             InitParams();
             InitUI();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        mLocationTracker.setLocationListener();
+        ceaselessMethods.startCeaselessMethods();
+        if(!isFirstCreate) {
+            restoreMapAndsetMarkers();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mLocationTracker.removeLocationListener();
+        ceaselessMethods.stopCeaselessMethods();
+        super.onPause();
     }
 
     @Override
@@ -469,7 +515,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
                 marker.setPosition(new LatLng(lat, lng));
                 if (t < 1.0) {
-                    handler.postDelayed(this, 10);
+                    handler.postDelayed(this, 20);
                 }
             }
         });
@@ -493,7 +539,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
         marker.setPosition(startLatLng);
 
-
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -504,7 +549,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double lat = target.latitude + t * (startLatLng.latitude - target.latitude);
                 marker.setPosition(new LatLng(lat, lng));
                 if (state < 1.0) {
-                    handler.postDelayed(this, 10);
+                    handler.postDelayed(this, 20);
                 }
             }
         });
@@ -534,10 +579,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        isFirstCreate = false;
         mapWrapperLayout = (MapWrapperLayout)findViewById(R.id.mapwrapperlayout);
         mapWrapperLayout.init(mMap, getPixelsFromDp(this, -10));
 
@@ -736,8 +782,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void restoreMapAndsetMarkers() {
-        mMap.clear();
         Mapinit_location();
+        mMap.clear();
         setMyPositionMarker();
         setDefaultMarkers();
     }
@@ -932,11 +978,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void setMyPositionMarker() {
+    private void moveMyPositionMarker() {
         if(MyPositionCircle!=null && MyPositionMarker!=null) {
+            MyPositionCircle.setCenter(CurrentPosition);
+            MyPositionCircle.setRadius(CurrentAccuracy);
+            MyPositionMarker.setPosition(CurrentPosition);
+            Log.i("moved", "asd");
+        }
+    }
+
+    private void setMyPositionMarker() {
+        /*if(MyPositionCircle!=null && MyPositionMarker!=null) {
             MyPositionCircle.remove();
             MyPositionMarker.remove();
-        }
+        }*/
         MyPositionCircle = mMap.addCircle(new CircleOptions().center(CurrentPosition)
                 .radius(CurrentAccuracy)
                 .fillColor(Color.argb(30, 36, 132, 237))
@@ -957,7 +1012,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 CurrentPosition = mLocationTracker.getCurrentLatlng();
                 CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
-                setMyPositionMarker();
+                moveMyPositionMarker();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));
             }
         });
