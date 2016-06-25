@@ -39,8 +39,6 @@ public class UserDetailActivity extends AppCompatActivity {
 
     private SharedPreferences userinfo;
 
-    private boolean IsUsernameModified;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ActivityCount++;
@@ -72,8 +70,6 @@ public class UserDetailActivity extends AppCompatActivity {
         //Toast.makeText(UserDetailActivity.this, "Error!", Toast.LENGTH_LONG).show();
 
         GetUserInfo();
-
-        IsUsernameModified = false;
 
         modify = (Button) findViewById(R.id.user_detail_modify_btn);
         modify.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +121,6 @@ public class UserDetailActivity extends AppCompatActivity {
         loading.setVisibility(View.VISIBLE);
         String s_username = username.getText().toString();
         if(!s_username.equals(userinfo.getString("username", null))){
-            IsUsernameModified = true;
         }
 
         AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
@@ -179,7 +174,6 @@ public class UserDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra("IsUsernameModified", IsUsernameModified);
         setResult(RESULT_CODE, intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);

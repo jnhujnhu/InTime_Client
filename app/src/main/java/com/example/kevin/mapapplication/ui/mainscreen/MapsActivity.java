@@ -181,6 +181,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(!isFirstCreate) {
             restoreMapAndsetMarkers();
         }
+        updateUsernameAndBalance();
         super.onResume();
     }
 
@@ -204,31 +205,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }, 300);
                     break;
-                case SearchResultActivity.RESULT_CODE:
-                    break;
                 case TagInfoActivity.RESULT_CODE:
                     Bundle bundle = data.getExtras();
                     bundle.putString("state", "show");
                     setState(bundle);
-                    if (bundle.getBoolean("IsCanceled")) {
-                        FocusedMarker.remove();
-                    }
-                    else {
-                        restoreMapAndsetMarkers();
-                    }
-                    break;
-                case UserDetailActivity.RESULT_CODE:
-                    bundle = data.getExtras();
-                    if (bundle.getBoolean("IsUsernameModified")) {
-                        m_username = userinfo.getString("username", null);
-                        NavigationView navigationview = (NavigationView) findViewById(R.id.nav_view);
-                        View headerview = navigationview.getHeaderView(0);
-                        TextView drawer_header_username = (TextView) headerview.findViewById(R.id.drawer_header_username);
-                        drawer_header_username.setText(m_username);
-                    }
                     break;
             }
         }
+    }
+
+    private void updateUsernameAndBalance() {
+        loading.setVisibility(View.VISIBLE);
+        AsyncJSONHttpResponseHandler handler = new AsyncJSONHttpResponseHandler() {
+            @Override
+            public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                NavigationView navigationview = (NavigationView) findViewById(R.id.nav_view);
+                View headerview = navigationview.getHeaderView(0);
+                TextView drawer_header_balance = (TextView) headerview.findViewById(R.id.drawer_header_balance);
+                drawer_header_balance.setText(Integer.toString(res.optInt("balance")) + " Points ");
+                TextView drawer_header_username = (TextView) headerview.findViewById(R.id.drawer_header_username);
+                drawer_header_username.setText(res.optString("username"));
+                SharedPreferences.Editor editor = userinfo.edit();
+                m_username = res.optString("username");
+                editor.putString("username", m_username);
+                editor.apply();
+            }
+            @Override
+            public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
+                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(MapsActivity.this, error, Toast.LENGTH_SHORT).show();
+            }
+        };
+        ConnectionManager.getInstance().GetUserInfo(userinfo.getString("uid", null), userinfo.getString("token", null), handler);
     }
 
     public void setState(Bundle bundle) {
@@ -975,7 +984,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         View headerview = navigationview.getHeaderView(0);
         TextView drawer_header_username = (TextView) headerview.findViewById(R.id.drawer_header_username);
+        TextView drawer_header_balance = (TextView) headerview.findViewById(R.id.drawer_header_balance);
         drawer_header_username.setText(m_username);
+        drawer_header_balance.setText(userinfo.getString("balance", null));
         ImageButton user_detail_btn = (ImageButton) headerview.findViewById(R.id.drawer_header_detail_btn);
 
         headerview.setOnClickListener(new View.OnClickListener() {

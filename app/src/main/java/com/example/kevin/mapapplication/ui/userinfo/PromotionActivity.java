@@ -30,13 +30,14 @@ public class PromotionActivity extends AppCompatActivity {
 
     private String uid;
     private String token;
+    private SharedPreferences userinfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_promotion);
 
-        SharedPreferences userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
+        userinfo = getSharedPreferences("User_info", MODE_PRIVATE);
         uid = userinfo.getString("uid", null);
         token = userinfo.getString("token", null);
         Log.i("uid", uid);

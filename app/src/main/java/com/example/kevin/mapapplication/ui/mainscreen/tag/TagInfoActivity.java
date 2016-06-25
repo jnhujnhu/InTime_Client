@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -94,9 +95,6 @@ public class TagInfoActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        if(!intent.hasExtra("IsCanceled")) {
-            intent.putExtra("IsCanceled", true);
-        }
         setOnBackIntent();
         setResult(RESULT_CODE, intent);
         finish();
@@ -178,7 +176,6 @@ public class TagInfoActivity extends AppCompatActivity {
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 Toast.makeText(TagInfoActivity.this, "Successfully created template", Toast.LENGTH_LONG).show();
-                intent.putExtra("IsCanceled", false);
                 TagInfoActivity.this.onBackPressed();
             }
 
@@ -198,7 +195,6 @@ public class TagInfoActivity extends AppCompatActivity {
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 Toast.makeText(TagInfoActivity.this, "Successfully modified template", Toast.LENGTH_LONG).show();
-                intent.putExtra("IsCanceled", false);
                 TagInfoActivity.this.onBackPressed();
             }
 
@@ -218,7 +214,6 @@ public class TagInfoActivity extends AppCompatActivity {
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 Toast.makeText(TagInfoActivity.this, "Successfully created " + type, Toast.LENGTH_SHORT).show();
-                intent.putExtra("IsCanceled", false);
                 TagInfoActivity.this.onBackPressed();
             }
 
@@ -238,7 +233,6 @@ public class TagInfoActivity extends AppCompatActivity {
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
                 Toast.makeText(TagInfoActivity.this, "Successfully modified " + type, Toast.LENGTH_SHORT).show();
-                intent.putExtra("IsCanceled", false);
                 TagInfoActivity.this.onBackPressed();
             }
 
@@ -338,6 +332,17 @@ public class TagInfoActivity extends AppCompatActivity {
         shorttitle.setText(b_title);
         if(!b_category.equals("null")) {
             category.setSelection(((ArrayAdapter<String>) category.getAdapter()).getPosition(b_category));
+            category.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if(parent.getItemAtPosition(position).equals("Other")) {
+
+                    }
+                    else {
+
+                    }
+                }
+            });
         }
         Place.setText(Placename);
         DetailedDcpt.setText(b_content);
