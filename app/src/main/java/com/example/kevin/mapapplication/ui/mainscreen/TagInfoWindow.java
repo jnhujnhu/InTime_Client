@@ -63,19 +63,8 @@ public class TagInfoWindow {
                         case MotionEvent.ACTION_UP:
                             try {
                                 marker.hideInfoWindow();
+                                context.loading.setVisibility(View.VISIBLE);
                                 context.DrawDirectionAndSet(MarkerManager.getInstance().Get(marker.getId()));
-                                /////////Disable InfoWindow//////////////
-                                mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                                    @Override
-                                    public View getInfoWindow(Marker marker) {
-                                        return null;
-                                    }
-
-                                    @Override
-                                    public View getInfoContents(Marker marker) {
-                                        return null;
-                                    }
-                                });
                             }catch (JSONException e) {
                                 e.printStackTrace();
                             }

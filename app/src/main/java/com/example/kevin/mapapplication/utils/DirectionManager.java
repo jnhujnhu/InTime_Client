@@ -35,16 +35,11 @@ public class DirectionManager {
 
     private String str_URL;
 
-    private Polyline DirectionLine;
-
     private LatLng ori, dest;
 
-    private MapsActivity context;
-
-    private GoogleMap mGoogleMap;
-
     public interface onDirectionShownCallBack {
-        void onDirectionShown(LatLng origin, LatLng destination);
+        void onDirectionShown(LatLng origin, LatLng destination, PolylineOptions lineOptions);
+        void onDirectionFailed();
     }
     public void setOnDirectionShowCallBack(onDirectionShownCallBack callBack) {
         onShown = callBack;
@@ -52,19 +47,10 @@ public class DirectionManager {
 
     private onDirectionShownCallBack onShown;
 
-    public void ClearPolyline() {
-        if(DirectionLine!=null) {
-            DirectionLine.remove();
-        }
-    }
-
-    public DirectionManager(LatLng origin, LatLng destination, GoogleMap mMap, MapsActivity m_context) {
+    public DirectionManager(LatLng origin, LatLng destination) {
         ori = origin;
         dest = destination;
         str_URL = BuildDirectionUrl(origin, destination);
-        mGoogleMap = mMap;
-        context = m_context;
-        context.loading.setVisibility(View.VISIBLE);
         new DownloadUrl().execute();
     }
 
@@ -96,6 +82,8 @@ public class DirectionManager {
 
                 urlConnection.connect();
 
+                urlConnection.setConnectTimeout(5 * 1000);
+
                 inputStream = urlConnection.getInputStream();
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -114,6 +102,7 @@ public class DirectionManager {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                onShown.onDirectionFailed();
             } finally {
                 try {
                     inputStream.close();
@@ -185,15 +174,8 @@ public class DirectionManager {
 
                 lineOptions.color(Color.argb(200, 91, 93, 255));
             }
-            if(lineOptions!=null) {
-                DirectionLine = mGoogleMap.addPolyline(lineOptions);
-                onShown.onDirectionShown(ori, dest);
-                context.loading.setVisibility(View.INVISIBLE);
-            }
-            else {
-                context.loading.setVisibility(View.INVISIBLE);
-                Toast.makeText(context, "Direction error.", Toast.LENGTH_LONG).show();
-            }
+
+            onShown.onDirectionShown(ori, dest, lineOptions);
         }
     }
 

@@ -69,6 +69,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONArray;
@@ -95,7 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private View InfoWindow;
 
     private DirectionInformer directionInformer;
-    public ProgressBar loading;
+    ProgressBar loading;
 
     private Circle MyPositionCircle;
     private Marker MyPositionMarker;
@@ -114,6 +116,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isFirstCreate = true;
     private Marker FocusedMarker;
     private String FocusedMarkerPlaceName;
+
+    private Polyline DirectionLine;
 
     private DrawerLayout drawer;
     private RelativeLayout action_bar_mask;
@@ -136,18 +140,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 CurrentPosition = mLocationTracker.getCurrentLatlng();
                 CurrentAccuracy = mLocationTracker.getCurrentAccuracy();
                 moveMyPositionMarker();
-
                 handler.postDelayed(this, 1000);
             }
         };
+
         public void startCeaselessMethods() {
             handler.post(locationUpdate);
-
         }
 
         public void stopCeaselessMethods() {
             handler.removeCallbacks(locationUpdate);
-
         }
     }
 
@@ -615,11 +617,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onDirectionShown(LatLng origin, LatLng destination) {
-        directionInformer.ShowTaskInformer();
-        double distance = SphericalUtil.computeDistanceBetween(origin, destination);
-        LatLng Center = new LatLng((origin.latitude + destination.latitude) / 2, (origin.longitude + destination.longitude) / 2);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Center, getZoomLevel((float) distance)));
+    public void onDirectionShown(LatLng origin, LatLng destination, PolylineOptions lineOptions) {
+        if(lineOptions!=null) {
+            DirectionLine = mMap.addPolyline(lineOptions);
+            loading.setVisibility(View.INVISIBLE);
+            directionInformer.ShowTaskInformer();
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    return null;
+                }
+            });
+            double distance = SphericalUtil.computeDistanceBetween(origin, destination);
+            LatLng Center = new LatLng((origin.latitude + destination.latitude) / 2, (origin.longitude + destination.longitude) / 2);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Center, getZoomLevel((float) distance)));
+        }
+        else {
+            loading.setVisibility(View.INVISIBLE);
+            Toast.makeText(MapsActivity.this, "Direction error.", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    @Override
+    public void onDirectionFailed() {
+        loading.setVisibility(View.INVISIBLE);
+        Toast.makeText(MapsActivity.this, "Cannot connect to Google Direction Service.", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -770,14 +798,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void DrawDirectionAndSet(JSONObject data) {
-        dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")), mMap, MapsActivity.this);
+        dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")));
         dm.setOnDirectionShowCallBack(this);
         setInfoWindowListener(false);
     }
 
     @Override
     public void ClearMapAndSetInfoWindow() {
-        dm.ClearPolyline();
+        if(DirectionLine!=null) {
+            DirectionLine.remove();
+        }
         setInfoWindowListener(true);
     }
 
@@ -983,7 +1013,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             MyPositionCircle.setCenter(CurrentPosition);
             MyPositionCircle.setRadius(CurrentAccuracy);
             MyPositionMarker.setPosition(CurrentPosition);
-            Log.i("moved", "asd");
         }
     }
 
