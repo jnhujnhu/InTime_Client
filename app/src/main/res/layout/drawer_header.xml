@@ -27,7 +27,7 @@
         android:textSize="20sp"
         android:textColor="#ffffff"
         android:gravity="center_vertical"
-        android:layout_marginBottom="36dp" />
+        android:layout_marginBottom="46dp" />
 
     <ImageButton
         android:layout_width="28dp"
@@ -41,5 +41,30 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="36dp"
         android:textAlignment="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Balance : "
+        android:id="@+id/drawer_header_balance_label"
+        android:layout_gravity="left|bottom"
+        android:layout_marginLeft="95dp"
+        android:layout_marginBottom="30dp"
+        android:textColor="#ffffff"
+        android:textSize="12sp"
+        android:fontFamily="san-serif" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 Points"
+        android:id="@+id/drawer_header_balance"
+        android:layout_gravity="left|bottom|center_horizontal"
+        android:layout_marginLeft="148dp"
+        android:layout_marginBottom="30dp"
+        android:textColor="#ffffff"
+        android:textStyle="italic"
+        android:textSize="12sp"
+        android:fontFamily="san-serif" />
 
 </FrameLayout>

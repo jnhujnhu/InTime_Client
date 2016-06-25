@@ -20,7 +20,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_alignBottom="@+id/tag_short_title"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical"
+        android:textAlignment="center" />
 
     <EditText
         android:layout_width="match_parent"
@@ -40,7 +41,8 @@
         android:id="@+id/tag_type_spinner_label"
         android:gravity="center_vertical"
         android:layout_below="@+id/tag_short_title_label"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textAlignment="center" />
 
     <Spinner
         android:layout_width="fill_parent"
