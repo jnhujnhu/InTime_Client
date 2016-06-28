@@ -77,7 +77,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
@@ -95,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private MapWrapperLayout mapWrapperLayout;
     private TagInfoWindow tagInfoWindow;
     private View InfoWindow;
+    private ListView QueryListView;
 
     private DirectionInformer directionInformer;
     ProgressBar loading;
@@ -109,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int RESULT_CODE_CANCEL = 240;
     public static final int RESULT_CODE_OK = 241;
     private static final int TOUCH_USER_DETAIL = 1;
-    private static final int TOUCH_QUERY_FOCUSED = 2;
+    private static final int TEXT_QUERY_INPUT = 2;
     private static final int TOUCH_QUERY_UNFOCUSED = 3;
     private static final int TOUCH_SEARCH = 4;
     private boolean show_isMarkerClicker;
@@ -124,6 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FloatingActionButton Fab;
     private long timebetweenclicks;
     private int fabclickcount;
+
+    private Set<String> orderTitleList;
 
     private SharedPreferences userinfo;
     private String m_username;
@@ -180,6 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ceaselessMethods.startCeaselessMethods();
         if(!isFirstCreate) {
             restoreMapAndsetMarkers();
+            directionInformer.HideTaskInformer();
         }
         updateUsernameAndBalance();
         super.onResume();
@@ -258,6 +264,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case "add":
                 app_state = "add";
                 drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                directionInformer.HideTaskInformer();
+                mMap.setInfoWindowAdapter(MapsActivity.this);
                 float color = bundle.getFloat("color");
                 addMarkerAndRelatedListener(color, true, false, true, true, null, 0, 0);
                 Fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_check));
@@ -510,12 +518,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = mMap.getProjection();
-
         Point startPoint = proj.toScreenLocation(target);
         startPoint.y = 0;
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
         marker.setPosition(startLatLng);
-
         final Interpolator interpolator = new BounceInterpolator();
         handler.post(new Runnable() {
             @Override
@@ -524,9 +530,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 float t = interpolator.getInterpolation((float) elapsed / duration);
                 double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
                 double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
                 if (t < 1.0) {
-                    handler.postDelayed(this, 20);
+                    handler.postDelayed(this, 10);
+                    marker.setPosition(new LatLng(lat, lng));
                 }
             }
         });
@@ -544,7 +550,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = mMap.getProjection();
-
         Point startPoint = proj.toScreenLocation(target);
         startPoint.y = startPoint.y - 50;
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
@@ -558,9 +563,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 float t = timeInterpolator.getInterpolation(state);
                 double lng = target.longitude + t * (startLatLng.longitude - target.longitude) ;
                 double lat = target.latitude + t * (startLatLng.latitude - target.latitude);
-                marker.setPosition(new LatLng(lat, lng));
                 if (state < 1.0) {
-                    handler.postDelayed(this, 20);
+                    handler.postDelayed(this, 10);
+                    marker.setPosition(new LatLng(lat, lng));
                 }
             }
         });
@@ -688,7 +693,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-               // MarkerManager.getInstance().Restore();
                 super.onBackPressed();
             }
         }
@@ -779,17 +783,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case TOUCH_USER_DETAIL:
                 ShowNavBar();
                 break;
-            case TOUCH_QUERY_FOCUSED:
-                ListView listView = (ListView) findViewById(R.id.query_listview);
-                Animation fadein = AnimationUtils.loadAnimation(this, R.anim.fade_and_slide_down);
-                listView.startAnimation(fadein);
-                listView.setVisibility(View.VISIBLE);
-                break;
             case TOUCH_QUERY_UNFOCUSED:
-                listView = (ListView) findViewById(R.id.query_listview);
-                Animation fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_and_slide_up);
-                listView.startAnimation(fadeout);
-                listView.setVisibility(View.INVISIBLE);
                 HideSoftInputandClearFocus();
                 break;
             case TOUCH_SEARCH:
@@ -803,6 +797,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Toast.makeText(MapsActivity.this, "Search content cannot be empty", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case TEXT_QUERY_INPUT:
+                List<String> search_result = new ArrayList<>();
+                for(String title : orderTitleList) {
+                    if(title.contains(Content)) {
+                        search_result.add(title);
+                    }
+                }
+                ArrayAdapter adapter =new ArrayAdapter<>(MapsActivity.this, R.layout.listview_item_search, search_result.toArray());
+                QueryListView.setAdapter(adapter);
+                break;
+
         }
     }
 
@@ -825,6 +830,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         setMyPositionMarker();
         setDefaultMarkers();
+        mMap.setInfoWindowAdapter(this);
     }
 
     private void setDefaultMarkers() {
@@ -849,7 +855,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
-        ConnectionManager.getInstance().GetOrderList("", "waiting", "", userinfo.getString("uid", null), false ,userinfo.getString("token", null), handler);
+        ConnectionManager.getInstance().GetOrderList("", "waiting|accepted|canceling", "", userinfo.getString("uid", null), false ,userinfo.getString("token", null), handler);
     }
 
     private void setDefaultMarkerProperty(JSONObject order, boolean hasAnimation) throws JSONException {
@@ -896,16 +902,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-
+                orderTitleList = new HashSet<>();
                 JSONArray orders_list = res.getJSONArray("orders");
                 int markers_num = orders_list.length();
-
                 for(int i = 0;i < markers_num;i ++) {
                     JSONObject order = orders_list.getJSONObject(i);
+                    orderTitleList.add(order.optString("title"));
                     if(!acceptedoid.contains(order.optString("oid"))) {
                         setDefaultMarkerProperty( order, false);
                     }
                 }
+                ArrayAdapter adapter =new ArrayAdapter<>(MapsActivity.this, R.layout.listview_item_search, orderTitleList.toArray());
+                QueryListView.setAdapter(adapter);
+
             }
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
@@ -1004,16 +1013,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        final ArrayAdapter adapter =new ArrayAdapter<>(this, R.layout.listview_item_search, new String[]{"StarCraft II", "Dota", "LOL", "Football", "Basketball", "Piano"});
+        QueryListView = (ListView) findViewById(R.id.query_listview);
 
-        ListView listView = (ListView) findViewById(R.id.query_listview);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        QueryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 EditText queryinput = (EditText) findViewById(R.id.queryinput);
-                queryinput.setText((String) adapter.getItem(position));
+                queryinput.setText((String) QueryListView.getAdapter().getItem(position));
                 HideSoftInputandClearFocus();
             }
         });

@@ -3,11 +3,16 @@ package com.example.kevin.mapapplication.ui.mainscreen;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 
 import com.example.kevin.mapapplication.R;
 
@@ -27,9 +32,9 @@ public class QueryFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private static final int TOUCH_USER_DETAIL = 1;
-    private static final int TOUCH_QUERY_FOCUSED = 2;
     private static final int TOUCH_QUERY_UNFOCUSED = 3;
     private static final int TOUCH_SEARCH = 4;
+    private static final int TEXT_QUERY_INPUT = 2;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -79,16 +84,39 @@ public class QueryFragment extends Fragment {
             }
         });
         final EditText query = (EditText) getActivity().findViewById(R.id.queryinput);
+        final ListView listView = (ListView) getActivity().findViewById(R.id.query_listview);
         query.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                     mListener.onFragmentInteraction(TOUCH_QUERY_FOCUSED, "");
+                    Animation fadein = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_and_slide_down);
+                    listView.startAnimation(fadein);
+                    listView.setVisibility(View.VISIBLE);
                 }
                 else {
                     String keywords = query.getText().toString();
                     mListener.onFragmentInteraction(TOUCH_QUERY_UNFOCUSED, keywords);
+                    Animation fadeout = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_and_slide_up);
+                    listView.startAnimation(fadeout);
+                    listView.setVisibility(View.INVISIBLE);
+
                 }
+            }
+        });
+        query.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mListener.onFragmentInteraction(TEXT_QUERY_INPUT, query.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         ImageButton searchbutton = (ImageButton) getActivity().findViewById(R.id.querystart);

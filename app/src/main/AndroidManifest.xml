@@ -40,17 +40,20 @@
             android:name=".ui.mainscreen.tag.RedTagInfoActivity"
             android:label="@string/title_activity_red_tag_info"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.mainscreen.tag.BlueTagInfoActivity"
             android:label="@string/title_activity_blue_tag_info"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.mainscreen.tag.GreenTagInfoActivity"
             android:label="@string/title_activity_green_tag_info"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.mainscreen.SearchResultActivity"
             android:screenOrientation="portrait"

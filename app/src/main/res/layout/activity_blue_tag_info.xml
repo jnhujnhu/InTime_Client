@@ -25,7 +25,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:theme="@style/BlueScrollViewTheme">
 
         <include layout="@layout/content_blue_tag_info" />
 

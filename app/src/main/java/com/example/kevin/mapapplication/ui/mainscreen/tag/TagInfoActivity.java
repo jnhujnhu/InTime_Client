@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ import com.example.kevin.mapapplication.model.ConnectionManager;
 import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
 import com.example.kevin.mapapplication.utils.HorizontalPicker;
+
+import junit.framework.Test;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +59,7 @@ public class TagInfoActivity extends AppCompatActivity {
     protected CheckBox Template;
     protected ProgressBar loading;
     protected Intent intent;
+    protected TextView customtype;
 
     protected String Placename, Class, oid, tid, b_title, b_category, b_exptime, b_content, type;
     protected int b_enrollment, b_price;
@@ -148,6 +152,10 @@ public class TagInfoActivity extends AppCompatActivity {
     private boolean checkForm() {
         if(shorttitle.getText().toString().equals("")) {
             Toast.makeText(TagInfoActivity.this, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(customtype.getVisibility() == View.VISIBLE && customtype.getText().toString().equals("")) {
+            Toast.makeText(TagInfoActivity.this, "Custom Type cannot be empty.", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(Price != null && Price.getText().toString().equals("")) {
@@ -264,6 +272,7 @@ public class TagInfoActivity extends AppCompatActivity {
 
         shorttitle = (EditText) findViewById(R.id.tag_short_title);
         category = (Spinner) findViewById(R.id.tag_type_spinner);
+        customtype = (TextView) findViewById(R.id.tag_custom_type);
         enrollment = (HorizontalPicker) findViewById(R.id.tag_enrollment_numberpicker);
         Price = (EditText) findViewById(R.id.tag_price);
         DetailedDcpt = (EditText) findViewById(R.id.tag_detaildcpt);
@@ -330,20 +339,36 @@ public class TagInfoActivity extends AppCompatActivity {
 
         ///////////////Set Default Content//////////////////////////
         shorttitle.setText(b_title);
+        final TextView customtypelabel = (TextView) findViewById(R.id.tag_custom_type_label);
         if(!b_category.equals("null")) {
-            category.setSelection(((ArrayAdapter<String>) category.getAdapter()).getPosition(b_category));
-            category.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if(parent.getItemAtPosition(position).equals("Other")) {
-
-                    }
-                    else {
-
-                    }
-                }
-            });
+            if(((ArrayAdapter<String>) category.getAdapter()).getPosition(b_category) == -1) {
+                customtypelabel.setVisibility(View.VISIBLE);
+                customtype.setVisibility(View.VISIBLE);
+                category.setSelection(((ArrayAdapter<String>) category.getAdapter()).getPosition("Other"));
+                customtype.setText(b_category);
+            }
+            else {
+                category.setSelection(((ArrayAdapter<String>) category.getAdapter()).getPosition(b_category));
+            }
         }
+        category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(parent.getItemAtPosition(position).equals("Other")) {
+                    customtypelabel.setVisibility(View.VISIBLE);
+                    customtype.setVisibility(View.VISIBLE);
+                }
+                else {
+                    customtypelabel.setVisibility(View.GONE);
+                    customtype.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         Place.setText(Placename);
         DetailedDcpt.setText(b_content);
         Privacy.setChecked(b_privacy);
@@ -395,6 +420,9 @@ public class TagInfoActivity extends AppCompatActivity {
                     }
                 }
                 String t_category = category.getSelectedItem().toString();
+                if(t_category.equals("Other")) {
+                    t_category = customtype.getText().toString();
+                }
                 String t_detail = DetailedDcpt.getText().toString();
                 boolean istemplate = Template.isChecked();
                 Placename = Place.getText().toString();

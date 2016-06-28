@@ -142,6 +142,7 @@ public class OrderAndTemplateDetailActivity extends AppCompatActivity {
         newBundle = new Bundle();
         newBundle.putString("type", res.optString("type"));
         newBundle.putString("title", res.optString("title"));
+        newBundle.putString("category", res.optString("category"));
         newBundle.putBoolean("isPrivate", res.optBoolean("isPrivate"));
         newBundle.putInt("number", res.optInt("number"));
         newBundle.putInt("points", res.optInt("points"));

@@ -62,7 +62,6 @@ public class StartUpActivity extends AppCompatActivity {
 
         String sp_username = userinfo.getString("username", null);
 
-
         if(sp_username != null) {
             String sp_password = userinfo.getString("password", null);
             Login(sp_username, sp_password, new Runnable(){

@@ -169,7 +169,7 @@
         android:text="Privacy:"
         android:id="@+id/tag_isprivate_label"
         android:gravity="center"
-        android:layout_below="@+id/tag_type_spinner_label"
+        android:layout_below="@+id/tag_custom_type_label"
         android:layout_alignParentStart="true" />
 
     <CheckBox
@@ -264,5 +264,27 @@
         android:indeterminateTintMode="src_atop"
         android:layout_toLeftOf="@+id/tag_cancel_button"
         android:layout_marginRight="10dp" />
+
+    <TextView
+        android:layout_width="130dp"
+        android:layout_height="45dp"
+        android:text="Custom Type: "
+        android:id="@+id/tag_custom_type_label"
+        android:gravity="center_vertical"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tag_type_spinner_label"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:id="@+id/tag_custom_type"
+        android:singleLine="true"
+        android:textCursorDrawable="@drawable/cc_greenpipe"
+        android:theme="@style/MyAppThemeGreen"
+        android:layout_alignTop="@+id/tag_custom_type_label"
+        android:layout_toRightOf="@+id/tag_custom_type_label"
+        android:visibility="gone" />
 
 </RelativeLayout>
