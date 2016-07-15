@@ -16,13 +16,10 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -96,8 +93,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TagButtonManager tagButtonManager;
     private MapWrapperLayout mapWrapperLayout;
     private TagInfoWindow tagInfoWindow;
-    private View InfoWindow;
+    private View InfoWindow_show;
     private ListView QueryListView;
+    private GoogleMap.InfoWindowAdapter adapter_showOne;
 
     private DirectionInformer directionInformer;
     ProgressBar loading;
@@ -185,7 +183,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ceaselessMethods.startCeaselessMethods();
         if(!isFirstCreate) {
             restoreMapAndsetMarkers();
-            directionInformer.HideTaskInformer();
+            if(directionInformer != null)
+                directionInformer.HideTaskInformer();
         }
         updateUsernameAndBalance();
         super.onResume();
@@ -273,13 +272,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 modifyScreen(false);
                 break;
             case "showOne":
+                app_state = "showOne";
                 Fab.setVisibility(View.GONE);
                 isMarkerDraggable = false;
                 Custom_Place = bundle.getString("place");
                 TextView Header = (TextView) findViewById(R.id.mask_header);
                 Header.setText("Position");
             case "modify":
-                app_state = "modify";
+                if(state.equals("modify"))
+                    app_state = "modify";
                 drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 modifyScreen(false);
                 setInfoWindowWithPlaceDetail(false, null, null, null);
@@ -370,9 +371,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ConnectionManager.getInstance().GetGeocodingPlace(FocusedMarker.getPosition(), handler);
     }
 
+
     private void setInfoWindowWithPlaceDetail(final boolean enable, final String Custom_Place, final String premise_name, final String district_name) {
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+        GoogleMap.InfoWindowAdapter adapter = new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker marker) {
                 return null;
@@ -382,25 +384,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public View getInfoContents(Marker marker) {
                 if(enable) {
                     if (marker.equals(FocusedMarker)) {
-
                         LayoutInflater inflater = LayoutInflater.from(MapsActivity.this);
-                        View v = inflater.inflate(R.layout.infowindow_marker_onadd, null);
-                        final TextView placename = (TextView) v.findViewById(R.id.markerinfowindow_placename);
-                        final TextView districtname = (TextView) v.findViewById(R.id.markerinfowindow_district);
-                        if(premise_name != null) {
-                            placename.setText(premise_name);
-                            districtname.setText(district_name);
+                        View v;
+                        if(Custom_Place == null) {
+                            v = inflater.inflate(R.layout.infowindow_marker_onadd, null);
+                            final TextView placename = (TextView) v.findViewById(R.id.markerinfowindow_placename);
+                            final TextView districtname = (TextView) v.findViewById(R.id.markerinfowindow_district);
+                            if (premise_name != null) {
+                                placename.setText(premise_name);
+                                districtname.setText(district_name);
+                            }
                         }
-                        if(Custom_Place != null) {
+                        else {
+                            v = inflater.inflate(R.layout.infowindow_marker_onadd_with_direction, null);
+                            final TextView placename = (TextView) v.findViewById(R.id.markerinfowindow_placename);
                             placename.setText(Custom_Place);
-                            districtname.setVisibility(View.GONE);
+                            ImageButton direction = (ImageButton) v.findViewById(R.id.markerinfowindow_dir_btn);
+                            direction.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View view, MotionEvent event) {
+                                    switch (event.getActionMasked()) {
+                                        case MotionEvent.ACTION_UP:
+                                            FocusedMarker.hideInfoWindow();
+                                            loading.setVisibility(View.VISIBLE);
+                                            DrawDirectionAndSet(FocusedMarker.getPosition());
+                                            break;
+                                    }
+                                    return true;
+                                }
+                            });
+                            mapWrapperLayout.setMarkerWithInfoWindow(FocusedMarker, v);
                         }
                         return v;
                     }
                 }
                 return null;
             }
-        });
+        };
+        mMap.setInfoWindowAdapter(adapter);
+
+        if(app_state.equals("showOne")) {
+            adapter_showOne = adapter;
+        }
     }
 
     private void modifyScreen(boolean enable) {
@@ -607,6 +632,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(m_bundle!=null && (m_bundle.getString("state").equals("modify")||m_bundle.getString("state").equals("showOne"))) {
             Mapinit_location();
             setMyPositionMarker();
+
+            /////////////////Init Direction in ShowOne Mode////////////////
+            if(m_bundle.getString("state").equals("showOne")) {
+                directionInformer = new DirectionInformer(this, mMap);
+                directionInformer.SetTaskInformer();
+            }
+
             Double mod_latitude = m_bundle.getDouble("latitude", 200), mod_longitude = m_bundle.getDouble("longitude", 200);
             if (mod_latitude == 200) {
                 mod_latitude = CurrentPosition.latitude;
@@ -671,9 +703,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return null;
         }
 
-        tagInfoWindow.setTagContent(InfoWindow, marker, mMap);
-        mapWrapperLayout.setMarkerWithInfoWindow(marker, InfoWindow);
-        return InfoWindow;
+        tagInfoWindow.setTagContent(InfoWindow_show, marker, mMap);
+        mapWrapperLayout.setMarkerWithInfoWindow(marker, InfoWindow_show);
+        return InfoWindow_show;
     }
 
     @Override
@@ -696,7 +728,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 super.onBackPressed();
             }
         }
-        else if(app_state.equals("modify")){
+        else if(app_state.equals("modify") || app_state.equals("showOne")){
             super.onBackPressed();
             overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
         }
@@ -811,8 +843,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void DrawDirectionAndSet(JSONObject data) {
-        dm = new DirectionManager(CurrentPosition, new LatLng(data.optJSONObject("coordinate").optDouble("latitude"), data.optJSONObject("coordinate").optDouble("longitude")));
+    public void DrawDirectionAndSet(LatLng MarkerPosition) {
+        dm = new DirectionManager(CurrentPosition, MarkerPosition);
         dm.setOnDirectionShowCallBack(this);
         setInfoWindowListener(false);
     }
@@ -822,15 +854,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(DirectionLine!=null) {
             DirectionLine.remove();
         }
-        setInfoWindowListener(true);
+        if(app_state.equals("show")) {
+            mMap.setInfoWindowAdapter(this);
+            setInfoWindowListener(true);
+        }
+        else if(app_state.equals("showOne")) {
+            mMap.setInfoWindowAdapter(adapter_showOne);
+        }
     }
 
     private void restoreMapAndsetMarkers() {
-        Mapinit_location();
-        mMap.clear();
-        setMyPositionMarker();
-        setDefaultMarkers();
-        mMap.setInfoWindowAdapter(this);
+        if(app_state.equals("show")) {
+            Mapinit_location();
+            mMap.clear();
+            setMyPositionMarker();
+            setDefaultMarkers();
+            mMap.setInfoWindowAdapter(this);
+        }
     }
 
     private void setDefaultMarkers() {
@@ -862,7 +902,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         final Marker marker = mMap.addMarker(new MarkerOptions().position(CurrentPosition));
         MarkerManager.getInstance().Put(marker.getId(), order);
-        final LatLng position = new LatLng(MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("latitude"), MarkerManager.getInstance().Get(marker.getId()).optJSONObject("coordinate").optDouble("longitude"));
+        final LatLng position = new LatLng(order.optJSONObject("coordinate").optDouble("latitude"), order.optJSONObject("coordinate").optDouble("longitude"));
 
         switch (order.optString("type")) {
             case "request":
@@ -1076,7 +1116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         directionInformer.SetTaskInformer();
 
         tagInfoWindow  = new TagInfoWindow(MapsActivity.this);
-        InfoWindow = tagInfoWindow.BuildTagContent();
+        InfoWindow_show = tagInfoWindow.BuildTagContent();
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(CurrentPosition));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentPosition, ZoomLevel));

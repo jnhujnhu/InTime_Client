@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="7dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Searching..."
+        android:id="@+id/markerinfowindow_placename"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:gravity="center_vertical" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="2px"
+        android:layout_height="40dp"
+        android:background="#a0a0a0"
+        android:id="@+id/linearLayout6"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/markerinfowindow_placename" />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/markerinfowindow_dir_btn"
+        android:background="@null"
+        android:textColor="#949494"
+        android:src="@drawable/ic_directions"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/linearLayout6"
+        android:layout_marginLeft="7dp" />
+</RelativeLayout>

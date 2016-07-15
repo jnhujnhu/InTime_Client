@@ -43,7 +43,6 @@ public class DirectionInformer {
             @Override
             public void onClick(View v) {
                 HideTaskInformer();
-                map.setInfoWindowAdapter(handle);
             }
         });
     }

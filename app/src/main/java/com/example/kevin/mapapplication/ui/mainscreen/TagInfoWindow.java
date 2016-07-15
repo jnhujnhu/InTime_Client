@@ -61,13 +61,9 @@ public class TagInfoWindow {
                 public boolean onTouch(View view, MotionEvent event) {
                     switch (event.getActionMasked()) {
                         case MotionEvent.ACTION_UP:
-                            try {
-                                marker.hideInfoWindow();
-                                context.loading.setVisibility(View.VISIBLE);
-                                context.DrawDirectionAndSet(MarkerManager.getInstance().Get(marker.getId()));
-                            }catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            marker.hideInfoWindow();
+                            context.loading.setVisibility(View.VISIBLE);
+                            context.DrawDirectionAndSet(marker.getPosition());
                             break;
                     }
                     return true;
