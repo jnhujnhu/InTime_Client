@@ -6,7 +6,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.kevin.mapapplication.R;
-import com.example.kevin.mapapplication.ui.mainscreen.MapsActivity;
 import com.google.android.gms.maps.GoogleMap;
 
 /**
@@ -18,8 +17,8 @@ public class DirectionInformer {
 
     private final GoogleMap map;
 
-    private LinearLayout taskinformer;
-    private Button task_cancel;
+    private LinearLayout directioninformer;
+    private Button direction_cancel;
 
     public boolean isShown;
 
@@ -36,39 +35,37 @@ public class DirectionInformer {
 
     private OnTaskCancelClicker onTaskCancelClicker;
 
-    public void SetTaskInformer() {
-        task_cancel = (Button) handle.findViewById(R.id.btn_direction_hide);
-        taskinformer = (LinearLayout) handle.findViewById(R.id.ll_task_informer);
-        task_cancel.setOnClickListener(new View.OnClickListener() {
+    public void SetDirectionInformer() {
+        direction_cancel = (Button) handle.findViewById(R.id.btn_direction_hide);
+        directioninformer = (LinearLayout) handle.findViewById(R.id.ll_direction_informer);
+        direction_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HideTaskInformer();
+                HideDirectionInformer();
             }
         });
     }
 
-    public void HideTaskInformer() {
+    public void HideDirectionInformer() {
         if(isShown) {
             onTaskCancelClicker.ClearMapAndSetInfoWindow();
             TranslateAnimation shiftright = new TranslateAnimation(0, 700, 0, 0);
             shiftright.setDuration(700);
-            taskinformer.startAnimation(shiftright);
-            taskinformer.setVisibility(View.GONE);
-            task_cancel.setEnabled(false);
+            directioninformer.startAnimation(shiftright);
+            directioninformer.setVisibility(View.GONE);
+            direction_cancel.setEnabled(false);
             isShown = false;
         }
     }
 
-    public void ShowTaskInformer() {
+    public void ShowDirectionInformer() {
         if(!isShown) {
-            Button task_cancel = (Button) handle.findViewById(R.id.btn_direction_hide);
-            LinearLayout taskinformer = (LinearLayout) handle.findViewById(R.id.ll_task_informer);
             TranslateAnimation shiftleft = new TranslateAnimation(700, 0, 0, 0);
             shiftleft.setDuration(700);
             shiftleft.setFillAfter(true);
-            taskinformer.setVisibility(View.VISIBLE);
-            taskinformer.startAnimation(shiftleft);
-            task_cancel.setEnabled(true);
+            directioninformer.setVisibility(View.VISIBLE);
+            directioninformer.startAnimation(shiftleft);
+            direction_cancel.setEnabled(true);
             isShown = true;
         }
     }

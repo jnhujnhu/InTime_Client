@@ -266,7 +266,7 @@ public class TagInfoActivity extends AppCompatActivity {
     }
 
     private void SetButtonListener() {
-        Button submit, cancel;
+        final Button submit, cancel;
         submit = (Button) findViewById(R.id.tag_submit_button);
         cancel = (Button) findViewById(R.id.tag_cancel_button);
 
@@ -428,13 +428,16 @@ public class TagInfoActivity extends AppCompatActivity {
                 Placename = Place.getText().toString();
 
                 if(Class.equals("template") && tid.equals("")) {
+                    submit.setEnabled(false);
                     createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                 }
                 else if(Class.equals("template")) {
+                    submit.setEnabled(false);
                     modifyTemplate(tid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                 }
                 else if(Class.equals("order") && oid.equals("")) {
                     if(checkForm()) {
+                        submit.setEnabled(false);
                         createOrder(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                         if (istemplate) {
                             createTemplate(t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
@@ -443,6 +446,7 @@ public class TagInfoActivity extends AppCompatActivity {
                 }
                 else if(Class.equals("order")) {
                     if(checkForm()) {
+                        submit.setEnabled(false);
                         modifyOrder(oid, t_shorttile, t_detail, t_category, t_price, number, t_time, privacy);
                     }
                 }

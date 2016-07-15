@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -98,6 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap.InfoWindowAdapter adapter_showOne;
 
     private DirectionInformer directionInformer;
+    private TaskInformer taskInformer;
     ProgressBar loading;
 
     private Circle MyPositionCircle;
@@ -127,6 +129,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int fabclickcount;
 
     private Set<String> orderTitleList;
+    private JSONArray onGoingOrders;
 
     private SharedPreferences userinfo;
     private String m_username;
@@ -184,7 +187,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(!isFirstCreate) {
             restoreMapAndsetMarkers();
             if(directionInformer != null)
-                directionInformer.HideTaskInformer();
+                directionInformer.HideDirectionInformer();
+            if(taskInformer != null)
+                taskInformer.HideTaskInformer();
         }
         updateUsernameAndBalance();
         super.onResume();
@@ -263,7 +268,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case "add":
                 app_state = "add";
                 drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                directionInformer.HideTaskInformer();
+                directionInformer.HideDirectionInformer();
                 mMap.setInfoWindowAdapter(MapsActivity.this);
                 float color = bundle.getFloat("color");
                 addMarkerAndRelatedListener(color, true, false, true, true, null, 0, 0);
@@ -636,7 +641,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             /////////////////Init Direction in ShowOne Mode////////////////
             if(m_bundle.getString("state").equals("showOne")) {
                 directionInformer = new DirectionInformer(this, mMap);
-                directionInformer.SetTaskInformer();
+                directionInformer.SetDirectionInformer();
             }
 
             Double mod_latitude = m_bundle.getDouble("latitude", 200), mod_longitude = m_bundle.getDouble("longitude", 200);
@@ -667,7 +672,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(lineOptions!=null) {
             DirectionLine = mMap.addPolyline(lineOptions);
             loading.setVisibility(View.INVISIBLE);
-            directionInformer.ShowTaskInformer();
+            directionInformer.ShowDirectionInformer();
             mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
                 public View getInfoWindow(Marker marker) {
@@ -880,13 +885,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccessWithJSON(int statusCode, Header[] headers, JSONObject res) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
-                JSONArray orders = res.optJSONArray("orders");
-                for(int i = 0;i < orders.length();i++) {
-                    JSONObject order = orders.optJSONObject(i);
+                onGoingOrders = res.optJSONArray("orders");
+                for(int i = 0;i < onGoingOrders.length();i++) {
+                    JSONObject order = onGoingOrders.optJSONObject(i);
                     acceptedorderid.add(order.optString("oid"));
                     setDefaultMarkerProperty(order, true);
                 }
                 MarkersFilter(acceptedorderid);
+
+                if(onGoingOrders.length() != 0) {
+                    taskInformer = new TaskInformer(MapsActivity.this, mMap, onGoingOrders);
+                    taskInformer.SetTaskInformer();
+                    taskInformer.ShowTaskInformer();
+                }
+                else if(taskInformer != null) {
+                    taskInformer.CloseTaskInformer();
+                }
             }
 
             @Override
@@ -895,6 +909,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
+
         ConnectionManager.getInstance().GetOrderList("", "waiting|accepted|canceling", "", userinfo.getString("uid", null), false ,userinfo.getString("token", null), handler);
     }
 
@@ -1113,7 +1128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setMyPositionMarker();
 
         directionInformer = new DirectionInformer(this, mMap);
-        directionInformer.SetTaskInformer();
+        directionInformer.SetDirectionInformer();
 
         tagInfoWindow  = new TagInfoWindow(MapsActivity.this);
         InfoWindow_show = tagInfoWindow.BuildTagContent();
