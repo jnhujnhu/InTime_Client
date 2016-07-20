@@ -164,7 +164,11 @@
             android:name=".ui.userinfo.TemplateDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.userinfo.OrdersActivity"
+        <activity
+            android:name=".ui.userinfo.OrdersActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.userinfo.TransactionsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
