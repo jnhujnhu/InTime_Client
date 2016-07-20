@@ -24,11 +24,21 @@ public class LocationTracker implements LocationListener {
     }
 
     public float getCurrentAccuracy() {
-        return lastLocation.getAccuracy();
+        if (lastLocation != null) {
+            return lastLocation.getAccuracy();
+        }
+        else {
+            return 0;
+        }
     }
 
     public LatLng getCurrentLatlng() {
-        return EvilTransform.transform(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()));
+        if (lastLocation != null) {
+            return EvilTransform.transform(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()));
+        }
+        else {
+            return new LatLng(0, 0);
+        }
     }
 
     private void getLocation(){

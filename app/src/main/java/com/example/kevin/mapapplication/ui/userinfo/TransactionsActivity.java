@@ -11,6 +11,8 @@ import com.example.kevin.mapapplication.utils.CustomWebView;
 
 public class TransactionsActivity extends AppCompatActivity {
 
+    public static final int RESULT_CODE = 233;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +33,8 @@ public class TransactionsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(RESULT_CODE, intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }

@@ -237,6 +237,10 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
             bundle.putString("username", orderItem.optString("username"));
             bundle.putString("status", orderItem.optString("status"));
             itemList.add(bundle);
+
+            if (orderItem.optString("status").equals("accepted") || orderItem.optString("status").equals("canceling")) {
+                isAccepted = true;
+            }
         }
 
         list_accept.setAdapter(new ArrayAdapter<Bundle>(OrderDetailActivity.this, R.layout.listview_item_accept, itemList) {
@@ -256,17 +260,6 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
                 return v;
             }
         });
-
-        list_accept.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle item = itemList.get(position);
-                Intent intent = new Intent(OrderDetailActivity.this, FriendsDetailActivity.class);
-                intent.putExtras(item);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-            }
-        });
     }
 
     private void showItem(View v, final Bundle item) {
@@ -277,6 +270,7 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         LinearLayout layout_stay_or_leave = (LinearLayout)v.findViewById(R.id.detail_item_accept_stay_or_leave);
         Button button_stay = (Button)v.findViewById(R.id.detail_item_accept_stay);
         Button button_leave = (Button)v.findViewById(R.id.detail_item_accept_leave);
+        LinearLayout layout_item = (LinearLayout)v.findViewById(R.id.detail_item_layout);
 
         text_accept.setText(item.getString("username"));
 
@@ -292,7 +286,6 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
                 text_status.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.status_accepted));
                 text_status.setText("Accepted");
                 text_accept.setAlpha(1f);
-                isAccepted = true;
                 break;
             case "completed":
                 text_status.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.status_completed));
@@ -305,7 +298,6 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
                 text_status.setText("Canceling");
                 text_accept.setAlpha(1f);
                 image_cancel.setVisibility(View.GONE);
-                isAccepted = true;
                 break;
             case "canceled":
                 text_status.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.status_canceled));
@@ -331,6 +323,18 @@ public class OrderDetailActivity extends OrderAndTemplateDetailActivity {
         else {
             layout_stay_or_leave.setVisibility(View.GONE);
         }
+
+        layout_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                if (!item.getString("uid").equals(userinfo.getString("uid", null))) {
+                    Intent intent = new Intent(OrderDetailActivity.this, FriendsDetailActivity.class);
+                    intent.putExtras(item);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                }
+            }
+        });
 
         image_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
