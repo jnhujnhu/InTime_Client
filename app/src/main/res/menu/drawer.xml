@@ -10,10 +10,6 @@
             android:icon="@drawable/ic_friends"
             android:title="@string/Nav_item_friends"/>
         <item
-            android:id="@+id/navigation_templates"
-            android:icon="@drawable/ic_file_list"
-            android:title="@string/Nav_item_templates"/>
-        <item
             android:id="@+id/navigation_wallet"
             android:icon="@drawable/ic_mywallet"
             android:title="@string/Nav_item_wallet"/>
@@ -21,6 +17,10 @@
             android:id="@+id/navigation_history"
             android:icon="@drawable/ic_myhistory"
             android:title="@string/Nav_item_history"/>
+        <item
+            android:id="@+id/navigation_templates"
+            android:icon="@drawable/ic_file_list"
+            android:title="@string/Nav_item_templates"/>
         <item
             android:id="@+id/navigation_promotion"
             android:icon="@drawable/ic_mypromotion"

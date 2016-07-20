@@ -11,7 +11,8 @@ import cz.msebera.android.httpclient.protocol.HTTP;
 
 public class ConnectionManager {
 
-    private static final String SERVER_ADDR = "http://intime.halcyons.org:3000/api";
+    public static final String SERVER_ADDR = "http://intime.halcyons.org:3000";
+    private static final String URL_PREFIX = SERVER_ADDR +"/api";
 
     private static ConnectionManager mInstance;
 
@@ -33,7 +34,7 @@ public class ConnectionManager {
         RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("password", password);
-        client.post(SERVER_ADDR + "/login", params,  handler);
+        client.post(URL_PREFIX + "/login", params,  handler);
     }
 
     public void Register(String username, String password, String phone, String email, AsyncHttpResponseHandler handler) {
@@ -42,7 +43,7 @@ public class ConnectionManager {
         params.put("password", password);
         params.put("phone", phone);
         params.put("email", email);
-        client.post(SERVER_ADDR + "/users", params, handler);
+        client.post(URL_PREFIX + "/users", params, handler);
     }
 
     public void ModifyUserInfo(String token, String uid, String username, String oldpassword, String password, String phone, String email, AsyncHttpResponseHandler handler) {
@@ -53,37 +54,37 @@ public class ConnectionManager {
         params.put("phone", phone);
         params.put("email", email);
         client.addHeader("x-access-token", token);
-        client.put(SERVER_ADDR + "/users/" + uid, params, handler);
+        client.put(URL_PREFIX + "/users/" + uid, params, handler);
     }
 
     public void GetUserInfo(String uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + "/users/" + uid, null, handler);
+        client.get(URL_PREFIX + "/users/" + uid, null, handler);
     }
 
     public void GetFriendsList(String uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + "/users/" + uid + "/friends", null, handler);
+        client.get(URL_PREFIX + "/users/" + uid + "/friends", null, handler);
     }
 
     public void SearchUser(String token, String keyword, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + "/users?username_like=" + keyword, null, handler);
+        client.get(URL_PREFIX + "/users?username_like=" + keyword, null, handler);
     }
 
     public void PostPromotionCode(String uid, String promotionCode, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.post(SERVER_ADDR + String.format("/users/%s/balance/promotion/%s", uid, promotionCode), null, handler);
+        client.post(URL_PREFIX + String.format("/users/%s/balance/promotion/%s", uid, promotionCode), null, handler);
     }
 
     public void PostRegToken(String uid, String regToken, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.post(SERVER_ADDR + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
+        client.post(URL_PREFIX + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
     }
 
     public void DeleteRegToken(String uid, String regToken, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.delete(SERVER_ADDR + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
+        client.delete(URL_PREFIX + String.format("/users/%s/reg_tokens/%s", uid, regToken), null, handler);
     }
 
     public void MarkNotification(String nid, Boolean read, String token, AsyncHttpResponseHandler handler) {
@@ -93,7 +94,7 @@ public class ConnectionManager {
             StringEntity entity = new StringEntity(params.toString());
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
-            client.put(null, SERVER_ADDR + String.format("/notifications/%s", nid), entity, "application/json", handler);
+            client.put(null, URL_PREFIX + String.format("/notifications/%s", nid), entity, "application/json", handler);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -102,32 +103,32 @@ public class ConnectionManager {
 
     public void GetNotificationList(String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + "/notifications", null, handler);
+        client.get(URL_PREFIX + "/notifications", null, handler);
     }
 
     public void CancelFriendRequest(String m_uid, String f_uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.delete(SERVER_ADDR + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
+        client.delete(URL_PREFIX + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
     }
 
     public void AddOrAcceptFriendRequest(String m_uid, String f_uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.post(SERVER_ADDR + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
+        client.post(URL_PREFIX + String.format("/users/%s/friends/%s", m_uid, f_uid), null, handler);
     }
 
     public void GetTemplateList(String uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + String.format("/templates?uid=%s", uid), null, handler);
+        client.get(URL_PREFIX + String.format("/templates?uid=%s", uid), null, handler);
     }
 
     public void GetTemplateDetail(String tid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + String.format("/templates/%s", tid), null, handler);
+        client.get(URL_PREFIX + String.format("/templates/%s", tid), null, handler);
     }
 
     public void DeleteTemplate(String tid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.delete(SERVER_ADDR + String.format("/templates/%s", tid), null, handler);
+        client.delete(URL_PREFIX + String.format("/templates/%s", tid), null, handler);
     }
 
     public void CreateTemplate(String type, String title, String content, String category, int price, int number, long time, String place, double latitude, double longitude, Boolean isPrivate, String token, AsyncHttpResponseHandler handler) {
@@ -152,7 +153,7 @@ public class ConnectionManager {
             StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
-            client.post(null, SERVER_ADDR + "/templates", entity, "application/json", handler);
+            client.post(null, URL_PREFIX + "/templates", entity, "application/json", handler);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -179,7 +180,7 @@ public class ConnectionManager {
             StringEntity entity = new StringEntity(params.toString(),"utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
-            client.post(null, SERVER_ADDR + "/orders", entity, "application/json", handler);
+            client.post(null, URL_PREFIX + "/orders", entity, "application/json", handler);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -208,7 +209,7 @@ public class ConnectionManager {
             StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
-            client.put(null, SERVER_ADDR + String.format("/templates/%s", tid), entity, "application/json", handler);
+            client.put(null, URL_PREFIX + String.format("/templates/%s", tid), entity, "application/json", handler);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -234,7 +235,7 @@ public class ConnectionManager {
             StringEntity entity = new StringEntity(params.toString(), "utf-8");
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             client.addHeader("x-access-token", token);
-            client.put(null, SERVER_ADDR + String.format("/orders/%s", oid), entity, "application/json", handler);
+            client.put(null, URL_PREFIX + String.format("/orders/%s", oid), entity, "application/json", handler);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -243,7 +244,7 @@ public class ConnectionManager {
 
     public void GetOrderList(String uid, String status, String keyword, String acceptUser, boolean notExpired, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s&time_gte_now=%s", uid, status, keyword, acceptUser, notExpired ? "true" : "false"), null, handler);
+        client.get(URL_PREFIX + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s&time_gte_now=%s", uid, status, keyword, acceptUser, notExpired ? "true" : "false"), null, handler);
     }
 
     public void GetDefaultOrdersList(String token, AsyncHttpResponseHandler handler) {
@@ -256,21 +257,21 @@ public class ConnectionManager {
 
     public void GetOrderDetail(String oid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(SERVER_ADDR + String.format("/orders/%s", oid), null, handler);
+        client.get(URL_PREFIX + String.format("/orders/%s", oid), null, handler);
     }
 
     public void SetOrderStatus(String oid, String status, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.put(SERVER_ADDR + String.format("/orders/%s", oid), new RequestParams("status", status), handler);
+        client.put(URL_PREFIX + String.format("/orders/%s", oid), new RequestParams("status", status), handler);
     }
 
     public void AcceptOrder(String oid, String uid, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.post(SERVER_ADDR + String.format("/orders/%s/accept_users/%s", oid, uid), null, handler);
+        client.post(URL_PREFIX + String.format("/orders/%s/accept_users/%s", oid, uid), null, handler);
     }
 
     public void SetOrderUserStatus(String oid, String uid, String status, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.put(SERVER_ADDR + String.format("/orders/%s/accept_users/%s", oid, uid), new RequestParams("status", status), handler);
+        client.put(URL_PREFIX + String.format("/orders/%s/accept_users/%s", oid, uid), new RequestParams("status", status), handler);
     }
 }

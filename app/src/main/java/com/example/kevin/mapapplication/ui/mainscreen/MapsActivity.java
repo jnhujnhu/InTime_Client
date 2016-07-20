@@ -49,6 +49,7 @@ import com.example.kevin.mapapplication.ui.userinfo.OrdersActivity;
 import com.example.kevin.mapapplication.ui.userinfo.PromotionActivity;
 import com.example.kevin.mapapplication.ui.userinfo.SettingsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.TemplatesActivity;
+import com.example.kevin.mapapplication.ui.userinfo.TransactionsActivity;
 import com.example.kevin.mapapplication.ui.userinfo.UserDetailActivity;
 import com.example.kevin.mapapplication.ui.userinfo.WalletActivity;
 import com.example.kevin.mapapplication.utils.AsyncJSONHttpResponseHandler;
@@ -771,7 +772,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivityWithDelay(intent_5);
                 break;
             case R.id.navigation_wallet :
-                final Intent intent_6 = new Intent(this, WalletActivity.class);
+                final Intent intent_6 = new Intent(this, TransactionsActivity.class);
                 startActivityWithDelay(intent_6);
                 break;
             case R.id.navigation_templates :
