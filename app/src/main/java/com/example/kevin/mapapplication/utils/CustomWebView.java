@@ -34,6 +34,9 @@ public class CustomWebView extends WebView {
 
         userinfo = getContext().getSharedPreferences("User_info", Context.MODE_PRIVATE);
 
+        getSettings().setLoadWithOverviewMode(true);
+        getSettings().setUseWideViewPort(true);
+
         setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
