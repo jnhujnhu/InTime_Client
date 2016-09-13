@@ -1,9 +1,14 @@
 package com.example.kevin.mapapplication.model;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.*;
 
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -28,6 +33,15 @@ public class ConnectionManager {
             return mInstance;
         }
         return mInstance;
+    }
+
+    private String escapeSpecialString(String str) {
+        try {
+            return URLEncoder.encode(str, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void Login(String username, String password, AsyncHttpResponseHandler handler) {
@@ -74,7 +88,7 @@ public class ConnectionManager {
 
     public void PostPromotionCode(String uid, String promotionCode, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.post(URL_PREFIX + String.format("/users/%s/balance/promotion/%s", uid, promotionCode), null, handler);
+        client.post(URL_PREFIX + String.format("/users/%s/balance/promotion/%s", uid, escapeSpecialString(promotionCode)), null, handler);
     }
 
     public void PostRegToken(String uid, String regToken, String token, AsyncHttpResponseHandler handler) {
@@ -244,7 +258,7 @@ public class ConnectionManager {
 
     public void GetOrderList(String uid, String status, String keyword, String acceptUser, boolean notExpired, String token, AsyncHttpResponseHandler handler) {
         client.addHeader("x-access-token", token);
-        client.get(URL_PREFIX + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s&time_gte_now=%s", uid, status, keyword, acceptUser, notExpired ? "true" : "false"), null, handler);
+        client.get(URL_PREFIX + String.format("/orders?uid=%s&status=%s&title_or_content_like=%s&accept_users_contains=%s&time_gte_now=%s", uid, status, escapeSpecialString(keyword), acceptUser, notExpired ? "true" : "false"), null, handler);
     }
 
     public void GetDefaultOrdersList(String token, AsyncHttpResponseHandler handler) {

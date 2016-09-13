@@ -54,6 +54,7 @@ public class TagInfoActivity extends AppCompatActivity {
     protected EditText Place;
     protected Button DateSelector;
     protected Button MapPlace;
+    protected Button submit, cancel;
     protected HorizontalPicker enrollment;
     protected CheckBox Privacy;
     protected CheckBox Template;
@@ -190,6 +191,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
+                submit.setEnabled(true);
                 Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
@@ -209,6 +211,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
+                submit.setEnabled(true);
                 Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
@@ -228,6 +231,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
+                submit.setEnabled(true);
                 Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
@@ -247,6 +251,7 @@ public class TagInfoActivity extends AppCompatActivity {
             @Override
             public void onFailureWithJSON(int statusCode, Header[] headers, JSONObject res, String error) throws JSONException {
                 loading.setVisibility(View.INVISIBLE);
+                submit.setEnabled(true);
                 Toast.makeText(TagInfoActivity.this, error, Toast.LENGTH_LONG).show();
             }
         };
@@ -266,7 +271,6 @@ public class TagInfoActivity extends AppCompatActivity {
     }
 
     private void SetButtonListener() {
-        final Button submit, cancel;
         submit = (Button) findViewById(R.id.tag_submit_button);
         cancel = (Button) findViewById(R.id.tag_cancel_button);
 

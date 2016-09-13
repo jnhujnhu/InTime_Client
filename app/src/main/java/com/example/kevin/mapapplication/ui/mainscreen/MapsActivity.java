@@ -751,14 +751,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final Intent intent_7 = new Intent(this, NotificationsActivity.class);
                 startActivityWithDelay(intent_7);
                 break;
-            case R.id.navigation_setting :
-                final Intent intent_1 = new Intent(this, SettingsActivity.class);
-                startActivityWithDelay(intent_1);
-                break;
-            case R.id.navigation_help :
-                final Intent intent_2 = new Intent(this, HelpActivity.class);
-                startActivityWithDelay(intent_2);
-                break;
+//            case R.id.navigation_setting :
+//                final Intent intent_1 = new Intent(this, SettingsActivity.class);
+//                startActivityWithDelay(intent_1);
+//                break;
+//            case R.id.navigation_help :
+//                final Intent intent_2 = new Intent(this, HelpActivity.class);
+//                startActivityWithDelay(intent_2);
+//                break;
             case R.id.navigation_history :
                 final Intent intent_3 = new Intent(this, OrdersActivity.class);
                 startActivityWithDelay(intent_3);
